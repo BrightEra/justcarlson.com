@@ -74,10 +74,13 @@ Plans:
   2. Placeholder About page created with Just Carlson content
   3. README rewritten for justcarlson.com repository
   4. Final validation shows zero identity reference leaks (grep validation clean)
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (to be planned)
+- [ ] 04-01-PLAN.md — Delete all previous owner's content (blog posts, images, avatars)
+- [ ] 04-02-PLAN.md — Create placeholder content (Hello World post, About page)
+- [ ] 04-03-PLAN.md — Clean identity leaks in source files, rewrite README
+- [ ] 04-04-PLAN.md — Create Obsidian blog post template
 
 ## Progress
 
@@ -89,7 +92,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation | 2/2 | Complete ✓ | 2026-01-29 |
 | 2. Components | 2/2 | Complete ✓ | 2026-01-29 |
 | 3. Infrastructure | 3/3 | Complete ✓ | 2026-01-29 |
-| 4. Content & Polish | 0/TBD | Not started | - |
+| 4. Content & Polish | 0/4 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-28*
