@@ -92,11 +92,12 @@ Plans:
   2. Brand displays as "justcarlson" in domain/username contexts (site title, URLs)
   3. Homepage profile image uses Gravatar (gravatar.com/justcarlson)
   4. Favicon.ico replaced with JC monogram (browser tabs show correct icon)
-**Plans:** 2 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Add authorFullName config, update social links and Gravatar
-- [ ] 05-02-PLAN.md — Regenerate favicon.ico from JC monogram SVG
+- [x] 05-01-PLAN.md — Add authorFullName config, update social links and Gravatar
+- [x] 05-02-PLAN.md — Regenerate favicon.ico from JC monogram SVG
+- [ ] 05-03-PLAN.md — Fix config values to match CONTEXT.md decisions (gap closure)
 
 ## Progress
 
@@ -109,7 +110,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Components | 2/2 | Complete ✓ | 2026-01-29 |
 | 3. Infrastructure | 3/3 | Complete ✓ | 2026-01-29 |
 | 4. Content & Polish | 4/4 | Complete ✓ | 2026-01-29 |
-| 5. Personal Brand Cleanup | 0/? | Not started | - |
+| 5. Personal Brand Cleanup | 2/3 | In progress | - |
 
 ---
 *Roadmap created: 2026-01-28*
