@@ -9,6 +9,7 @@ interface SocialLink {
 interface Site {
   website: string;
   author: string;
+  authorFullName: string;
   profile: string;
   desc: string;
   title: string;
@@ -32,10 +33,11 @@ interface Site {
 // Site configuration
 export const SITE: Site = {
   website: "https://justcarlson.com/",
-  author: "Just Carlson",
+  author: "justcarlson",
+  authorFullName: "Justin Carlson",
   profile: "https://justcarlson.com/about",
   desc: "Writing about things I find interesting.",
-  title: "Just Carlson",
+  title: "justcarlson",
   ogImage: "og.png",
   lightAndDarkMode: true,
   postPerIndex: 10,
