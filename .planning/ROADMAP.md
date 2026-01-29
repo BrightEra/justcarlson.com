@@ -58,10 +58,12 @@ Plans:
   2. Vercel redirects updated (no steipete.me references)
   3. CSP headers updated with correct domain allowlist
   4. Production build succeeds with no broken references
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (to be planned)
+- [ ] 03-01-PLAN.md — Update PWA manifest branding and generate icon sizes
+- [ ] 03-02-PLAN.md — Clean up Vercel redirects and CSP headers
+- [ ] 03-03-PLAN.md — Add build validation and fix 404 page
 
 ### Phase 4: Content & Polish
 **Goal**: Content cleaned, tooling configured, final validation complete
@@ -86,7 +88,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete ✓ | 2026-01-29 |
 | 2. Components | 2/2 | Complete ✓ | 2026-01-29 |
-| 3. Infrastructure | 0/TBD | Not started | - |
+| 3. Infrastructure | 0/3 | Not started | - |
 | 4. Content & Polish | 0/TBD | Not started | - |
 
 ---
