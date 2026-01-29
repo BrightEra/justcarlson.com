@@ -28,10 +28,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Social links point to justcarlson GitHub and LinkedIn accounts
   3. Leaf Blue light theme and AstroPaper v4 dark theme colors applied site-wide
   4. Favicon displays JC monogram in browser tabs and PWA
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (to be planned)
+- [ ] 01-01-PLAN.md — Update site configuration files with Just Carlson identity
+- [ ] 01-02-PLAN.md — Apply theme colors and implement JC monogram favicon
 
 ### Phase 2: Components
 **Goal**: All components reference correct assets and config values
@@ -78,11 +79,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/2 | Planned | - |
 | 2. Components | 0/TBD | Not started | - |
 | 3. Infrastructure | 0/TBD | Not started | - |
 | 4. Content & Polish | 0/TBD | Not started | - |
