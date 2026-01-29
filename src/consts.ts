@@ -93,8 +93,8 @@ export const ICON_MAP: Record<string, string> = {
 
 // Newsletter configuration
 export const NEWSLETTER_CONFIG = {
-  enabled: false, // Set to true when newsletter service is configured
-  provider: "buttondown", // or "convertkit", "mailchimp", etc.
-  formAction: "", // Will be set when service is configured
-  tag: "",
+  enabled: false,
+  provider: "", // Set when newsletter service is configured (e.g., "buttondown", "convertkit")
+  formAction: "", // Newsletter provider form action URL
+  tag: "", // Optional tag for subscriber segmentation
 };
