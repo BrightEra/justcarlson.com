@@ -22,19 +22,19 @@
 
 :root,
 html[data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
-  --muted: #e6e6e6;
-  --border: #ece9e9;
+  --background: #f2f5ec;  /* Leaf Blue background */
+  --foreground: #282728;  /* Keep existing dark text */
+  --accent: #1158d1;      /* Leaf Blue accent (blue) */
+  --muted: #dde3d5;       /* Harmonized with Leaf Blue bg */
+  --border: #c8d1c0;      /* Slightly darker than muted */
 }
 
 html[data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --muted: #343f60bf;
-  --border: #ab4b08;
+  --background: #000123;  /* AstroPaper v4 dark navy */
+  --foreground: #eaedf3;  /* Keep existing light text */
+  --accent: #617bff;      /* AstroPaper v4 purple-blue accent */
+  --muted: #1a1a3d;       /* Dark navy muted */
+  --border: #2a2a5a;      /* Slightly lighter than muted */
 }
 
 @theme {
