@@ -23,10 +23,10 @@ Requirements for initial rebrand. Each maps to roadmap phases.
 
 ### Content
 
-- [ ] **CNT-01**: Delete all blog posts in `src/content/blog/`
-- [ ] **CNT-02**: Delete all post images in `public/assets/img/`
-- [ ] **CNT-03**: Create placeholder About page
-- [ ] **CNT-04**: Rewrite README.md for justcarlson.com repo
+- [x] **CNT-01**: Delete all blog posts in `src/content/blog/`
+- [x] **CNT-02**: Delete all post images in `public/assets/img/`
+- [x] **CNT-03**: Create placeholder About page
+- [x] **CNT-04**: Rewrite README.md for justcarlson.com repo
 
 ### Infrastructure
 
@@ -37,13 +37,13 @@ Requirements for initial rebrand. Each maps to roadmap phases.
 
 ### Cleanup
 
-- [ ] **CLN-01**: Audit and remove remaining "steipete/peter/steinberger" references
-- [ ] **CLN-02**: Remove Peter's custom CSS overrides in `src/styles/custom.css`
-- [ ] **CLN-03**: Delete Peter's avatar/office images (`peter-*.jpg`)
+- [x] **CLN-01**: Audit and remove remaining "steipete/peter/steinberger" references
+- [x] **CLN-02**: Remove Peter's custom CSS overrides in `src/styles/custom.css`
+- [x] **CLN-03**: Delete Peter's avatar/office images (`peter-*.jpg`)
 
 ### Tooling
 
-- [ ] **TLG-01**: Create Obsidian blog post template at `~/notes/personal-vault/Templates/` matching blog frontmatter schema
+- [x] **TLG-01**: Create Obsidian blog post template at `~/notes/personal-vault/Templates/` matching blog frontmatter schema
 
 ## v2 Requirements
 
@@ -85,18 +85,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIS-02 | Phase 1 | Complete |
 | VIS-03 | Phase 4 | Pending *(deferred - avatar in content)* |
 | VIS-04 | Phase 1 | Complete |
-| CNT-01 | Phase 4 | Pending |
-| CNT-02 | Phase 4 | Pending |
-| CNT-03 | Phase 4 | Pending |
-| CNT-04 | Phase 4 | Pending |
+| CNT-01 | Phase 4 | Complete |
+| CNT-02 | Phase 4 | Complete |
+| CNT-03 | Phase 4 | Complete |
+| CNT-04 | Phase 4 | Complete |
 | INF-01 | Phase 3 | Complete |
 | INF-02 | Phase 3 | Complete |
 | INF-03 | Phase 3 | Complete |
 | INF-04 | Phase 3 | Complete |
-| CLN-01 | Phase 4 | Pending |
-| CLN-02 | Phase 4 | Pending |
-| CLN-03 | Phase 4 | Pending |
-| TLG-01 | Phase 4 | Pending |
+| CLN-01 | Phase 4 | Complete |
+| CLN-02 | Phase 4 | Complete |
+| CLN-03 | Phase 4 | Complete |
+| TLG-01 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total
