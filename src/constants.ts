@@ -4,14 +4,14 @@ export const SOCIALS = [
   {
     name: "Github",
     href: "https://github.com/justcarlson",
-    linkTitle: `${SITE.title} on Github`,
+    linkTitle: `${SITE.authorFullName} on Github`,
     icon: "github",
     active: true,
   },
   {
     name: "LinkedIn",
     href: "https://www.linkedin.com/in/justincarlson0/",
-    linkTitle: `${SITE.title} on LinkedIn`,
+    linkTitle: `${SITE.authorFullName} on LinkedIn`,
     icon: "linkedin",
     active: true,
   },
