@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2025-01-28)
 
 **Core value:** A clean, personal space to write — free of the previous owner's identity and content.
-**Current focus:** Phase 5: Personal Brand Cleanup
+**Current focus:** Phase 6: About Page Photo & Profile Images
 
 ## Current Position
 
-Phase: 5 of 5 (Personal Brand Cleanup)
-Plan: 4 of 4 (all gap closures complete)
-Status: Project complete
-Last activity: 2026-01-29 - Completed quick task 002: add X social profile
+Phase: 6 of 6 (About Page Photo & Profile Images)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-30 - Completed 06-01-PLAN.md
 
-Progress: [███████████] 100% (15/15 plans)
+Progress: [████████████] 100% (16/16 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: 2.0 min
-- Total execution time: 0.47 hours
+- Total plans completed: 16
+- Average duration: 1.9 min
+- Total execution time: 0.49 hours
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [███████████] 100% (15/15 plans)
 | 03-infrastructure | 3 | 5 min | 1.67 min |
 | 04-content-polish | 4 | 6 min | 1.5 min |
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
+| 06-about-page-photo | 1 | 1 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (2 min), 05-01 (1 min), 05-02 (1 min), 05-03 (1 min), 05-04 (1 min)
+- Last 5 plans: 05-02 (1 min), 05-03 (1 min), 05-04 (1 min), 06-01 (1 min)
 - Trend: Consistently fast execution
 
 *Updated after each plan completion*
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - identicon fallback over mystery person silhouette (05-03)
 - Homepage avatar uses Gravatar, not static PNG (05-04)
 - Blog post page titles use "{Post} | {Site}" format (post-UAT fix)
+- Use widths only (not densities) for Astro Image - API constraint (06-01)
+- 320/640/800 breakpoints for mobile/retina/desktop (06-01)
 
 ### Pending Todos
 
@@ -86,7 +89,7 @@ None.
 
 ### Blockers/Concerns
 
-None - all identity work complete and aligned with CONTEXT.md.
+None - all 6 phases complete, milestone ready for completion.
 
 ### Quick Tasks Completed
 
@@ -97,6 +100,6 @@ None - all identity work complete and aligned with CONTEXT.md.
 
 ## Session Continuity
 
-Last session: 2026-01-29T23:45:00Z
-Stopped at: Fixed blog post page titles (post-UAT fix), ready for milestone audit
+Last session: 2026-01-30T02:55:10Z
+Stopped at: Completed 06-01-PLAN.md (Phase 6 complete, all 6 phases done)
 Resume file: None

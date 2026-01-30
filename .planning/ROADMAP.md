@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Infrastructure** - Build config and deployment ready
 - [x] **Phase 4: Content & Polish** - Content cleaned, final validation complete
 - [x] **Phase 5: Personal Brand Cleanup** - Fix author name, avatar, and favicon
-- [ ] **Phase 6: About Page Photo & Profile Images** - Add personal photos to About page
+- [x] **Phase 6: About Page Photo & Profile Images** - Add personal photos to About page
 
 ## Phase Details
 
@@ -112,7 +112,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Copy photo and update about.mdx with Astro Image component
+- [x] 06-01-PLAN.md — Copy photo and update about.mdx with Astro Image component
 
 ## Progress
 
@@ -126,7 +126,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | 3. Infrastructure | 3/3 | Complete ✓ | 2026-01-29 |
 | 4. Content & Polish | 4/4 | Complete ✓ | 2026-01-29 |
 | 5. Personal Brand Cleanup | 4/4 | Complete ✓ | 2026-01-29 |
-| 6. About Page Photo & Profile Images | 0/1 | In Progress | — |
+| 6. About Page Photo & Profile Images | 1/1 | Complete | 2026-01-30 |
 
 ---
 *Roadmap created: 2026-01-28*
