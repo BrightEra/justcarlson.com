@@ -76,9 +76,10 @@ None.
 |---|-------------|------|-----------|
 | 001 | Delete obsolete webmanifest, fix PWA name | 2026-01-29 | [001-delete-obsolete-webmanifest-fix-pwa-name](./quick/001-delete-obsolete-webmanifest-fix-pwa-name/) |
 | 002 | Add X social profile (x.com/_justcarlson) | 2026-01-29 | [002-add-x-twitter-social-profile](./quick/002-add-x-twitter-social-profile/) |
+| 003 | Unify Obsidian post templates | 2026-01-30 | [003-unify-obsidian-post-templates](./quick/003-unify-obsidian-post-templates/) |
 
 ## Session Continuity
 
-Last session: 2026-01-30T19:19:14Z
-Stopped at: Completed 07-02-PLAN.md (Claude hooks)
+Last session: 2026-01-30T21:02:32Z
+Stopped at: Completed quick-003 (Unify Obsidian post templates)
 Resume file: None
