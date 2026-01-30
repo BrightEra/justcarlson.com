@@ -60,39 +60,39 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | TBD | Pending |
-| SETUP-02 | TBD | Pending |
-| SETUP-03 | TBD | Pending |
-| SETUP-04 | TBD | Pending |
-| PUB-01 | TBD | Pending |
-| PUB-02 | TBD | Pending |
-| PUB-03 | TBD | Pending |
-| PUB-04 | TBD | Pending |
-| PUB-05 | TBD | Pending |
-| PUB-06 | TBD | Pending |
-| PUB-07 | TBD | Pending |
-| PUB-08 | TBD | Pending |
-| PUB-09 | TBD | Pending |
-| PUB-10 | TBD | Pending |
-| PUB-11 | TBD | Pending |
-| ROLL-01 | TBD | Pending |
-| ROLL-02 | TBD | Pending |
-| ROLL-03 | TBD | Pending |
-| ROLL-04 | TBD | Pending |
-| ROLL-05 | TBD | Pending |
-| UTIL-01 | TBD | Pending |
-| UTIL-02 | TBD | Pending |
-| UTIL-03 | TBD | Pending |
-| UTIL-04 | TBD | Pending |
-| UTIL-05 | TBD | Pending |
-| HOOK-01 | TBD | Pending |
-| HOOK-02 | TBD | Pending |
+| SETUP-01 | Phase 7 | Pending |
+| SETUP-02 | Phase 7 | Pending |
+| SETUP-03 | Phase 7 | Pending |
+| SETUP-04 | Phase 7 | Pending |
+| HOOK-01 | Phase 7 | Pending |
+| HOOK-02 | Phase 7 | Pending |
+| PUB-01 | Phase 8 | Pending |
+| PUB-02 | Phase 8 | Pending |
+| PUB-03 | Phase 8 | Pending |
+| PUB-04 | Phase 8 | Pending |
+| PUB-05 | Phase 8 | Pending |
+| PUB-06 | Phase 8 | Pending |
+| PUB-07 | Phase 8 | Pending |
+| PUB-08 | Phase 8 | Pending |
+| PUB-09 | Phase 8 | Pending |
+| PUB-10 | Phase 8 | Pending |
+| PUB-11 | Phase 8 | Pending |
+| UTIL-01 | Phase 9 | Pending |
+| UTIL-02 | Phase 9 | Pending |
+| UTIL-03 | Phase 9 | Pending |
+| UTIL-04 | Phase 9 | Pending |
+| UTIL-05 | Phase 9 | Pending |
+| ROLL-01 | Phase 10 | Pending |
+| ROLL-02 | Phase 10 | Pending |
+| ROLL-03 | Phase 10 | Pending |
+| ROLL-04 | Phase 10 | Pending |
+| ROLL-05 | Phase 10 | Pending |
 
 **Coverage:**
 - v0.2.0 requirements: 27 total
-- Mapped to phases: 0
-- Unmapped: 27
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-30*
-*Last updated: 2026-01-30 after initial definition*
+*Last updated: 2026-01-30 after roadmap creation*
