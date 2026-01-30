@@ -69,38 +69,38 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| JUST-01 | TBD | Pending |
-| JUST-02 | TBD | Pending |
-| JUST-03 | TBD | Pending |
-| JUST-04 | TBD | Pending |
-| JUST-05 | TBD | Pending |
-| JUST-06 | TBD | Pending |
-| JUST-07 | TBD | Pending |
-| JUST-08 | TBD | Pending |
-| JUST-09 | TBD | Pending |
-| JUST-10 | TBD | Pending |
-| JUST-11 | TBD | Pending |
-| JUST-12 | TBD | Pending |
-| JUST-13 | TBD | Pending |
-| JUST-14 | TBD | Pending |
-| JUST-15 | TBD | Pending |
-| JUST-16 | TBD | Pending |
-| JUST-17 | TBD | Pending |
-| JUST-18 | TBD | Pending |
-| JUST-19 | TBD | Pending |
-| JUST-20 | TBD | Pending |
-| HOOK-01 | TBD | Pending |
-| HOOK-02 | TBD | Pending |
-| HOOK-03 | TBD | Pending |
-| HOOK-04 | TBD | Pending |
-| SKILL-01 | TBD | Pending |
-| SKILL-02 | TBD | Pending |
-| SKILL-03 | TBD | Pending |
+| JUST-01 | Phase 7 | Pending |
+| JUST-02 | Phase 7 | Pending |
+| JUST-03 | Phase 7 | Pending |
+| JUST-04 | Phase 8 | Pending |
+| JUST-05 | Phase 8 | Pending |
+| JUST-06 | Phase 8 | Pending |
+| JUST-07 | Phase 8 | Pending |
+| JUST-08 | Phase 8 | Pending |
+| JUST-09 | Phase 8 | Pending |
+| JUST-10 | Phase 8 | Pending |
+| JUST-11 | Phase 8 | Pending |
+| JUST-12 | Phase 8 | Pending |
+| JUST-13 | Phase 8 | Pending |
+| JUST-14 | Phase 8 | Pending |
+| JUST-15 | Phase 9 | Pending |
+| JUST-16 | Phase 9 | Pending |
+| JUST-17 | Phase 9 | Pending |
+| JUST-18 | Phase 9 | Pending |
+| JUST-19 | Phase 9 | Pending |
+| JUST-20 | Phase 9 | Pending |
+| HOOK-01 | Phase 7 | Pending |
+| HOOK-02 | Phase 7 | Pending |
+| HOOK-03 | Phase 7 | Pending |
+| HOOK-04 | Phase 7 | Pending |
+| SKILL-01 | Phase 10 | Pending |
+| SKILL-02 | Phase 10 | Pending |
+| SKILL-03 | Phase 10 | Pending |
 
 **Coverage:**
 - v0.2.0 requirements: 27 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 27
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-30*
