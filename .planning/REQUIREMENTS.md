@@ -69,9 +69,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| JUST-01 | Phase 7 | Pending |
-| JUST-02 | Phase 7 | Pending |
-| JUST-03 | Phase 7 | Pending |
+| JUST-01 | Phase 7 | Complete |
+| JUST-02 | Phase 7 | Complete |
+| JUST-03 | Phase 7 | Complete (pattern ready, reads in Phase 8) |
 | JUST-04 | Phase 8 | Pending |
 | JUST-05 | Phase 8 | Pending |
 | JUST-06 | Phase 8 | Pending |
@@ -89,9 +89,9 @@
 | JUST-18 | Phase 9 | Pending |
 | JUST-19 | Phase 9 | Pending |
 | JUST-20 | Phase 9 | Pending |
-| HOOK-01 | Phase 7 | Pending |
-| HOOK-02 | Phase 7 | Pending |
-| HOOK-03 | Phase 7 | Pending |
+| HOOK-01 | Phase 7 | Complete |
+| HOOK-02 | Phase 7 | Complete |
+| HOOK-03 | Phase 7 | Complete |
 | HOOK-04 | Deferred | Pending (not in Phase 7 success criteria) |
 | SKILL-01 | Phase 10 | Pending |
 | SKILL-02 | Phase 10 | Pending |

@@ -56,8 +56,8 @@
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: Justfile foundation and setup recipe
-- [ ] 07-02: Claude hooks (setup trigger, git safety)
+- [x] 07-01: Justfile foundation and setup recipe
+- [x] 07-02: Claude hooks (setup trigger, git safety)
 
 #### Phase 8: Core Publishing
 **Goal**: User can publish posts from Obsidian with full validation pipeline
@@ -121,11 +121,11 @@ Plans:
 | 4. Content Polish | v0.1.0 | 4/4 | Complete | 2026-01-29 |
 | 5. Personal Brand Cleanup | v0.1.0 | 4/4 | Complete | 2026-01-29 |
 | 6. About Page Photo | v0.1.0 | 1/1 | Complete | 2026-01-30 |
-| 7. Setup & Safety | v0.2.0 | 0/2 | Not started | - |
+| 7. Setup & Safety | v0.2.0 | 2/2 | Complete | 2026-01-30 |
 | 8. Core Publishing | v0.2.0 | 0/3 | Not started | - |
 | 9. Utilities | v0.2.0 | 0/2 | Not started | - |
 | 10. Skills Layer | v0.2.0 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-30 (redesigned with justfile + hooks architecture)*
+*Last updated: 2026-01-30 (Phase 7 complete)*
