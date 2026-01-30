@@ -17,6 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Infrastructure** - Build config and deployment ready
 - [x] **Phase 4: Content & Polish** - Content cleaned, final validation complete
 - [x] **Phase 5: Personal Brand Cleanup** - Fix author name, avatar, and favicon
+- [ ] **Phase 6: About Page Photo & Profile Images** - Add personal photos to About page
 
 ## Phase Details
 
@@ -100,10 +101,23 @@ Plans:
 - [x] 05-03-PLAN.md — Fix config values to match CONTEXT.md decisions (gap closure)
 - [x] 05-04-PLAN.md — Fix homepage avatar to use Gravatar (gap closure)
 
+### Phase 6: About Page Photo & Profile Images
+**Goal**: Add personal photo to About page using Astro Image optimization
+**Depends on**: Phase 5 (builds on completed brand identity)
+**Requirements**: None (enhancement)
+**Success Criteria** (what must be TRUE):
+  1. About page displays personal photo (~/Downloads/IMG_0251.jpg)
+  2. Photo stored in correct asset directory following existing patterns
+  3. Image optimized for web (appropriate size/format)
+**Plans:** 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md — Copy photo and update about.mdx with Astro Image component
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -112,6 +126,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 3. Infrastructure | 3/3 | Complete ✓ | 2026-01-29 |
 | 4. Content & Polish | 4/4 | Complete ✓ | 2026-01-29 |
 | 5. Personal Brand Cleanup | 4/4 | Complete ✓ | 2026-01-29 |
+| 6. About Page Photo & Profile Images | 0/1 | In Progress | — |
 
 ---
 *Roadmap created: 2026-01-28*
