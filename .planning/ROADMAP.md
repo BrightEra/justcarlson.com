@@ -45,7 +45,7 @@
 #### Phase 7: Setup & Safety
 **Goal**: Justfile foundation with configuration and git protection
 **Depends on**: Phase 6 (v0.1.0 complete)
-**Requirements**: JUST-01, JUST-02, JUST-03, HOOK-01, HOOK-02, HOOK-03, HOOK-04
+**Requirements**: JUST-01, JUST-02, JUST-03, HOOK-01, HOOK-02, HOOK-03 (HOOK-04 deferred)
 **Success Criteria** (what must be TRUE):
   1. User can run `just setup` and it prompts for Obsidian vault path interactively
   2. After setup, `.claude/settings.local.json` contains the configured vault path

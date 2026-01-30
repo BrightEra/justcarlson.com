@@ -92,7 +92,7 @@
 | HOOK-01 | Phase 7 | Pending |
 | HOOK-02 | Phase 7 | Pending |
 | HOOK-03 | Phase 7 | Pending |
-| HOOK-04 | Phase 7 | Pending |
+| HOOK-04 | Deferred | Pending (not in Phase 7 success criteria) |
 | SKILL-01 | Phase 10 | Pending |
 | SKILL-02 | Phase 10 | Pending |
 | SKILL-03 | Phase 10 | Pending |
