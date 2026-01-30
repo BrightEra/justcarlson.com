@@ -1,16 +1,16 @@
 ---
-import { SITE_TITLE } from "../consts";
+import { ICON_MAP, SITE, SITE_TITLE, SOCIAL_LINKS } from "../consts";
 ---
 
 <div id="sidebar">
   <div id="nav-wrapper">
-	    <div id="profile-wrapper" class="d-flex flex-column">
-	      <div id="avatar" class="d-flex justify-content-center">
-	        <a href="/">
-	          <img
-	            src="https://gravatar.com/avatar/832ece085bfe2c7c5b0ed6be62d7e675?s=240&d=mp"
-	            alt="Peter Steinberger's avatar"
-	          />
+    <div id="profile-wrapper" class="d-flex flex-column">
+      <div id="avatar" class="d-flex justify-content-center">
+        <a href="/">
+          <img
+            src="https://gravatar.com/avatar/ef133a0cc6308305d254916b70332b1a?s=400&d=identicon"
+            alt={SITE.authorFullName + "'s avatar"}
+          />
         </a>
       </div>
       <div class="profile-text mt-3">
@@ -18,7 +18,7 @@ import { SITE_TITLE } from "../consts";
           <a href="/">{SITE_TITLE}</a>
         </div>
         <div id="site-subtitle" class="font-italic">
-          iOS Developer, Entrepreneur, and Open Source Contributor
+          {SITE.desc}
         </div>
       </div>
     </div>
@@ -47,21 +47,16 @@ import { SITE_TITLE } from "../consts";
 
   <div class="sidebar-bottom">
     <div class="social-links">
-      <a href="https://github.com/steipete" target="_blank">
-        <i class="fab fa-github-alt"></i>
-      </a>
-      <a href="https://twitter.com/steipete" target="_blank">
-        <i class="fab fa-twitter"></i>
-      </a>
-      <a href="https://www.linkedin.com/in/steipete/" target="_blank">
-        <i class="fab fa-linkedin"></i>
-      </a>
-      <a href="mailto:peter@steipete.me">
-        <i class="fas fa-envelope"></i>
-      </a>
-      <a href="/rss.xml" target="_blank">
-        <i class="fas fa-rss"></i>
-      </a>
+      {SOCIAL_LINKS.map(link => {
+        const isExternal = !link.href.startsWith('/');
+        const iconClass = link.label === 'RSS' ? 'fas' : 'fab';
+        const iconName = ICON_MAP[link.label] || link.label.toLowerCase();
+        return (
+          <a href={link.href} target={isExternal ? '_blank' : '_self'} rel={isExternal ? 'noopener noreferrer' : undefined}>
+            <i class={`${iconClass} fa-${iconName}`}></i>
+          </a>
+        );
+      })}
     </div>
   </div>
 </div>

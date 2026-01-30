@@ -9,6 +9,7 @@ import remarkCollapse from "remark-collapse";
 import { remarkLazyLoadImages } from "./src/utils/remarkLazyLoadImages.mjs";
 import { SITE } from "./src/config";
 import AstroPWA from "@vite-pwa/astro";
+import buildValidator from "./src/integrations/build-validator.ts";
 
 // https://astro.build/config
 export default defineConfig({
@@ -99,11 +100,11 @@ export default defineConfig({
     react(),
     AstroPWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "peter-avatar.jpg"],
+      includeAssets: ["favicon.ico", "apple-touch-icon.png"],
       manifest: {
-        name: "Peter Steinberger",
-        short_name: "steipete",
-        description: "AI-powered tools from Swift roots to web frontiers. Everything I build is open source.",
+        name: "Justin Carlson",
+        short_name: "JustCarlson",
+        description: "Writing about things I find interesting.",
         theme_color: "#006cac",
         background_color: "#fdfdfd",
         display: "standalone",
@@ -117,15 +118,15 @@ export default defineConfig({
             type: "image/x-icon",
           },
           {
-            src: "peter-avatar.jpg",
+            src: "icon-192.png",
             sizes: "192x192",
-            type: "image/jpeg",
+            type: "image/png",
             purpose: "any",
           },
           {
-            src: "peter-avatar.jpg",
+            src: "icon-512.png",
             sizes: "512x512",
-            type: "image/jpeg",
+            type: "image/png",
             purpose: "any maskable",
           },
         ],
@@ -170,6 +171,7 @@ export default defineConfig({
         directoryAndTrailingSlashHandler: true,
       },
     }),
+    buildValidator(),
   ],
   vite: {
     resolve: {

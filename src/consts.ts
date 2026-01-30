@@ -9,6 +9,7 @@ interface SocialLink {
 interface Site {
   website: string;
   author: string;
+  authorFullName: string;
   profile: string;
   desc: string;
   title: string;
@@ -31,12 +32,13 @@ interface Site {
 
 // Site configuration
 export const SITE: Site = {
-  website: "https://steipete.me/",
-  author: "Peter Steinberger",
-  profile: "https://steipete.me/about",
-  desc: "AI-powered tools from Swift roots to web frontiers. Every commit lands on GitHub for you to fork & remix.",
-  title: "Peter Steinberger",
-  ogImage: "peter-avatar.jpg",
+  website: "https://justcarlson.com/",
+  author: "Justin Carlson",
+  authorFullName: "Justin Carlson",
+  profile: "https://justcarlson.com/about",
+  desc: "Writing about things I find interesting.",
+  title: "Justin Carlson",
+  ogImage: "og.png",
   lightAndDarkMode: true,
   postPerIndex: 10,
   postPerPage: 10,
@@ -46,7 +48,7 @@ export const SITE: Site = {
   editPost: {
     enabled: true,
     text: "Edit on GitHub",
-    url: "https://github.com/steipete/steipete.me/edit/main/",
+    url: "https://github.com/justcarlson/justcarlson.com/edit/main/",
   },
   dynamicOgImage: true,
   lang: "en",
@@ -71,16 +73,16 @@ export const NAV_LINKS: SocialLink[] = [
 // Social media links
 export const SOCIAL_LINKS: SocialLink[] = [
   {
-    href: "https://github.com/steipete",
+    href: "https://github.com/justcarlson",
     label: "GitHub",
   },
   {
-    href: "https://twitter.com/steipete",
-    label: "Twitter",
+    href: "https://x.com/_justcarlson",
+    label: "X",
   },
   {
-    href: "https://bsky.app/profile/steipete.me",
-    label: "BlueSky",
+    href: "https://www.linkedin.com/in/justincarlson0/",
+    label: "LinkedIn",
   },
   {
     href: "/rss.xml",
@@ -91,8 +93,15 @@ export const SOCIAL_LINKS: SocialLink[] = [
 // Icon map for social media
 export const ICON_MAP: Record<string, string> = {
   GitHub: "github",
-  Twitter: "twitter",
-  BlueSky: "bsky",
+  X: "twitter",
+  LinkedIn: "linkedin",
   RSS: "rss",
-  Email: "mail",
+};
+
+// Newsletter configuration
+export const NEWSLETTER_CONFIG = {
+  enabled: false,
+  provider: "", // Set when newsletter service is configured (e.g., "buttondown", "convertkit")
+  formAction: "", // Newsletter provider form action URL
+  tag: "", // Optional tag for subscriber segmentation
 };

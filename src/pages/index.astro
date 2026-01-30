@@ -21,29 +21,27 @@ const featuredPosts = posts2025AndLater.filter(({ data }) => data.featured);
 const recentPosts = posts2025AndLater.filter(({ data }) => !data.featured);
 ---
 
-<Layout description="Peter Steinberger: AI-powered tools from Swift roots to web frontiers. Every commit lands on GitHub for you to fork & remix.">
+<Layout description={SITE.desc}>
   <StructuredData type="WebSite" data={{}} />
   <StructuredData type="Person" data={{}} />
   <Header />
   <main id="main-content" data-layout="index">
     <section id="hero" class="pt-6 pb-4">
-      <div class="flex flex-col sm:flex-row items-start gap-4">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <a href="/about" class="block mx-auto sm:mx-0 group">
-          <img 
-            src="/peter-avatar.jpg" 
-            alt="Peter Steinberger" 
+          <img
+            src="https://gravatar.com/avatar/ef133a0cc6308305d254916b70332b1a?s=400&d=identicon"
+            alt={SITE.author}
             class="w-40 h-40 rounded-full object-cover flex-shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
           />
         </a>
         <div class="flex-1 text-center sm:text-left">
-          <div class="flex items-center gap-2 justify-center sm:justify-start">
-            <h1 class="my-2 inline-block text-2xl font-bold sm:my-4 sm:text-3xl">
-              Hi, I'm @steipete.
-            </h1>
+          <h1 class="my-2 text-2xl font-bold sm:my-4 sm:text-3xl">
+            Hi, I'm @_justcarlson.
             <a
               target="_blank"
               href="/rss.xml"
-              class="inline-block"
+              class="inline-block align-middle ml-1"
               aria-label="rss feed"
               title="RSS Feed"
             >
@@ -54,10 +52,9 @@ const recentPosts = posts2025AndLater.filter(({ data }) => !data.featured);
               />
               <span class="sr-only">RSS Feed</span>
             </a>
-          </div>
+          </h1>
           <p>
-            AI-powered tools from Swift roots to web frontiers.<br />
-            Every commit lands on GitHub for you to fork & remix.
+            {SITE.desc}
           </p>
           {
             // only display if at least one social link is enabled
