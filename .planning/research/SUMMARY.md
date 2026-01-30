@@ -58,12 +58,36 @@ All required tools are already present in the codebase. No new dependencies need
 
 The three-layer pattern separates concerns into deterministic commands, automated safety, and optional intelligent oversight. **Layer 1 (justfile)** contains all business logic and works standalone. **Layer 2 (hooks)** triggers setup automatically and enforces safety without user action. **Layer 3 (skills)** provides Claude oversight with manual invocation only.
 
+**Three operational modes** (from [install-and-maintain](https://github.com/disler/install-and-maintain)):
+1. **Deterministic**: `just publish` — fast, predictable, CI-friendly, no LLM variance
+2. **Agentic**: `claude --init` — hook execution + agent analysis + status reporting
+3. **Interactive**: `/publish` skill — hook execution with human-in-the-loop oversight
+
 **Major components:**
 1. **justfile** — source of truth for all publishing commands (setup, publish, unpublish, list-drafts, preview)
-2. **.claude/settings.json** — committed hook configuration (Setup hook runs `just setup` on `--init`)
+2. **.claude/settings.json** — committed hook configuration with `Setup` event hook (runs `just setup` on `--init`)
 3. **.claude/settings.local.json** — gitignored user config (Obsidian vault path, blog subfolder)
 4. **.githooks/pre-push** — blocks dangerous git operations before they reach remote
 5. **.claude/skills/** — skill definitions that instruct Claude to run justfile recipes
+
+**Setup hook configuration** (from [official hooks reference](https://code.claude.com/docs/en/hooks)):
+```json
+{
+  "hooks": {
+    "Setup": [{
+      "matcher": "init",
+      "hooks": [{
+        "type": "command",
+        "command": "just setup"
+      }]
+    }]
+  }
+}
+```
+- `Setup` event fires on `claude --init` or `claude --init-only`
+- Matchers: `init` (from --init flags), `maintenance` (from --maintenance flag)
+- Has access to `CLAUDE_ENV_FILE` for persisting environment variables
+- Different from `SessionStart` which runs on every session
 
 **Build order:** Layer 1 first (justfile recipes), then Layer 2 (safety), then Layer 1 expansion (remaining recipes), finally Layer 3 (skills that wrap Layer 1). This ensures terminal testing without Claude and allows rollback to justfile-only if skills have issues.
 
@@ -162,12 +186,17 @@ No critical gaps identified. Research covered all necessary areas with authorita
 
 ### Primary (HIGH confidence)
 - [Just Programmer's Manual](https://just.systems/man/en/) — recipe syntax, shell configuration, variable scoping
-- [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks) — hook events, JSON output, matchers, exit codes
+- [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks) — complete hook lifecycle, all events (Setup, SessionStart, PreToolUse, etc.), JSON output format, exit codes, matchers
 - [Claude Code Skills](https://code.claude.com/docs/en/skills) — skill structure, disable-model-invocation, allowed-tools
 - [Claude Code Settings](https://code.claude.com/docs/en/settings) — settings hierarchy, local vs committed
 - [Astro Images Guide](https://docs.astro.build/en/guides/images/) — image optimization, Sharp integration
 - [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) — frontmatter schema, validation
 - **Codebase verification:** package.json, astro.config.mjs, src/styles/global.css, src/consts.ts
+
+### Pattern References (HIGH confidence)
+- [install.md Specification](https://github.com/mintlify/install-md) — LLM-executable installation format (OBJECTIVE, DONE WHEN, TODO checkboxes, EXECUTE NOW)
+- [installmd.org](https://installmd.org) — standard for AI-agent-executable setup instructions
+- [disler/install-and-maintain](https://github.com/disler/install-and-maintain) — deterministic + agentic patterns, three operational modes, justfile as command runner
 
 ### Secondary (MEDIUM confidence)
 - [disler/claude-code-hooks-mastery](https://github.com/disler/claude-code-hooks-mastery) — script-as-source-of-truth pattern
