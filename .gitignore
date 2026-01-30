@@ -41,3 +41,6 @@ src/content/temp/
 
 # Local Claude settings (user-specific config, each machine runs setup)
 .claude/settings.local.json
+
+# Blocked operations log (machine-specific)
+.claude/blocked-operations.log
