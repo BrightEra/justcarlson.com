@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** Frictionless publishing from Obsidian with validation, rollback, and confidence that builds always pass.
-**Current focus:** v0.2.0 Publishing Workflow - Phase 7 (Setup & Safety)
+**Current focus:** v0.2.0 Publishing Workflow — Redesigning with justfile + hooks architecture
 
 ## Current Position
 
-Phase: 7 of 10 (Setup & Safety)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-01-30 — Roadmap created for v0.2.0
+Phase: Not started (defining requirements)
+Plan: —
+Status: Redesigning v0.2.0 requirements
+Last activity: 2026-01-30 — Architecture pivot to justfile + hooks + optional skills
 
-Progress: [██████████░░░░░░░░░░] 50% (16/24 plans)
+Progress: [██████████░░░░░░░░░░] 50% (16 plans from v0.1.0)
 
 ## Performance Metrics
 
@@ -66,4 +66,4 @@ Resume file: None
 
 ## Next Steps
 
-Run `/gsd:plan-phase 7` to create plans for Setup & Safety phase.
+Defining new requirements for justfile + hooks architecture.

@@ -12,13 +12,20 @@ A clean, personal space to write — free of the previous owner's identity and c
 
 **Goal:** Frictionless publishing from Obsidian with validation, rollback, and confidence that builds always pass.
 
+**Architecture:** Three-layer pattern (justfile + hooks + optional skills)
+- **justfile** — Deterministic commands that work standalone (`just publish`, `just preview`)
+- **Claude hooks** — Safety gates and setup triggers (block dangerous git ops, run setup on `--init`)
+- **Skills (optional)** — Agentic oversight when helpful (`/publish` wraps `just publish`)
+
 **Target features:**
-- `/publish-blog` — validate → copy → lint → build check → commit → push
-- `/unpublish-blog` — remove from public repo (keeps Obsidian source)
-- `/list-drafts` — see what's ready to publish
-- `/preview-blog` — local dev server for review
-- Image handling for embedded images
-- Pre-publish validation (frontmatter, Biome, build)
+- `just setup` — Configure Obsidian vault path interactively
+- `just publish` — find posts → validate → copy → lint → build → commit → push
+- `just unpublish [file]` — remove post from repo (keeps Obsidian source)
+- `just list-drafts` — show ready-to-publish posts with validation status
+- `just preview` — start Astro dev server
+- Setup hook (`--init`) — run interactive setup on first use
+- Safety hooks — block dangerous git operations (force push, reset --hard)
+- `/publish` skill — human-in-the-loop oversight of `just publish` (optional)
 
 ## Requirements
 
@@ -44,13 +51,12 @@ A clean, personal space to write — free of the previous owner's identity and c
 
 ### Active
 
-- [ ] `/publish-blog` command — validate, copy from Obsidian, commit, push
-- [ ] `/unpublish-blog` command — remove from repo, commit, push
-- [ ] `/list-drafts` command — show ready-to-publish posts
-- [ ] `/preview-blog` command — start local dev server
+- [ ] justfile with publishing commands (setup, publish, unpublish, list-drafts, preview)
+- [ ] Setup hook for first-time configuration (`claude --init`)
+- [ ] Safety hooks blocking dangerous git operations
 - [ ] Image handling — copy referenced images to public/assets/
-- [ ] Validation — description filled, frontmatter valid, Biome lint, build check
-- [ ] Rollback support — edit/republish, unpublish, git revert
+- [ ] Validation — frontmatter valid, Biome lint, build check before commit
+- [ ] Optional `/publish` skill for human-in-the-loop oversight
 
 ### Deferred
 
@@ -109,4 +115,4 @@ A clean, personal space to write — free of the previous owner's identity and c
 | Build validation warns only | Don't fail builds for identity leaks | ✓ Good — catches issues without blocking |
 
 ---
-*Last updated: 2026-01-30 after starting v0.2.0 milestone*
+*Last updated: 2026-01-30 after redesigning v0.2.0 with justfile + hooks architecture*
