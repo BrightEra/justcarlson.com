@@ -3,7 +3,7 @@ phase: 05-personal-brand-cleanup
 verified: 2026-01-29T23:30:00Z
 status: passed
 re-verified: "yes - after 05-04 gap closure"
-score: 4/4 must-haves verified
+score: 5/5 must-haves verified
 human_verification:
   - test: "Verify Gravatar image displays in Sidebar on blog posts"
     expected: "Profile photo of Justin Carlson appears, not mystery person silhouette"
@@ -30,8 +30,9 @@ human_verification:
 | 2 | Brand displays as "justcarlson" in domain/username contexts | VERIFIED | `website: "https://justcarlson.com/"` in consts.ts:35, GitHub/LinkedIn hrefs use `justcarlson` and `justincarlson0`, edit URL uses `justcarlson/justcarlson.com` |
 | 3 | Homepage profile image uses Gravatar | VERIFIED | index.astro:33 and Sidebar.astro:11 both use Gravatar URL with correct hash `ef133a0cc6308305d254916b70332b1a` (05-04 gap closure fix) |
 | 4 | Favicon.ico replaced with JC monogram | VERIFIED | favicon.ico is 15086 bytes (reduced from 101KB), contains 48x48, 32x32, 16x16 ICO with JC monogram derived from favicon.svg |
+| 5 | Blog post page titles include site name | VERIFIED | BlogPostLayout.astro:24 now uses `${title} | ${SITE.title}` format (post-UAT fix) |
 
-**Score:** 4/4 truths verified
+**Score:** 5/5 truths verified
 
 ### Clarification on Truth #3 (Updated after 05-04 gap closure)
 

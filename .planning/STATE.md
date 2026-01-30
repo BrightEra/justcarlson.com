@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2025-01-28)
 Phase: 5 of 5 (Personal Brand Cleanup)
 Plan: 4 of 4 (all gap closures complete)
 Status: Project complete
-Last activity: 2026-01-29 - Completed 05-04-PLAN.md (gap closure for homepage Gravatar)
+Last activity: 2026-01-29 - Fixed blog post page titles to include site name (post-UAT)
 
 Progress: [███████████] 100% (15/15 plans)
 
@@ -78,6 +78,7 @@ Recent decisions affecting current work:
 - Gravatar 400px for retina quality (05-03)
 - identicon fallback over mystery person silhouette (05-03)
 - Homepage avatar uses Gravatar, not static PNG (05-04)
+- Blog post page titles use "{Post} | {Site}" format (post-UAT fix)
 
 ### Pending Todos
 
@@ -89,6 +90,6 @@ None - all identity work complete and aligned with CONTEXT.md.
 
 ## Session Continuity
 
-Last session: 2026-01-29T23:30:00Z
-Stopped at: Completed 05-04-PLAN.md (gap closure for homepage Gravatar)
+Last session: 2026-01-29T23:45:00Z
+Stopped at: Fixed blog post page titles (post-UAT fix), ready for milestone audit
 Resume file: None
