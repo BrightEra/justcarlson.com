@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** Frictionless publishing from Obsidian with validation, rollback, and confidence that builds always pass.
-**Current focus:** Phase 7: Setup & Safety
+**Current focus:** Phase 8: Publish Workflow
 
 ## Current Position
 
-Phase: 7 of 10 (Setup & Safety)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-30 — Completed 07-01-PLAN.md (justfile setup)
+Phase: 7 of 10 (Setup & Safety) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-30 — Completed 07-02-PLAN.md (Claude hooks)
 
-Progress: [██████████▓░░░░░░░░░] 54% (17/24 plans)
+Progress: [██████████▓░░░░░░░░░] 58% (18/24 plans)
 
 ## Performance Metrics
 
@@ -35,11 +35,11 @@ Progress: [██████████▓░░░░░░░░░] 54% (17
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (1/8 plans)
+**v0.2.0 Milestone:** In progress (2/8 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 07-setup-safety | 1/2 | 2 min | 2 min |
+| 07-setup-safety | 2/2 | 4 min | 2 min |
 
 ## Accumulated Context
 
@@ -55,6 +55,12 @@ v0.2.0 architecture decision:
 - Config stored in .claude/settings.local.json (project-local, gitignored)
 - Vault detection searches home directory to maxdepth 4
 - JSON uses flat structure: {obsidianVaultPath: string}
+
+07-02 decisions:
+- Block force push, reset --hard, checkout ., restore ., clean -f
+- Allow branch -D and rebase (useful, not catastrophic)
+- Log blocked operations to .claude/blocked-operations.log
+- Exit code 2 blocks operation, exit code 0 allows
 
 ### Pending Todos
 
@@ -73,6 +79,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-30T19:15:34Z
-Stopped at: Completed 07-01-PLAN.md (justfile setup)
+Last session: 2026-01-30T19:19:14Z
+Stopped at: Completed 07-02-PLAN.md (Claude hooks)
 Resume file: None
