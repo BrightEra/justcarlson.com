@@ -53,11 +53,11 @@
   4. Running `claude --init` triggers `just setup` automatically via Setup hook
   5. Dangerous git operations (`--force`, `reset --hard`, `checkout .`, `clean -f`) are blocked with clear error messages
 **Research recommended**: false
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 07-01: Justfile foundation and setup recipe
-- [ ] 07-02: Claude hooks (setup trigger, git safety, maintenance)
+- [ ] 07-02: Claude hooks (setup trigger, git safety)
 
 #### Phase 8: Core Publishing
 **Goal**: User can publish posts from Obsidian with full validation pipeline
