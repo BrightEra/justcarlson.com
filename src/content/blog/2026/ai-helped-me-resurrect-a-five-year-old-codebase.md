@@ -2,11 +2,9 @@
 title: AI Helped Me Update a Five Year Old Codebase
 pubDatetime: 2026-01-30T16:40:17.000-0500
 description: How I used AI to resurrect an abandoned project and publish it to the Chrome Web Store
-heroImage:
 categories:
   - "[[Posts]]"
-author:
-  - "[[Me]]"
+author: "Justin Carlson"
 url:
 created: 2026-01-30
 published: 2026-01-30
