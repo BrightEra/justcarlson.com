@@ -391,9 +391,8 @@ list_posts() {
             colored_status="${RED}Invalid${RESET}"
         fi
 
-        # Print row
-        printf "%-40s %-12s " "$title" "$display_date"
-        echo -e "$colored_status"
+        # Print row (use echo -e for ANSI color support)
+        echo -e "$(printf "%-40s %-12s " "$title" "$display_date")$colored_status"
 
         # Print errors if invalid
         if [[ "$status" == "invalid" && -n "$errors" ]]; then

@@ -41,3 +41,9 @@ sync:
 # Publish posts from Obsidian vault (use --dry-run to preview)
 publish *args='':
     ./scripts/publish.sh {{args}}
+
+# === Utilities ===
+
+# List posts from Obsidian (default: unpublished, use --all or --published for more)
+list-posts *args='':
+    ./scripts/list-posts.sh {{args}}
