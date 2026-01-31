@@ -15,13 +15,13 @@
 
 #### Publishing
 - [ ] **JUST-04**: User can run `just publish` to publish all ready posts
-- [ ] **JUST-05**: `just publish` finds all `draft: false` posts in configured Obsidian path
+- [ ] **JUST-05**: `just publish` finds all `status: - Published` posts in configured Obsidian path (case-insensitive)
 - [ ] **JUST-06**: `just publish` validates frontmatter (title, pubDatetime, description required)
 - [ ] **JUST-07**: `just publish` copies posts to `src/content/blog/YYYY/` (year from pubDatetime)
 - [ ] **JUST-08**: `just publish` detects and copies referenced images to `public/assets/blog/`
 - [ ] **JUST-09**: `just publish` runs Biome lint before commit
 - [ ] **JUST-10**: `just publish` runs `npm run build` before push
-- [ ] **JUST-11**: `just publish` commits with conventional message (feat: for new, fix: for update)
+- [ ] **JUST-11**: `just publish` commits with conventional message (`docs(blog): add` for new, `docs(blog): update` for changed)
 - [ ] **JUST-12**: `just publish` pushes to origin
 - [ ] **JUST-13**: User can run `just publish --dry-run` to preview actions without executing
 - [ ] **JUST-14**: `just publish` reports progress (echoes step names during execution)
