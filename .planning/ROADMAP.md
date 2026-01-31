@@ -81,21 +81,22 @@ Plans:
 - [x] 08-05: UAT gap closure (frontmatter type normalization)
 
 #### Phase 9: Utilities
-**Goal**: User can preview, list drafts, and unpublish posts
+**Goal**: User can list posts and unpublish posts (preview already exists)
 **Depends on**: Phase 7 (uses config), Phase 8 (unpublish reverses publish)
 **Requirements**: JUST-15, JUST-16, JUST-17, JUST-18, JUST-19, JUST-20
 **Success Criteria** (what must be TRUE):
-  1. User can run `just list-drafts` to see all `draft: false` posts in Obsidian
-  2. Each listed post shows validation status (ready vs missing required fields)
-  3. User can run `just unpublish [file]` to remove a post from repo while keeping Obsidian source
-  4. Unpublish commits and pushes removal with conventional message
-  5. User can run `just preview` to start Astro dev server for local review
+  1. User can run `just list-posts` to see posts with Published status in Obsidian
+  2. `just list-posts --all` shows all, `--published` shows only in-repo posts
+  3. Each listed post shows title, date, status (ready vs invalid), and validation errors
+  4. User can run `just unpublish <file>` to remove a post from repo (keeps Obsidian source)
+  5. Unpublish commits removal (does NOT push - user can push when ready)
+  6. `just preview` starts Astro dev server (already implemented in Phase 7)
 **Research recommended**: false
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: List drafts and preview recipes
-- [ ] 09-02: Unpublish recipe
+- [ ] 09-01: List posts utility with filters and validation display
+- [ ] 09-02: Unpublish recipe with confirmation and post-hook
 
 #### Phase 10: Skills Layer
 **Goal**: Optional Claude oversight wrapping justfile commands
@@ -125,9 +126,9 @@ Plans:
 | 6. About Page Photo | v0.1.0 | 1/1 | Complete | 2026-01-30 |
 | 7. Setup & Safety | v0.2.0 | 2/2 | Complete | 2026-01-30 |
 | 8. Core Publishing | v0.2.0 | 5/5 | Complete | 2026-01-31 |
-| 9. Utilities | v0.2.0 | 0/2 | Not started | - |
+| 9. Utilities | v0.2.0 | 0/2 | Planned | - |
 | 10. Skills Layer | v0.2.0 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-31 (Phase 8 complete — all gap closure plans executed)*
+*Last updated: 2026-01-31 (Phase 9 planned — 2 plans in 2 waves)*
