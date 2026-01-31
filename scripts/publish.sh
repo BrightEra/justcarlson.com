@@ -29,6 +29,157 @@ declare -a POST_IS_UPDATE=()
 declare -a SELECTED_FILES=()
 
 # ============================================================================
+# Validation
+# ============================================================================
+
+# Associative array to store validation errors by file path
+declare -A VALIDATION_ERRORS
+
+extract_frontmatter() {
+    # Extract YAML frontmatter content (between first two --- lines)
+    local file="$1"
+    sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d'
+}
+
+get_frontmatter_field() {
+    # Extract a field value from frontmatter content
+    # Handles both simple values and quoted strings
+    local frontmatter="$1"
+    local field="$2"
+
+    # Match field: value or field: "value" or field: 'value'
+    local value
+    value=$(echo "$frontmatter" | grep -E "^${field}:" | head -1 | sed "s/^${field}:[[:space:]]*//" | sed 's/^["\x27]//' | sed 's/["\x27]$//' | tr -d '\r')
+
+    echo "$value"
+}
+
+validate_iso8601() {
+    # Validate ISO 8601 datetime format: YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD
+    local datetime="$1"
+
+    # Check full datetime: YYYY-MM-DDTHH:MM:SS (with optional timezone)
+    if [[ "$datetime" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]; then
+        return 0
+    fi
+
+    # Check date only: YYYY-MM-DD
+    if [[ "$datetime" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+validate_frontmatter() {
+    # Validate a single file's frontmatter
+    # Returns array of error messages (empty = valid)
+    local file="$1"
+    local errors=()
+
+    # Extract frontmatter
+    local frontmatter
+    frontmatter=$(extract_frontmatter "$file")
+
+    if [[ -z "$frontmatter" ]]; then
+        errors+=("No frontmatter found (YAML block between --- markers)")
+        printf '%s\n' "${errors[@]}"
+        return 1
+    fi
+
+    # Check required fields
+    local title
+    local pubDatetime
+    local description
+
+    title=$(get_frontmatter_field "$frontmatter" "title")
+    pubDatetime=$(get_frontmatter_field "$frontmatter" "pubDatetime")
+    description=$(get_frontmatter_field "$frontmatter" "description")
+
+    # Validate title
+    if [[ -z "$title" ]]; then
+        errors+=("Missing title (required for SEO and display)")
+    fi
+
+    # Validate pubDatetime
+    if [[ -z "$pubDatetime" ]]; then
+        errors+=("Missing pubDatetime (required for post ordering and URLs)")
+    elif ! validate_iso8601 "$pubDatetime"; then
+        errors+=("Invalid pubDatetime format: '$pubDatetime' (expected YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD)")
+    fi
+
+    # Validate description
+    if [[ -z "$description" ]]; then
+        errors+=("Missing description (required for SEO and previews)")
+    fi
+
+    # Output errors (one per line)
+    if [[ ${#errors[@]} -gt 0 ]]; then
+        printf '%s\n' "${errors[@]}"
+        return 1
+    fi
+
+    return 0
+}
+
+validate_selected_posts() {
+    # Validate all selected posts, collecting all errors (not fail-fast)
+    echo ""
+    echo -e "${CYAN}Validating selected posts...${RESET}"
+
+    local valid_files=()
+    local invalid_files=()
+    local all_errors=""
+
+    for file in "${SELECTED_FILES[@]}"; do
+        local errors
+        local filename
+        filename=$(basename "$file")
+
+        if errors=$(validate_frontmatter "$file"); then
+            valid_files+=("$file")
+        else
+            invalid_files+=("$file")
+            all_errors+="${YELLOW}$filename:${RESET}\n"
+            while IFS= read -r error; do
+                all_errors+="  ${RED}- $error${RESET}\n"
+            done <<< "$errors"
+            all_errors+="\n"
+        fi
+    done
+
+    # Display all errors at once
+    if [[ ${#invalid_files[@]} -gt 0 ]]; then
+        echo ""
+        echo -e "${RED}Validation errors found:${RESET}"
+        echo ""
+        echo -e "$all_errors"
+    fi
+
+    # Handle partial valid scenario
+    if [[ ${#invalid_files[@]} -gt 0 && ${#valid_files[@]} -gt 0 ]]; then
+        echo -e "${YELLOW}${#valid_files[@]} of ${#SELECTED_FILES[@]} posts are valid.${RESET}"
+        read -rp "Publish the valid ones? [Y/n] " response
+
+        if [[ "$response" =~ ^[Nn] ]]; then
+            echo ""
+            echo -e "${YELLOW}Cancelled. Fix validation errors and try again.${RESET}"
+            exit $EXIT_SUCCESS
+        fi
+
+        # Continue with only valid files
+        SELECTED_FILES=("${valid_files[@]}")
+        echo ""
+        echo -e "${GREEN}Continuing with ${#SELECTED_FILES[@]} valid post(s)${RESET}"
+    elif [[ ${#invalid_files[@]} -gt 0 && ${#valid_files[@]} -eq 0 ]]; then
+        echo -e "${RED}No valid posts to publish. Fix validation errors and try again.${RESET}"
+        exit $EXIT_ERROR
+    else
+        echo -e "${GREEN}All ${#SELECTED_FILES[@]} post(s) passed validation${RESET}"
+    fi
+}
+
+# ============================================================================
 # Configuration
 # ============================================================================
 
@@ -396,6 +547,10 @@ main() {
 
     echo ""
     echo -e "${GREEN}Selected ${#SELECTED_FILES[@]} post(s) for publishing${RESET}"
+
+    # Validate selected posts
+    validate_selected_posts
+
     echo ""
 
     # Output selected files (for pipeline stages)
@@ -405,7 +560,7 @@ main() {
     echo ""
 
     # Store selected files for next pipeline stages
-    # Future: pass to validation, transformation, commit stages
+    # Future: transformation, commit stages
 
     exit $EXIT_SUCCESS
 }
