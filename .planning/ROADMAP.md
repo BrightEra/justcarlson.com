@@ -2,13 +2,13 @@
 
 ## Milestones
 
-- ✅ **v0.1.0 MVP Rebranding** - Phases 1-6 (shipped 2026-01-30)
-- 🚧 **v0.2.0 Publishing Workflow** - Phases 7-10 (in progress)
+- v0.1.0 MVP Rebranding - Phases 1-6 (shipped 2026-01-30)
+- v0.2.0 Publishing Workflow - Phases 7-10 (in progress)
 
 ## Phases
 
 <details>
-<summary>✅ v0.1.0 MVP Rebranding (Phases 1-6) - SHIPPED 2026-01-30</summary>
+<summary>v0.1.0 MVP Rebranding (Phases 1-6) - SHIPPED 2026-01-30</summary>
 
 ### Phase 1: Foundation
 **Goal**: Project infrastructure and identity setup
@@ -36,7 +36,7 @@
 
 </details>
 
-### 🚧 v0.2.0 Publishing Workflow (In Progress)
+### v0.2.0 Publishing Workflow (In Progress)
 
 **Milestone Goal:** Frictionless publishing from Obsidian with validation, rollback, and confidence that builds always pass.
 
@@ -71,12 +71,13 @@ Plans:
   5. Changes are committed with conventional message (feat: for new, fix: for update) and pushed to origin
   6. User can run `just publish --dry-run` to preview all actions without executing
 **Research recommended**: false
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [x] 08-01: Publish recipe and post discovery
 - [x] 08-02: Frontmatter validation and image handling
 - [x] 08-03: Lint, build, commit, push pipeline with dry-run
+- [ ] 08-04: UAT gap closure (ANSI output, lint-staged, dry-run prompts)
 
 #### Phase 9: Utilities
 **Goal**: User can preview, list drafts, and unpublish posts
@@ -111,7 +112,7 @@ Plans:
 
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 7 → 8 → 9 → 10
+**Execution Order:** Phases execute in numeric order: 7 -> 8 -> 9 -> 10
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -122,10 +123,10 @@ Plans:
 | 5. Personal Brand Cleanup | v0.1.0 | 4/4 | Complete | 2026-01-29 |
 | 6. About Page Photo | v0.1.0 | 1/1 | Complete | 2026-01-30 |
 | 7. Setup & Safety | v0.2.0 | 2/2 | Complete | 2026-01-30 |
-| 8. Core Publishing | v0.2.0 | 3/3 | Complete | 2026-01-31 |
+| 8. Core Publishing | v0.2.0 | 3/4 | In progress | - |
 | 9. Utilities | v0.2.0 | 0/2 | Not started | - |
 | 10. Skills Layer | v0.2.0 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-31 (Phase 8 complete)*
+*Last updated: 2026-01-31 (Phase 8 gap closure plan added)*
