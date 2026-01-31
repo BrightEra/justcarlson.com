@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-30)
 
 **Core value:** Frictionless publishing from Obsidian with validation, rollback, and confidence that builds always pass.
-**Current focus:** Phase 9: Utilities
+**Current focus:** Phase 10: Skills Layer
 
 ## Current Position
 
-Phase: 9 of 10 (Utilities)
-Plan: 2 of 3 in current phase
-Status: In progress - unpublish command complete
-Last activity: 2026-01-31 — Completed 09-02-PLAN.md (Unpublish Command)
+Phase: 9 of 10 (Utilities) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete - list-posts and unpublish utilities delivered
+Last activity: 2026-01-31 — Completed Phase 9 execution and verification
 
-Progress: [███████████████░░░░░] 86% (25/29 plans)
+Progress: [████████████████░░░░] 86% (25/29 plans)
 
 ## Performance Metrics
 
@@ -35,13 +35,13 @@ Progress: [███████████████░░░░░] 86% (25
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (10/12 plans)
+**v0.2.0 Milestone:** In progress (9/10 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
 | 08-core-publishing | 5/5 | 11 min | 2.2 min |
-| 09-utilities | 2/3 | 5 min | 2.5 min |
+| 09-utilities | 2/2 | 5 min | 2.5 min |
 
 ## Accumulated Context
 

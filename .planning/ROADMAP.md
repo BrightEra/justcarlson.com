@@ -95,8 +95,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: List posts utility with filters and validation display
-- [ ] 09-02: Unpublish recipe with confirmation and post-hook
+- [x] 09-01: List posts utility with filters and validation display
+- [x] 09-02: Unpublish recipe with confirmation and post-hook
 
 #### Phase 10: Skills Layer
 **Goal**: Optional Claude oversight wrapping justfile commands
@@ -126,9 +126,9 @@ Plans:
 | 6. About Page Photo | v0.1.0 | 1/1 | Complete | 2026-01-30 |
 | 7. Setup & Safety | v0.2.0 | 2/2 | Complete | 2026-01-30 |
 | 8. Core Publishing | v0.2.0 | 5/5 | Complete | 2026-01-31 |
-| 9. Utilities | v0.2.0 | 0/2 | Planned | - |
+| 9. Utilities | v0.2.0 | 2/2 | Complete | 2026-01-31 |
 | 10. Skills Layer | v0.2.0 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-31 (Phase 9 planned — 2 plans in 2 waves)*
+*Last updated: 2026-01-31 (Phase 9 complete — 2 plans executed)*
