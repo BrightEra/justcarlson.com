@@ -309,6 +309,21 @@ validate_frontmatter() {
     return 0
 }
 
+normalize_frontmatter() {
+    # Normalize frontmatter types for Astro schema compatibility
+    # Takes content as input, returns normalized content
+    local content="$1"
+
+    # Replace author array with site default string
+    # Pattern matches: author:\n  - "[[Me]]" or author:\n  - [[Me]] or author:\n  - "Name"
+    content=$(echo "$content" | perl -0777 -pe 's/^author:\s*\n\s*-\s*.*$/author: "Justin Carlson"/m')
+
+    # Remove empty heroImage lines (heroImage: followed by newline or nothing)
+    content=$(echo "$content" | perl -pe 's/^heroImage:\s*$\n?//m')
+
+    echo "$content"
+}
+
 validate_selected_posts() {
     # Validate all selected posts, collecting all errors (not fail-fast)
     echo ""
