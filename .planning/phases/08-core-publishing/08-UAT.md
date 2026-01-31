@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 08-core-publishing
 source: [08-01-SUMMARY.md, 08-02-SUMMARY.md, 08-03-SUMMARY.md]
 started: 2026-01-31T18:30:00Z
@@ -82,27 +82,38 @@ skipped: 1
   reason: "User reported: ANSI escape codes printed literally: Found \\033[0;32m1\\033[0m post(s) instead of colored text"
   severity: cosmetic
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Line 1090 uses plain echo without -e flag; bash echo doesn't interpret escape sequences by default"
+  artifacts:
+    - path: "scripts/publish.sh"
+      issue: "Line 1090 missing -e flag on echo with color variables"
+  missing:
+    - "Add -e flag to echo on line 1090"
+  debug_session: ".planning/debug/ansi-escape-codes.md"
 
 - truth: "Build verification runs after commits, before push"
   status: failed
   reason: "User reported: Script exits with error after commit, never reaches build step. lint-staged returns non-zero despite successful commit, killing pipeline. Additionally, build fails due to schema validation (author as array, heroImage as null) - validation doesn't check type correctness."
   severity: blocker
   test: 8
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: ".husky/pre-commit runs lint-staged without --allow-empty; lint-staged exits 1 when no .js/.ts/.json files staged"
+  artifacts:
+    - path: ".husky/pre-commit"
+      issue: "Missing --allow-empty flag on lint-staged"
+    - path: "package.json"
+      issue: "lint-staged only covers code files, not .md content files"
+  missing:
+    - "Add --allow-empty flag to npx lint-staged in .husky/pre-commit"
+  debug_session: ".planning/debug/pipeline-exit-after-commit.md"
 
 - truth: "Dry-run shows complete preview without prompts or mutations"
   status: failed
   reason: "User reported: Dry-run prompts for input (Publish the valid ones? [Y/n]) instead of auto-continuing. Should preview all actions without prompts."
   severity: major
   test: 11
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "validate_selected_posts() shows confirmation prompt without checking DRY_RUN flag"
+  artifacts:
+    - path: "scripts/publish.sh"
+      issue: "Lines 347-360 in validate_selected_posts() missing DRY_RUN check"
+  missing:
+    - "Wrap prompt in DRY_RUN conditional; auto-continue when dry-run is true"
+  debug_session: ".planning/debug/dryrun-prompts-issue.md"
