@@ -71,12 +71,12 @@ Plans:
   5. Changes are committed with conventional message (feat: for new, fix: for update) and pushed to origin
   6. User can run `just publish --dry-run` to preview all actions without executing
 **Research recommended**: false
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 08-01: Publish recipe structure and post discovery
+- [ ] 08-01: Publish recipe and post discovery
 - [ ] 08-02: Frontmatter validation and image handling
-- [ ] 08-03: Lint, build, commit, push pipeline
+- [ ] 08-03: Lint, build, commit, push pipeline with dry-run
 
 #### Phase 9: Utilities
 **Goal**: User can preview, list drafts, and unpublish posts
@@ -128,4 +128,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-30 (Phase 7 complete)*
+*Last updated: 2026-01-31 (Phase 8 planned)*
