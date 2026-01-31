@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 8 of 10 (Core Publishing)
-Plan: 2 of 4 in current phase
+Plan: 3 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-31 - Completed 08-02-PLAN.md (Validation and Image Handling)
+Last activity: 2026-01-31 - Completed 08-03-PLAN.md (Lint/Build/Commit/Push)
 
-Progress: [████████████░░░░░░░░] 66% (20/24 plans)
+Progress: [█████████████░░░░░░░] 70% (21/24 plans)
 
 ## Performance Metrics
 
@@ -35,12 +35,12 @@ Progress: [████████████░░░░░░░░] 66% (20
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (3/8 plans)
+**v0.2.0 Milestone:** In progress (5/8 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
-| 08-core-publishing | 2/4 | 5 min | 2.5 min |
+| 08-core-publishing | 3/4 | 8 min | 2.67 min |
 
 ## Accumulated Context
 
@@ -76,6 +76,12 @@ v0.2.0 architecture decision:
 - Missing images warn but don't block publishing
 - Search Attachments folder first, then recursive vault search for images
 
+08-03 decisions:
+- Lint runs after copy, before commits; build runs after commits, before push
+- Retry markers (PUBLISH_LINT_FAILED, PUBLISH_BUILD_FAILED) output to stderr for Claude hook integration
+- Rollback only removes files created in current publish run, not updates
+- Dry-run selects all posts automatically for complete preview
+
 ### Pending Todos
 
 None.
@@ -94,6 +100,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31T18:01:55Z
-Stopped at: Completed 08-02-PLAN.md (Validation and Image Handling)
+Last session: 2026-01-31T18:07:32Z
+Stopped at: Completed 08-03-PLAN.md (Lint/Build/Commit/Push)
 Resume file: None
