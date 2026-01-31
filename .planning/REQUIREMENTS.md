@@ -14,17 +14,17 @@
 - [ ] **JUST-03**: All other recipes read vault path from config
 
 #### Publishing
-- [ ] **JUST-04**: User can run `just publish` to publish all ready posts
-- [ ] **JUST-05**: `just publish` finds all `status: - Published` posts in configured Obsidian path (case-insensitive)
-- [ ] **JUST-06**: `just publish` validates frontmatter (title, pubDatetime, description required)
-- [ ] **JUST-07**: `just publish` copies posts to `src/content/blog/YYYY/` (year from pubDatetime)
-- [ ] **JUST-08**: `just publish` detects and copies referenced images to `public/assets/blog/`
-- [ ] **JUST-09**: `just publish` runs Biome lint before commit
-- [ ] **JUST-10**: `just publish` runs `npm run build` before push
-- [ ] **JUST-11**: `just publish` commits with conventional message (`docs(blog): add` for new, `docs(blog): update` for changed)
-- [ ] **JUST-12**: `just publish` pushes to origin
-- [ ] **JUST-13**: User can run `just publish --dry-run` to preview actions without executing
-- [ ] **JUST-14**: `just publish` reports progress (echoes step names during execution)
+- [x] **JUST-04**: User can run `just publish` to publish all ready posts
+- [x] **JUST-05**: `just publish` finds all `status: - Published` posts in configured Obsidian path (case-insensitive)
+- [x] **JUST-06**: `just publish` validates frontmatter (title, pubDatetime, description required)
+- [x] **JUST-07**: `just publish` copies posts to `src/content/blog/YYYY/` (year from pubDatetime)
+- [x] **JUST-08**: `just publish` detects and copies referenced images to `public/assets/blog/`
+- [x] **JUST-09**: `just publish` runs Biome lint before commit
+- [x] **JUST-10**: `just publish` runs `npm run build` before push
+- [x] **JUST-11**: `just publish` commits with conventional message (`docs(blog): add` for new, `docs(blog): update` for changed)
+- [x] **JUST-12**: `just publish` pushes to origin
+- [x] **JUST-13**: User can run `just publish --dry-run` to preview actions without executing
+- [x] **JUST-14**: `just publish` reports progress (echoes step names during execution)
 
 #### Utilities
 - [ ] **JUST-15**: User can run `just list-drafts` to see ready-to-publish posts
@@ -72,17 +72,17 @@
 | JUST-01 | Phase 7 | Complete |
 | JUST-02 | Phase 7 | Complete |
 | JUST-03 | Phase 7 | Complete (pattern ready, reads in Phase 8) |
-| JUST-04 | Phase 8 | Pending |
-| JUST-05 | Phase 8 | Pending |
-| JUST-06 | Phase 8 | Pending |
-| JUST-07 | Phase 8 | Pending |
-| JUST-08 | Phase 8 | Pending |
-| JUST-09 | Phase 8 | Pending |
-| JUST-10 | Phase 8 | Pending |
-| JUST-11 | Phase 8 | Pending |
-| JUST-12 | Phase 8 | Pending |
-| JUST-13 | Phase 8 | Pending |
-| JUST-14 | Phase 8 | Pending |
+| JUST-04 | Phase 8 | Complete |
+| JUST-05 | Phase 8 | Complete |
+| JUST-06 | Phase 8 | Complete |
+| JUST-07 | Phase 8 | Complete |
+| JUST-08 | Phase 8 | Complete |
+| JUST-09 | Phase 8 | Complete |
+| JUST-10 | Phase 8 | Complete |
+| JUST-11 | Phase 8 | Complete |
+| JUST-12 | Phase 8 | Complete |
+| JUST-13 | Phase 8 | Complete |
+| JUST-14 | Phase 8 | Complete |
 | JUST-15 | Phase 9 | Pending |
 | JUST-16 | Phase 9 | Pending |
 | JUST-17 | Phase 9 | Pending |
