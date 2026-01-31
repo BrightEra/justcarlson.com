@@ -233,7 +233,91 @@ is_published_in_blog() {
 # Post Discovery and Listing
 # ============================================================================
 
+list_published_posts() {
+    # List posts directly from the blog directory (already published)
+    # This mode does NOT require Obsidian vault - scans blog repo directly
+
+    # Find all posts in blog directory
+    local found_files=()
+    while IFS= read -r -d '' file; do
+        found_files+=("$file")
+    done < <(find "$BLOG_DIR" -name "*.md" -type f -print0 2>/dev/null)
+
+    if [[ ${#found_files[@]} -eq 0 ]]; then
+        echo -e "${YELLOW}No published posts found in $BLOG_DIR${RESET}"
+        exit $EXIT_SUCCESS
+    fi
+
+    # Arrays to hold post data
+    declare -a titles=()
+    declare -a dates=()
+
+    # Process each post
+    for file in "${found_files[@]}"; do
+        local title
+        local pub_date
+
+        # Extract metadata
+        title=$(extract_frontmatter_value "$file" "title")
+        pub_date=$(extract_frontmatter_value "$file" "pubDatetime")
+
+        # Fallback: use filename as title if not set
+        if [[ -z "$title" ]]; then
+            title=$(basename "$file" .md)
+        fi
+
+        # Store data
+        titles+=("$title")
+        dates+=("$pub_date")
+    done
+
+    # Sort by date descending
+    declare -a sort_keys=()
+    for i in "${!titles[@]}"; do
+        local sort_date="${dates[$i]:-0000-00-00}"
+        sort_keys+=("${sort_date}|${i}")
+    done
+
+    local sorted_indices=()
+    while IFS='|' read -r date idx; do
+        sorted_indices+=("$idx")
+    done < <(printf '%s\n' "${sort_keys[@]}" | sort -t'|' -k1,1r)
+
+    # Display table header
+    echo ""
+    printf "%-40s %-12s\n" "TITLE" "DATE"
+    printf '%.0s─' {1..54}
+    echo ""
+
+    # Display posts
+    for idx in "${sorted_indices[@]}"; do
+        local title="${titles[$idx]}"
+        local date="${dates[$idx]}"
+
+        # Truncate title if too long
+        if [[ ${#title} -gt 40 ]]; then
+            title="${title:0:37}..."
+        fi
+
+        # Format date for display
+        local display_date="${date:0:10}"
+        if [[ -z "$display_date" || "$display_date" == "null" ]]; then
+            display_date="(no date)"
+        fi
+
+        printf "%-40s %-12s\n" "$title" "$display_date"
+    done
+
+    echo ""
+}
+
 list_posts() {
+    # For --published mode, scan blog directory directly (no vault needed)
+    if [[ "$FILTER_MODE" == "published" ]]; then
+        list_published_posts
+        return
+    fi
+
     # Discover all posts with Published status
     local found_files=()
 

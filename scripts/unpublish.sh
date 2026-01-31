@@ -219,7 +219,7 @@ confirm_removal() {
     if [[ ! "$response" =~ ^[Yy]$ ]]; then
         echo ""
         echo -e "${YELLOW}Cancelled. Post not removed.${RESET}"
-        exit $EXIT_CANCELLED
+        exit $EXIT_SUCCESS
     fi
 
     return 0
@@ -258,7 +258,7 @@ display_next_steps() {
     echo ""
     echo -e "${YELLOW}Note:${RESET} Update status in Obsidian to prevent re-publishing:"
     echo "  status:"
-    echo "    - Draft  ${CYAN}(or remove - Published)${RESET}"
+    echo -e "    - Draft  ${CYAN}(or remove - Published)${RESET}"
     echo ""
     echo -e "${CYAN}Changes committed locally. Run 'git push' when ready.${RESET}"
     echo ""
