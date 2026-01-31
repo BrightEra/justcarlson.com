@@ -38,6 +38,6 @@ sync:
 
 # === Publishing ===
 
-# Publish posts from Obsidian vault (interactive)
+# Publish posts from Obsidian vault (use --dry-run to preview)
 publish *args='':
     ./scripts/publish.sh {{args}}
