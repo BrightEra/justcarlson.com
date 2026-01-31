@@ -36,7 +36,7 @@ All required tools are already present in the codebase. No new dependencies need
 **Must have (table stakes):**
 - `just publish` — single command to validate, copy, lint, build, commit, push
 - `just setup` — interactive Obsidian vault path configuration
-- `just list-drafts` — show posts with `draft: false` ready to publish
+- `just list-drafts` — show posts with `status: - Published` ready to publish
 - Frontmatter validation — required fields (title, pubDatetime, description)
 - Image copying — parse markdown for references, copy to `public/assets/blog/`
 - Git safety — block `--force`, `reset --hard`, `checkout .`, `clean -f`

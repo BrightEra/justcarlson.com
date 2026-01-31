@@ -465,27 +465,27 @@ copy-post post:
 
 ---
 
-### Minor: Draft Flag Ambiguity
+### Minor: Status Field Parsing
 
-**What goes wrong:** Post with `draft: true` gets published; or `draft: false` post missed.
+**What goes wrong:** Post with `status: - Draft` gets published; or `status: - Published` post missed.
 
-**Why it happens:** YAML boolean parsing varies (`true`/`True`/`"true"`/`yes`).
+**Why it happens:** Status is a YAML list, requires multiline matching.
 
 **Prevention:**
-- Standardize on lowercase `true`/`false` in templates
-- Parse with YAML-aware tool (yq), not grep
+- Use perl for multiline matching (status: followed by list item)
+- Parse with YAML-aware tool, not simple grep
 
 ```bash
-# CORRECT - use yq for boolean parsing
-yq '.draft == false' "$post"
+# CORRECT - use perl for multiline YAML list matching
+perl -0777 -ne 'exit(!/status:\s*\n\s*-\s*Published/i)' "$post"
 
-# WRONG - grep fails on boolean variations
-grep 'draft: false' "$post"  # Misses "draft: False", "draft: no"
+# WRONG - grep fails on multiline YAML lists
+grep 'status: - Published' "$post"  # Misses when on separate lines
 ```
 
 **Warning signs:** Some posts not discovered; unexpected posts published.
 
-**Phase:** 9 (Utilities) - Use yq in list-drafts skill
+**Phase:** 9 (Utilities) - Use perl for status field matching
 
 ---
 

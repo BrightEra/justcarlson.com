@@ -16,7 +16,7 @@ Features users expect. Missing = workflow feels broken or incomplete.
 |---------|--------------|------------|-------|
 | `just publish` | Core workflow trigger | Medium | Single command to validate, copy, lint, build, commit, push |
 | `just preview` | See changes before publishing | Low | Starts Astro dev server |
-| `just list-drafts` | Know what's ready to publish | Low | Show `draft: false` posts from Obsidian vault |
+| `just list-posts` | Know what's ready to publish | Low | Show posts with `status: - Published` from Obsidian vault |
 | `just setup` | First-time configuration | Low | Prompts for Obsidian vault path, writes to config |
 
 ### Validation Steps
@@ -24,7 +24,7 @@ Features users expect. Missing = workflow feels broken or incomplete.
 | Validation | Why Expected | Complexity | Notes |
 |------------|--------------|------------|-------|
 | Frontmatter presence | Posts without title/date/description fail silently | Low | Required: `title`, `pubDatetime`, `description` |
-| Draft status check | Only publish `draft: false` posts | Low | Prevent accidental publishing |
+| Status check | Only publish posts with `status: - Published` | Low | Prevent accidental publishing |
 | Biome lint | Catch code issues before deploy | Low | Already exists in project |
 | Build check | Astro must compile successfully | Low | Already exists: `npm run build:check` |
 
@@ -139,7 +139,7 @@ Step-by-step flow for standalone execution:
    - Error if not configured: "Run `just setup` first"
 
 2. Discover posts
-   - Find all .md files in vault with `draft: false` frontmatter
+   - Find all .md files in vault with `status: - Published` frontmatter
    - Parse frontmatter with gray-matter
 
 3. Validate posts
@@ -197,7 +197,7 @@ allowed-tools:
 
 ## Prerequisites
 - Obsidian vault path configured (run /setup-blog if not)
-- Posts marked with `draft: false` in frontmatter
+- Posts marked with `status: - Published` in frontmatter
 
 ## Steps
 1. Find publishable posts in configured Obsidian vault

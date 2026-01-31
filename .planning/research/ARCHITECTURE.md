@@ -164,7 +164,7 @@ User: /publish-blog
 +---------------------------------------------------+
 | just publish                                      |
 | 1. Read vault path from settings.local.json       |
-| 2. Find draft: false posts in vault/blog/         |
+| 2. Find posts with status: - Published in vault   |
 | 3. Validate frontmatter                           |
 | 4. Copy posts to src/content/blog/YYYY/           |
 | 5. Copy referenced images                         |
@@ -293,7 +293,7 @@ unpublish file: _check-config
 # List posts ready to publish
 list-drafts: _check-config
     #!/usr/bin/env bash
-    # Find draft: false posts, show validation status
+    # Find posts with status: - Published, show validation status
 
 # Start preview server
 preview:
@@ -331,7 +331,7 @@ Implementation should follow dependency order:
 
 | Order | Component | Rationale |
 |-------|-----------|-----------|
-| 7 | `just list-drafts` | Non-destructive, good for testing |
+| 7 | `just list-posts` | Non-destructive, good for testing |
 | 8 | `just publish` | Core publishing logic |
 | 9 | `just unpublish` | Rollback capability |
 | 10 | `just preview` | Simple wrapper, low risk |

@@ -64,7 +64,7 @@ Plans:
 **Depends on**: Phase 7 (setup creates config that publish reads)
 **Requirements**: JUST-04, JUST-05, JUST-06, JUST-07, JUST-08, JUST-09, JUST-10, JUST-11, JUST-12, JUST-13, JUST-14
 **Success Criteria** (what must be TRUE):
-  1. User can run `just publish` to find all `draft: false` posts in configured Obsidian path
+  1. User can run `just publish` to find all posts with `status: - Published` in configured Obsidian path
   2. Posts with invalid/missing frontmatter (title, pubDatetime, description) are flagged with clear errors
   3. Valid posts are copied to `src/content/blog/YYYY/` (year from pubDatetime) with referenced images in `public/assets/blog/`
   4. Biome lint passes and full build succeeds before any commit happens

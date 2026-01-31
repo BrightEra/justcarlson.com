@@ -39,7 +39,7 @@ default:
 setup:
     ./scripts/setup.sh
 
-# Find draft:false posts ready to publish
+# Find posts with status: - Published ready to publish
 list-drafts:
     ./scripts/list-drafts.sh
 
@@ -241,7 +241,7 @@ setup:
 
 # === Publishing ===
 
-# List posts ready to publish (draft: false in frontmatter)
+# List posts ready to publish (status: - Published in frontmatter)
 list-drafts:
     ./scripts/list-drafts.sh
 
