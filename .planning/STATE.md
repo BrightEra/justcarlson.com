@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 9 of 10 (Utilities) - COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase complete - list-posts and unpublish utilities delivered
-Last activity: 2026-01-31 — Completed Phase 9 execution and verification
+Plan: 3 of 3 in current phase (including gap closure)
+Status: Phase complete with UAT gaps resolved
+Last activity: 2026-01-31 — Completed 09-03-PLAN.md (gap closure)
 
-Progress: [████████████████░░░░] 86% (25/29 plans)
+Progress: [████████████████░░░░] 90% (26/29 plans)
 
 ## Performance Metrics
 
@@ -41,7 +41,7 @@ Progress: [████████████████░░░░] 86% (25
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
 | 08-core-publishing | 5/5 | 11 min | 2.2 min |
-| 09-utilities | 2/2 | 5 min | 2.5 min |
+| 09-utilities | 3/3 | 8 min | 2.7 min |
 
 ## Accumulated Context
 
@@ -105,6 +105,11 @@ v0.2.0 architecture decision:
 - Images left in repo when unpublishing (safer, avoids orphan complexity)
 - Obsidian source untouched (YAML list manipulation too risky)
 
+09-03 decisions:
+- --published mode scans blog directory directly (no vault dependency)
+- User cancellation exits with code 0 (valid outcome, not error)
+- v0.1.0 historical docs remain unchanged
+
 ### Pending Todos
 
 None.
@@ -123,8 +128,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31T22:22:29Z
-Stopped at: Completed 09-02-PLAN.md — unpublish command complete
+Last session: 2026-01-31T23:57:45Z
+Stopped at: Completed 09-03-PLAN.md — gap closure complete
 Resume file: None
 
 Config:
