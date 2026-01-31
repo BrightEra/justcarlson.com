@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 8 of 10 (Core Publishing) - COMPLETE
-Plan: 4 of 4 in current phase
-Status: Phase complete - all UAT gaps closed
-Last activity: 2026-01-31 — Completed 08-04-PLAN.md (UAT Gap Closure)
+Plan: 5 of 5 in current phase
+Status: Phase complete - all UAT gaps closed, frontmatter normalization added
+Last activity: 2026-01-31 — Completed 08-05-PLAN.md (Frontmatter Type Normalization)
 
-Progress: [█████████████░░░░░░░] 75% (22/24 plans)
+Progress: [██████████████░░░░░░] 79% (23/29 plans)
 
 ## Performance Metrics
 
@@ -35,12 +35,12 @@ Progress: [█████████████░░░░░░░] 75% (22
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (6/8 plans)
+**v0.2.0 Milestone:** In progress (7/8 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
-| 08-core-publishing | 4/4 | 9 min | 2.25 min |
+| 08-core-publishing | 5/5 | 11 min | 2.2 min |
 
 ## Accumulated Context
 
@@ -87,6 +87,12 @@ v0.2.0 architecture decision:
 - Add --allow-empty to lint-staged to allow markdown-only commits
 - Auto-continue in dry-run mode when partial validation failures occur
 
+08-05 decisions:
+- Hardcode site default author string (Justin Carlson) to avoid config file dependency
+- Use perl -0777 for multiline YAML pattern matching (consistent with discover_posts)
+- Remove empty heroImage entirely (not set to empty string) for proper optional() schema handling
+- Pipeline order: normalize_frontmatter before convert_wiki_links (critical for wiki-links in author field)
+
 ### Pending Todos
 
 None.
@@ -105,6 +111,13 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31T18:55:00Z
-Stopped at: Phase 8 complete — verification passed (9/9), gap closure successful
+Last session: 2026-01-31T19:11:14Z
+Stopped at: Completed 08-05-PLAN.md — frontmatter type normalization complete
 Resume file: None
+
+Config:
+{
+  "obsidianVaultPath": "/home/jc/obsidian/jc",
+  "model_profile": "balanced",
+  "commit_docs": true
+}
