@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 8 of 10 (Core Publishing) - COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-01-31 — Completed Phase 8 execution and verification
+Plan: 4 of 4 in current phase
+Status: Phase complete - all UAT gaps closed
+Last activity: 2026-01-31 — Completed 08-04-PLAN.md (UAT Gap Closure)
 
-Progress: [█████████████░░░░░░░] 71% (21/24 plans)
+Progress: [█████████████░░░░░░░] 75% (22/24 plans)
 
 ## Performance Metrics
 
@@ -35,12 +35,12 @@ Progress: [█████████████░░░░░░░] 71% (21
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (5/8 plans)
+**v0.2.0 Milestone:** In progress (6/8 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
-| 08-core-publishing | 3/3 | 8 min | 2.67 min |
+| 08-core-publishing | 4/4 | 9 min | 2.25 min |
 
 ## Accumulated Context
 
@@ -82,6 +82,11 @@ v0.2.0 architecture decision:
 - Rollback only removes files created in current publish run, not updates
 - Dry-run selects all posts automatically for complete preview
 
+08-04 decisions:
+- Use echo -e flag to enable ANSI escape sequence interpretation
+- Add --allow-empty to lint-staged to allow markdown-only commits
+- Auto-continue in dry-run mode when partial validation failures occur
+
 ### Pending Todos
 
 None.
@@ -100,6 +105,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31T18:15:00Z
-Stopped at: Completed Phase 8 execution and verification
+Last session: 2026-01-31T18:50:33Z
+Stopped at: Completed 08-04-PLAN.md (UAT Gap Closure)
 Resume file: None
