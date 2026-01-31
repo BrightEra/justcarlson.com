@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 
 ## Current Position
 
-Phase: 8 of 10 (Core Publishing) - COMPLETE
-Plan: 5 of 5 in current phase
-Status: Phase complete - all UAT gaps closed, frontmatter normalization added
-Last activity: 2026-01-31 — Completed 08-05-PLAN.md (Frontmatter Type Normalization)
+Phase: 9 of 10 (Utilities)
+Plan: 1 of 3 in current phase
+Status: In progress - list posts utility complete
+Last activity: 2026-01-31 — Completed 09-01-PLAN.md (List Posts Utility)
 
-Progress: [██████████████░░░░░░] 79% (23/29 plans)
+Progress: [███████████████░░░░░] 83% (24/29 plans)
 
 ## Performance Metrics
 
@@ -35,12 +35,13 @@ Progress: [██████████████░░░░░░] 79% (23
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (7/8 plans)
+**v0.2.0 Milestone:** In progress (8/8 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
 | 08-core-publishing | 5/5 | 11 min | 2.2 min |
+| 09-utilities | 1/3 | 3 min | 3 min |
 
 ## Accumulated Context
 
@@ -93,6 +94,12 @@ v0.2.0 architecture decision:
 - Remove empty heroImage entirely (not set to empty string) for proper optional() schema handling
 - Pipeline order: normalize_frontmatter before convert_wiki_links (critical for wiki-links in author field)
 
+09-01 decisions:
+- Default filter shows unpublished posts only (scales as post count grows)
+- Reuse validation functions from publish.sh for consistency
+- CLI utilities follow pattern: script in scripts/, recipe in justfile with arg passthrough
+- Filter modes via flags: default (most common), --all (everything), --specific (targeted)
+
 ### Pending Todos
 
 None.
@@ -111,8 +118,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31T19:11:14Z
-Stopped at: Completed 08-05-PLAN.md — frontmatter type normalization complete
+Last session: 2026-01-31T22:18:16Z
+Stopped at: Completed 09-01-PLAN.md — list posts utility complete
 Resume file: None
 
 Config:
