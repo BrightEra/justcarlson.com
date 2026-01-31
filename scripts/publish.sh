@@ -503,6 +503,174 @@ select_posts() {
 }
 
 # ============================================================================
+# Image Handling
+# ============================================================================
+
+# Asset directory for blog images
+ASSETS_DIR="public/assets/blog"
+
+extract_images() {
+    # Extract image references from post content
+    # Returns array of image filenames (local images only)
+    local content="$1"
+    local images=()
+
+    # Find wiki-style images: ![[image.png]] or ![[image.png|alt text]]
+    while IFS= read -r match; do
+        if [[ -n "$match" ]]; then
+            # Remove any alt text after |
+            local img="${match%%|*}"
+            images+=("$img")
+        fi
+    done < <(echo "$content" | grep -oP '!\[\[\K[^\]]+(?=\]\])' || true)
+
+    # Find markdown-style local images: ![alt](path) - skip http/https URLs
+    while IFS= read -r match; do
+        if [[ -n "$match" && ! "$match" =~ ^https?:// ]]; then
+            # Extract just the filename from path
+            local img="${match##*/}"
+            images+=("$img")
+        fi
+    done < <(echo "$content" | grep -oP '!\[[^\]]*\]\(\K[^)]+(?=\))' || true)
+
+    # Output unique images
+    printf '%s\n' "${images[@]}" | sort -u
+}
+
+find_local_image() {
+    # Find an image file in the vault's Attachments folder
+    local image="$1"
+    local vault="$2"
+
+    # Primary location: Attachments folder
+    local attachments_path="${vault}/Attachments/${image}"
+    if [[ -f "$attachments_path" ]]; then
+        echo "$attachments_path"
+        return 0
+    fi
+
+    # Fallback: search recursively in vault (for images in subdirectories)
+    local found
+    found=$(find "$vault" -name "$image" -type f 2>/dev/null | head -1)
+    if [[ -n "$found" ]]; then
+        echo "$found"
+        return 0
+    fi
+
+    return 1
+}
+
+convert_wiki_links() {
+    # Convert wiki-style image links to markdown format
+    # Takes content and slug, returns converted content
+    local content="$1"
+    local slug="$2"
+
+    # Convert ![[image.png]] to ![image.png](/assets/blog/slug/image.png)
+    # Also handle ![[image.png|alt text]] to ![alt text](/assets/blog/slug/image.png)
+    content=$(echo "$content" | perl -pe 's/!\[\[([^|\]]+)\|([^\]]+)\]\]/![$2](\/assets\/blog\/'"$slug"'\/$1)/g')
+    content=$(echo "$content" | perl -pe 's/!\[\[([^\]]+)\]\]/![$1](\/assets\/blog\/'"$slug"'\/$1)/g')
+
+    # Rewrite local markdown image paths (not http/https) to use asset directory
+    # ![alt](image.png) or ![alt](./image.png) -> ![alt](/assets/blog/slug/image.png)
+    content=$(echo "$content" | perl -pe 's/!\[([^\]]*)\]\((?!https?:\/\/)(?:\.\/)?([^\/\)]+)\)/![$1](\/assets\/blog\/'"$slug"'\/$2)/g')
+
+    echo "$content"
+}
+
+copy_images() {
+    # Copy images to public assets directory
+    local slug="$1"
+    shift
+    local images=("$@")
+
+    if [[ ${#images[@]} -eq 0 ]]; then
+        return 0
+    fi
+
+    local dest_dir="${ASSETS_DIR}/${slug}"
+    mkdir -p "$dest_dir"
+
+    for image in "${images[@]}"; do
+        local source_path
+        if source_path=$(find_local_image "$image" "$VAULT_PATH"); then
+            cp "$source_path" "$dest_dir/"
+            echo -e "  ${GREEN}Copied:${RESET} $image"
+        else
+            echo -e "  ${YELLOW}Warning: Image not found: $image${RESET}"
+        fi
+    done
+}
+
+copy_post() {
+    # Copy and transform a post to the blog directory
+    local source_path="$1"
+    local slug="$2"
+    local year="$3"
+
+    local dest_dir="${BLOG_DIR}/${year}"
+    local dest_path="${dest_dir}/${slug}.md"
+
+    # Create year directory if needed
+    mkdir -p "$dest_dir"
+
+    # Read content
+    local content
+    content=$(cat "$source_path")
+
+    # Convert wiki-links to markdown
+    content=$(convert_wiki_links "$content" "$slug")
+
+    # Write to destination
+    echo "$content" > "$dest_path"
+}
+
+process_posts() {
+    # Process all selected posts: extract images, copy, transform
+    echo ""
+    echo -e "${CYAN}Processing posts...${RESET}"
+
+    for file in "${SELECTED_FILES[@]}"; do
+        local filename
+        local slug
+        local title
+        local pub_date
+        local year
+
+        filename=$(basename "$file")
+        slug=$(slugify "$filename")
+        title=$(extract_frontmatter_value "$file" "title")
+        pub_date=$(extract_frontmatter_value "$file" "pubDatetime")
+        year="${pub_date:0:4}"
+
+        echo ""
+        echo -e "${CYAN}Processing:${RESET} $title"
+
+        # Read content
+        local content
+        content=$(cat "$file")
+
+        # Extract and copy images
+        local images=()
+        while IFS= read -r img; do
+            [[ -n "$img" ]] && images+=("$img")
+        done < <(extract_images "$content")
+
+        if [[ ${#images[@]} -gt 0 ]]; then
+            echo -e "  ${CYAN}Copying images...${RESET}"
+            copy_images "$slug" "${images[@]}"
+        fi
+
+        # Copy and transform post
+        copy_post "$file" "$slug" "$year"
+        echo -e "  ${GREEN}Published:${RESET} ${BLOG_DIR}/${year}/${slug}.md"
+    done
+
+    echo ""
+    echo -e "${GREEN}Successfully processed ${#SELECTED_FILES[@]} post(s)${RESET}"
+}
+
+# ============================================================================
 # Main
 # ============================================================================
 
@@ -551,16 +719,8 @@ main() {
     # Validate selected posts
     validate_selected_posts
 
-    echo ""
-
-    # Output selected files (for pipeline stages)
-    for file in "${SELECTED_FILES[@]}"; do
-        echo "  - $file"
-    done
-    echo ""
-
-    # Store selected files for next pipeline stages
-    # Future: transformation, commit stages
+    # Process posts: extract images, transform wiki-links, copy to blog
+    process_posts
 
     exit $EXIT_SUCCESS
 }
