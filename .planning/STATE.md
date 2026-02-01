@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** A clean, personal space to write — with a publishing workflow that just works.
-**Current focus:** Phase 15 - Library Extraction + yq Integration
+**Current focus:** Phase 16 - Two-Way Sync
 
 ## Current Position
 
-Phase: 15 of 17 (Library Extraction + yq Integration)
-Plan: 2 of 4 complete
-Status: In progress
-Last activity: 2026-02-01 - Completed 15-02-PLAN.md
+Phase: 16 of 17 (Two-Way Sync)
+Plan: 0 of ? (not yet planned)
+Status: Ready to plan
+Last activity: 2026-02-01 — Completed Phase 15
 
-Progress: [██░░░░░░░░░░░░░░░░░░] 10% (v0.4.0)
+Progress: [███░░░░░░░░░░░░░░░░░] 15% (v0.4.0)
 
 ## Performance Metrics
 
@@ -25,13 +25,14 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 10% (v0
 
 **Cumulative:**
 - 3 milestones shipped
-- 38 plans executed
-- 14 phases complete
+- 40 plans executed
+- 15 phases complete
 - 4 days total development
 
 **v0.4.0:**
 - Plans completed: 2
 - Phases: 15-17 (3 phases, 17 requirements)
+- Phase 15 complete: Library Extraction + yq Integration
 
 ## Accumulated Context
 
@@ -39,9 +40,10 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 10% (v0
 
 All decisions documented in PROJECT.md Key Decisions table.
 
-**15-02 Decisions:**
-- Used sed fallback for frontmatter parsing (mikefarah/yq not installed)
+**Phase 15 Decisions:**
+- Used sed fallback for frontmatter parsing when mikefarah/yq unavailable
 - extract_frontmatter_value is alias to get_frontmatter_field for backward compat
+- Installed go-yq (replacing kislyuk/yq) and shellcheck locally
 
 ### Pending Todos
 
@@ -54,9 +56,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 15-02-PLAN.md
+Stopped at: Completed Phase 15
 Resume file: None
-Next action: Execute 15-03-PLAN.md
+Next action: `/gsd:plan-phase 16` or `/gsd:discuss-phase 16`
 
 Config:
 {

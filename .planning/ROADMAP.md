@@ -13,7 +13,7 @@ This milestone eliminates technical debt in the publishing workflow by consolida
 
 ## Phases
 
-- [ ] **Phase 15: Library Extraction + yq Integration** - Consolidate duplicated code and establish reliable YAML tooling
+- [x] **Phase 15: Library Extraction + yq Integration** - Consolidate duplicated code and establish reliable YAML tooling
 - [ ] **Phase 16: Two-Way Sync** - Bidirectional metadata sync between Obsidian and blog
 - [ ] **Phase 17: Schema Migration** - Replace status field with draft as source of truth
 
@@ -32,8 +32,8 @@ This milestone eliminates technical debt in the publishing workflow by consolida
 **Plans:** 2 plans
 
 Plans:
-- [ ] 15-01-PLAN.md — Install yq in devcontainer + create common.sh skeleton with constants
-- [ ] 15-02-PLAN.md — Extract functions to common.sh + migrate all scripts to source it
+- [x] 15-01-PLAN.md — Install yq in devcontainer + create common.sh skeleton with constants
+- [x] 15-02-PLAN.md — Extract functions to common.sh + migrate all scripts to source it
 
 ### Phase 16: Two-Way Sync
 
@@ -97,7 +97,7 @@ Phases execute in numeric order: 15 -> 16 -> 17
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 15. Library Extraction | 0/2 | Planned | - |
+| 15. Library Extraction | 2/2 | Complete | 2026-02-01 |
 | 16. Two-Way Sync | 0/? | Not started | - |
 | 17. Schema Migration | 0/? | Not started | - |
 
