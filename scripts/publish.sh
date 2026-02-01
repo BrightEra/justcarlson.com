@@ -2,24 +2,9 @@
 # Publish workflow: discover posts from Obsidian vault marked as Published
 set -euo pipefail
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-RESET='\033[0m'
-
-# Config file location (matches setup.sh)
-CONFIG_FILE=".claude/settings.local.json"
-
-# Project paths
-BLOG_DIR="src/content/blog"
-ASSETS_DIR="public/assets/blog"
-
-# Exit codes
-EXIT_SUCCESS=0
-EXIT_ERROR=1
-EXIT_CANCELLED=130
+# Source shared library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
 
 # Dry-run mode (set by --dry-run argument)
 DRY_RUN=false
@@ -273,93 +258,6 @@ run_build_with_retry() {
 # Associative array to store validation errors by file path
 declare -A VALIDATION_ERRORS
 
-extract_frontmatter() {
-    # Extract YAML frontmatter content (between first two --- lines)
-    local file="$1"
-    sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d'
-}
-
-get_frontmatter_field() {
-    # Extract a field value from frontmatter content
-    # Handles both simple values and quoted strings
-    local frontmatter="$1"
-    local field="$2"
-
-    # Match field: value or field: "value" or field: 'value'
-    local value
-    value=$(echo "$frontmatter" | grep -E "^${field}:" | head -1 | sed "s/^${field}:[[:space:]]*//" | sed 's/^["\x27]//' | sed 's/["\x27]$//' | tr -d '\r')
-
-    echo "$value"
-}
-
-validate_iso8601() {
-    # Validate ISO 8601 datetime format: YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD
-    local datetime="$1"
-
-    # Check full datetime: YYYY-MM-DDTHH:MM:SS (with optional timezone)
-    if [[ "$datetime" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]; then
-        return 0
-    fi
-
-    # Check date only: YYYY-MM-DD
-    if [[ "$datetime" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
-        return 0
-    fi
-
-    return 1
-}
-
-validate_frontmatter() {
-    # Validate a single file's frontmatter
-    # Returns array of error messages (empty = valid)
-    local file="$1"
-    local errors=()
-
-    # Extract frontmatter
-    local frontmatter
-    frontmatter=$(extract_frontmatter "$file")
-
-    if [[ -z "$frontmatter" ]]; then
-        errors+=("No frontmatter found (YAML block between --- markers)")
-        printf '%s\n' "${errors[@]}"
-        return 1
-    fi
-
-    # Check required fields
-    local title
-    local pubDatetime
-    local description
-
-    title=$(get_frontmatter_field "$frontmatter" "title")
-    pubDatetime=$(get_frontmatter_field "$frontmatter" "pubDatetime")
-    description=$(get_frontmatter_field "$frontmatter" "description")
-
-    # Validate title
-    if [[ -z "$title" ]]; then
-        errors+=("Missing title (required for SEO and display)")
-    fi
-
-    # Validate pubDatetime
-    if [[ -z "$pubDatetime" ]]; then
-        errors+=("Missing pubDatetime (required for post ordering and URLs)")
-    elif ! validate_iso8601 "$pubDatetime"; then
-        errors+=("Invalid pubDatetime format: '$pubDatetime' (expected YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD)")
-    fi
-
-    # Validate description
-    if [[ -z "$description" ]]; then
-        errors+=("Missing description (required for SEO and previews)")
-    fi
-
-    # Output errors (one per line)
-    if [[ ${#errors[@]} -gt 0 ]]; then
-        printf '%s\n' "${errors[@]}"
-        return 1
-    fi
-
-    return 0
-}
-
 normalize_frontmatter() {
     # Normalize frontmatter types for Astro schema compatibility
     # Takes content as input, returns normalized content
@@ -442,69 +340,8 @@ validate_selected_posts() {
 }
 
 # ============================================================================
-# Configuration
-# ============================================================================
-
-load_config() {
-    if [[ ! -f "$CONFIG_FILE" ]]; then
-        echo -e "${RED}Error: Config file not found: $CONFIG_FILE${RESET}" >&2
-        echo -e "${YELLOW}Run 'just setup' first to configure your Obsidian vault path.${RESET}" >&2
-        exit $EXIT_ERROR
-    fi
-
-    if ! command -v jq &>/dev/null; then
-        echo -e "${RED}Error: jq is required but not installed.${RESET}" >&2
-        echo -e "${YELLOW}Install with: pacman -S jq (Arch) or brew install jq (macOS)${RESET}" >&2
-        exit $EXIT_ERROR
-    fi
-
-    VAULT_PATH=$(jq -r '.obsidianVaultPath // empty' "$CONFIG_FILE")
-
-    if [[ -z "$VAULT_PATH" ]]; then
-        echo -e "${RED}Error: Obsidian vault path not configured.${RESET}" >&2
-        echo -e "${YELLOW}Run 'just setup' to configure your vault path.${RESET}" >&2
-        exit $EXIT_ERROR
-    fi
-
-    if [[ ! -d "$VAULT_PATH" ]]; then
-        echo -e "${RED}Error: Vault directory does not exist: $VAULT_PATH${RESET}" >&2
-        echo -e "${YELLOW}Run 'just setup' to reconfigure your vault path.${RESET}" >&2
-        exit $EXIT_ERROR
-    fi
-
-    echo -e "Vault: ${CYAN}$VAULT_PATH${RESET}"
-}
-
-# ============================================================================
 # Post Discovery
 # ============================================================================
-
-slugify() {
-    # Convert filename to slug: lowercase, spaces to hyphens, remove special chars
-    local name="$1"
-    # Remove .md extension if present
-    name="${name%.md}"
-    # Lowercase
-    name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
-    # Replace spaces with hyphens
-    name=$(echo "$name" | tr ' ' '-')
-    # Remove special characters except hyphens
-    name=$(echo "$name" | sed 's/[^a-z0-9-]//g')
-    # Collapse multiple hyphens
-    name=$(echo "$name" | sed 's/-\+/-/g')
-    # Remove leading/trailing hyphens
-    name=$(echo "$name" | sed 's/^-//' | sed 's/-$//')
-    echo "$name"
-}
-
-extract_frontmatter_value() {
-    # Extract a simple value from YAML frontmatter
-    local file="$1"
-    local key="$2"
-
-    # Read until --- (end of frontmatter), grep for key, extract value
-    sed -n '/^---$/,/^---$/p' "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed 's/^"//' | sed 's/"$//' | tr -d '\r'
-}
 
 get_existing_post_path() {
     # Find if a post with this slug already exists in blog directory
@@ -519,15 +356,6 @@ get_existing_post_path() {
     if [[ -f "$existing_path" ]]; then
         echo "$existing_path"
     fi
-}
-
-extract_frontmatter_field() {
-    # Extract a single frontmatter field value from a file
-    local file="$1"
-    local field="$2"
-
-    # Get content between first two --- delimiters, then extract field
-    sed -n '/^---$/,/^---$/p' "$file" | grep -E "^${field}:" | sed "s/^${field}:[[:space:]]*//"
 }
 
 extract_content_body() {
@@ -567,8 +395,8 @@ posts_are_identical() {
     local fields=("title" "description" "pubDatetime" "heroImage")
     for field in "${fields[@]}"; do
         local obsidian_val blog_val
-        obsidian_val=$(extract_frontmatter_field "$obsidian_file" "$field")
-        blog_val=$(extract_frontmatter_field "$blog_file" "$field")
+        obsidian_val=$(get_frontmatter_field "$obsidian_file" "$field")
+        blog_val=$(get_frontmatter_field "$blog_file" "$field")
 
         if [[ "$obsidian_val" != "$blog_val" ]]; then
             return 1  # Different frontmatter

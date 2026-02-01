@@ -2,15 +2,12 @@
 # Interactive setup for Obsidian vault path configuration
 set -euo pipefail
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RESET='\033[0m'
+# Source shared library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
 
-# Config file location
+# Config directory (CONFIG_FILE comes from common.sh)
 CONFIG_DIR=".claude"
-CONFIG_FILE="$CONFIG_DIR/settings.local.json"
 
 # Non-interactive mode
 VAULT_ARG=""

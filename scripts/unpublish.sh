@@ -2,23 +2,9 @@
 # Unpublish workflow: remove a published post from the blog repository
 set -euo pipefail
 
-# Colors for output (matching publish.sh)
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-RESET='\033[0m'
-
-# Config file location
-CONFIG_FILE=".claude/settings.local.json"
-
-# Project paths
-BLOG_DIR="src/content/blog"
-
-# Exit codes
-EXIT_SUCCESS=0
-EXIT_ERROR=1
-EXIT_CANCELLED=130
+# Source shared library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
 
 # Script arguments
 FILE_ARG=""
@@ -83,55 +69,6 @@ parse_args() {
         echo -e "${RED}Error: Missing required file or slug argument${RESET}" >&2
         print_usage
     fi
-}
-
-# ============================================================================
-# Configuration
-# ============================================================================
-
-load_config() {
-    if [[ ! -f "$CONFIG_FILE" ]]; then
-        echo -e "${RED}Error: Config file not found: $CONFIG_FILE${RESET}" >&2
-        echo -e "${YELLOW}Run 'just setup' first to configure your Obsidian vault path.${RESET}" >&2
-        exit $EXIT_ERROR
-    fi
-
-    if ! command -v jq &>/dev/null; then
-        echo -e "${RED}Error: jq is required but not installed.${RESET}" >&2
-        echo -e "${YELLOW}Install with: pacman -S jq (Arch) or brew install jq (macOS)${RESET}" >&2
-        exit $EXIT_ERROR
-    fi
-}
-
-# ============================================================================
-# Utility Functions
-# ============================================================================
-
-slugify() {
-    # Convert filename to slug: lowercase, spaces to hyphens, remove special chars
-    local name="$1"
-    # Remove .md extension if present
-    name="${name%.md}"
-    # Lowercase
-    name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
-    # Replace spaces with hyphens
-    name=$(echo "$name" | tr ' ' '-')
-    # Remove special characters except hyphens
-    name=$(echo "$name" | sed 's/[^a-z0-9-]//g')
-    # Collapse multiple hyphens
-    name=$(echo "$name" | sed 's/-\+/-/g')
-    # Remove leading/trailing hyphens
-    name=$(echo "$name" | sed 's/^-//' | sed 's/-$//')
-    echo "$name"
-}
-
-extract_frontmatter_value() {
-    # Extract a simple value from YAML frontmatter
-    local file="$1"
-    local key="$2"
-
-    # Read until --- (end of frontmatter), grep for key, extract value
-    sed -n '/^---$/,/^---$/p' "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed 's/^"//' | sed 's/"$//' | tr -d '\r'
 }
 
 # ============================================================================
@@ -271,9 +208,6 @@ display_next_steps() {
 main() {
     # Parse arguments
     parse_args "$@"
-
-    # Load configuration
-    load_config
 
     # Resolve post path from input
     local post_path
