@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 12 of 12 (Bootstrap & Portability)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-01 — Completed 12-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-01 — Completed 12-02-PLAN.md
 
-Progress: [████████████████████░] 95%
+Progress: [█████████████████████] 100%
 
 ## Performance Metrics
 
@@ -29,6 +29,12 @@ Progress: [████████████████████░] 95%
 - Average duration: 2.25 min
 - Total execution time: 0.45 hours
 - Timeline: 2 days (2026-01-30 to 2026-01-31)
+
+**v0.3.0 Milestone:**
+- Total plans completed: 4
+- Average duration: 2.75 min
+- Total execution time: 0.18 hours
+- Timeline: 1 day (2026-02-01)
 
 **By Phase:**
 
@@ -45,7 +51,7 @@ Progress: [████████████████████░] 95%
 | 09-utilities | 3 | 8 min | 2.7 min |
 | 10-skills-layer | 2 | 4 min | 2 min |
 | 11-content-workflow-polish | 2 | 4 min | 2 min |
-| 12-bootstrap-portability | 1 | 3 min | 3 min |
+| 12-bootstrap-portability | 2 | 6 min | 3 min |
 
 ## Accumulated Context
 
@@ -62,6 +68,9 @@ All decisions documented in PROJECT.md Key Decisions table.
 | 2026-02-01 | 11-02 | Move SessionStart command to external hook script |
 | 2026-02-01 | 12-01 | Node 22 major version only (auto patch updates) |
 | 2026-02-01 | 12-01 | No content.config.ts changes needed - Astro glob loader handles empty dirs |
+| 2026-02-01 | 12-02 | Named volume for node_modules to avoid macOS/Windows bind mount performance issues |
+| 2026-02-01 | 12-02 | Use openPreview instead of openBrowser for port forwarding |
+| 2026-02-01 | 12-02 | Add --host flag to dev server for container/network accessibility |
 
 ### Pending Todos
 
@@ -74,9 +83,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 12-01-PLAN.md
+Stopped at: Completed 12-02-PLAN.md (Phase 12 complete)
 Resume file: None
-Next action: Execute 12-02-PLAN.md (dev container)
+Next action: v0.3.0 milestone complete - all phases done
 
 Config:
 {
