@@ -67,7 +67,7 @@ Plans:
   4. Hook checks vault configuration and posts-ready status
   5. Hook has timeout protection (10s) in settings.json
   6. Hook provides context to Claude via additionalContext
-**Plans**: TBD (to be planned)
+**Plans**: 1 plan
 
 Plans:
 - [ ] 13-01-PLAN.md - Convert SessionStart to Python with full infrastructure
@@ -89,7 +89,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 11. Content & Workflow Polish | v0.3.0 | 5/5 | Complete | 2026-02-01 |
 | 12. Bootstrap & Portability | v0.3.0 | 2/2 | Complete | 2026-02-01 |
-| 13. Hook Infrastructure | v0.3.0 | 0/1 | Not Started | - |
+| 13. Hook Infrastructure | v0.3.0 | 0/1 | Planned | - |
 | 14. Refactor Cleanup | v0.3.0 | 0/? | Not Started | - |
 
 ---
