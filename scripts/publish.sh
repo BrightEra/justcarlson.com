@@ -180,7 +180,7 @@ run_lint_with_retry() {
             echo -e "${CYAN}Retrying lint...${RESET}"
         fi
 
-        ((attempt++))
+        ((++attempt))
     done
 
     # All attempts failed - rollback
@@ -207,7 +207,7 @@ run_build_with_retry() {
             echo -e "${CYAN}Retrying build...${RESET}"
         fi
 
-        ((attempt++))
+        ((++attempt))
     done
 
     # All attempts failed - rollback
@@ -1031,7 +1031,7 @@ commit_posts() {
             # Create commit
             git commit -m "$commit_msg" --quiet
             echo -e "  ${GREEN}Committed:${RESET} $commit_msg"
-            ((commit_count++))
+            ((++commit_count))
         fi
     done
 
