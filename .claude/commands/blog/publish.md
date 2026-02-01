@@ -29,6 +29,20 @@ Guide the user through publishing posts from Obsidian to the blog repo with over
 - The stop hook runs `npm run build` and blocks if it fails
 - This wraps `just publish` - do not reimplement the publish logic
 
+## Non-Interactive Options
+
+The publish script supports non-interactive mode for use in Claude Code:
+
+- `--all` or `-a`: Select all discovered posts (no TTY selection)
+- `--post <slug>` or `-p <slug>`: Select a specific post by slug
+- `--yes` or `-y`: Auto-confirm all prompts (validation, push)
+
+**For Claude Code use:**
+```bash
+just publish --post hello-world --yes  # Publish specific post
+just publish --all --yes               # Publish all posts
+```
+
 ## About disable-model-invocation
 
 The `disable-model-invocation: true` setting prevents Claude from invoking this

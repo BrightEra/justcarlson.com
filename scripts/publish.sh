@@ -24,6 +24,11 @@ EXIT_CANCELLED=130
 # Dry-run mode (set by --dry-run argument)
 DRY_RUN=false
 
+# Non-interactive mode flags
+SELECT_ALL=false
+SELECT_POST=""
+AUTO_CONFIRM=false
+
 # Retry configuration
 MAX_RETRY_ATTEMPTS=3
 
@@ -54,6 +59,18 @@ parse_args() {
         case "$1" in
             --dry-run)
                 DRY_RUN=true
+                shift
+                ;;
+            --all|-a)
+                SELECT_ALL=true
+                shift
+                ;;
+            --post|-p)
+                SELECT_POST="$2"
+                shift 2
+                ;;
+            --yes|-y)
+                AUTO_CONFIRM=true
                 shift
                 ;;
             *)
@@ -365,6 +382,9 @@ validate_selected_posts() {
         if [[ "$DRY_RUN" == "true" ]]; then
             # Auto-continue in dry-run mode
             echo -e "${CYAN}Dry run: auto-continuing with valid posts${RESET}"
+        elif [[ "$AUTO_CONFIRM" == "true" ]]; then
+            # Auto-continue in non-interactive mode
+            echo -e "${CYAN}Auto-continuing with valid posts (--yes)${RESET}"
         else
             read -rp "Publish the valid ones? [Y/n] " response
 
@@ -1052,9 +1072,21 @@ push_commits() {
         return 0
     fi
 
-    read -rp "Push $commit_count commit(s) to remote? [Y/n] " response
+    local should_push=false
 
-    if [[ "$response" =~ ^[Nn] ]]; then
+    if [[ "$AUTO_CONFIRM" == "true" ]]; then
+        # Auto-push in non-interactive mode
+        should_push=true
+        echo -e "${CYAN}Auto-pushing (--yes)${RESET}"
+    else
+        read -rp "Push $commit_count commit(s) to remote? [Y/n] " response
+
+        if [[ ! "$response" =~ ^[Nn] ]]; then
+            should_push=true
+        fi
+    fi
+
+    if [[ "$should_push" == "false" ]]; then
         echo ""
         echo -e "${YELLOW}Commits created locally. Run 'git push' when ready.${RESET}"
         return 0
@@ -1164,12 +1196,48 @@ main() {
     echo -e "Found ${GREEN}${#POST_FILES[@]}${RESET} post(s) ready to publish"
     echo ""
 
-    # Interactive selection (skip in dry-run for simpler flow)
-    if [[ "$DRY_RUN" == "true" ]]; then
-        # In dry-run, select all posts to show full preview
+    # Post selection: handle non-interactive modes first
+    if [[ "$SELECT_ALL" == "true" ]]; then
+        # --all flag: select all discovered posts
+        SELECTED_FILES=("${POST_FILES[@]}")
+        echo -e "${CYAN}Selecting all ${#SELECTED_FILES[@]} post(s)${RESET}"
+    elif [[ -n "$SELECT_POST" ]]; then
+        # --post flag: select specific post by slug or filename
+        local found=false
+        for i in "${!POST_FILES[@]}"; do
+            local file="${POST_FILES[$i]}"
+            local filename
+            local slug
+            filename=$(basename "$file")
+            slug=$(slugify "$filename")
+
+            if [[ "$slug" == "$SELECT_POST" || "$filename" == "$SELECT_POST" || "${filename%.md}" == "$SELECT_POST" ]]; then
+                SELECTED_FILES+=("$file")
+                found=true
+                echo -e "${CYAN}Selected: ${POST_TITLES[$i]}${RESET}"
+                break
+            fi
+        done
+
+        if [[ "$found" == "false" ]]; then
+            echo -e "${RED}Error: Post not found: $SELECT_POST${RESET}"
+            echo ""
+            echo "Available posts:"
+            for i in "${!POST_FILES[@]}"; do
+                local filename
+                filename=$(basename "${POST_FILES[$i]}")
+                local slug
+                slug=$(slugify "$filename")
+                echo "  - $slug (${POST_TITLES[$i]})"
+            done
+            exit $EXIT_ERROR
+        fi
+    elif [[ "$DRY_RUN" == "true" ]]; then
+        # In dry-run without explicit selection, select all posts to show full preview
         SELECTED_FILES=("${POST_FILES[@]}")
         echo -e "${CYAN}Dry run: selecting all ${#SELECTED_FILES[@]} post(s)${RESET}"
     else
+        # Interactive selection
         if ! select_posts; then
             echo ""
             echo -e "${YELLOW}No posts selected. Cancelled.${RESET}"
