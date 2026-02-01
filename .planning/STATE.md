@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-31)
 
 **Core value:** A clean, personal space to write — with a publishing workflow that just works.
-**Current focus:** v0.3.0 Polish & Portability
+**Current focus:** v0.3.0 Polish & Portability - COMPLETE
 
 ## Current Position
 
-Phase: 11, 12, 13 of 14 complete (v0.3.0)
-Plan: 13-01 complete (Python SessionStart hook)
-Status: Phase 13 verified, Phase 14 ready to plan
-Last activity: 2026-02-01 — Phase 13 UAT passed, CLI fixes applied (folded into Phase 14 scope)
+Phase: 14 of 14 complete (v0.3.0)
+Plan: 14-01 complete (Dead Code Removal)
+Status: v0.3.0 milestone complete
+Last activity: 2026-02-01 - Completed 14-01-PLAN.md (Knip + dead code removal)
 
-Progress: [███████████████░░░░░] 75% (3/4 v0.3.0 phases)
+Progress: [████████████████████] 100% (4/4 v0.3.0 phases)
 
 ## Performance Metrics
 
@@ -31,9 +31,9 @@ Progress: [███████████████░░░░░] 75% (3/
 - Timeline: 2 days (2026-01-30 to 2026-01-31)
 
 **v0.3.0 Milestone:**
-- Total plans completed: 8
-- Average duration: 2.4 min
-- Total execution time: 0.31 hours
+- Total plans completed: 9
+- Average duration: 2.3 min
+- Total execution time: 0.35 hours
 - Timeline: 1 day (2026-02-01)
 
 **By Phase:**
@@ -53,6 +53,7 @@ Progress: [███████████████░░░░░] 75% (3/
 | 11-content-workflow-polish | 5 | 10 min | 2 min |
 | 12-bootstrap-portability | 2 | 6 min | 3 min |
 | 13-hook-infrastructure | 1 | 2 min | 2 min |
+| 14-refactor-cleanup | 1 | 3 min | 3 min |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ All decisions documented in PROJECT.md Key Decisions table.
 | 2026-02-01 | 13-01 | Logger class writes to stderr and log file for debugging |
 | 2026-02-01 | 13-01 | Log rotation keeps last 500 lines (~100 sessions) |
 | 2026-02-01 | 13-01 | Python hooks use PEP 723 inline deps with uv run --script |
+| 2026-02-01 | quick-004 | trailingSlash: "ignore" to accept both /posts and /posts/ URLs |
+| 2026-02-01 | 14-01 | Keep FormattedDate/AboutLayout despite Knip false positives (MDX usage) |
+| 2026-02-01 | 14-01 | Knip added for ongoing dead code detection |
 
 ### Pending Todos
 
@@ -90,9 +94,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Phase 13 UAT complete, CLI non-interactive fixes applied
+Stopped at: v0.3.0 milestone complete - Phase 14-01 executed
 Resume file: None
-Next action: /gsd:plan-phase 14 (Refactor Cleanup with CLI verification)
+Next action: v0.3.0 complete - Ready for v0.4.0 planning or content creation
 
 Config:
 {
