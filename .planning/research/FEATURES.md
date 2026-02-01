@@ -367,3 +367,298 @@ allowed-tools:
 - Workflow patterns: HIGH (official Claude Code docs + community examples)
 
 **Downstream:** Requirements definition, roadmap phase structuring
+
+---
+
+# Addendum: First-Run Experience & Bootstrap UX
+
+**Added:** 2026-01-31
+**Focus:** Developer onboarding for a public blog repository
+**Context:** Subsequent milestone - adding polish and portability to existing Astro blog
+
+## Problem Statement
+
+When a developer clones this public repo, they face:
+1. Multiple manual steps with unclear ordering
+2. No single "just works" command
+3. Vault path configuration required but not obvious
+4. Uncertainty about what to run first
+
+The goal: Transform "clone, read docs, figure out steps, maybe it works" into "clone, run one command, start writing."
+
+---
+
+## First-Run Table Stakes
+
+Features users expect from any developer-friendly open source project. Missing these creates friction and signals poor maintenance.
+
+| Feature | Why Expected | Complexity | Current State |
+|---------|--------------|------------|---------------|
+| Single setup command | Every modern OSS project has `make setup`, `npm run setup`, or equivalent | Low | Exists: `just setup` |
+| README quick start | 3-5 lines to go from zero to running dev server | Low | Partial: npm install + npm run dev documented |
+| Dependency installation | Clear path to install required tools | Low | npm install works |
+| Interactive prompts for config | Guide first-time users through required choices | Medium | Exists: vault path picker in setup.sh |
+| Idempotent setup | Running setup twice doesn't break anything | Low | Exists: setup.sh checks for existing config |
+| Error messages with solutions | Don't just fail; explain how to fix | Medium | Partial: validation exists, messages could improve |
+
+### Already Built
+
+- `just setup` - interactive vault path configuration
+- `just publish` - full validation pipeline
+- SessionStart hook warns if not configured
+- `/install` skill for guided setup
+
+### Gaps to Address
+
+- No unified "bootstrap" command that does npm install + setup in one step
+- README doesn't mention `just` or the justfile workflow
+- No `.tool-versions` or version management for Node.js
+- No guidance for contributors without Obsidian vault
+
+---
+
+## First-Run Differentiators
+
+Features that set this project apart. Not expected, but create delight when present.
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Zero-config instant start | Works without vault for exploration | Low | Let devs explore site without Obsidian setup |
+| Devcontainer/Codespaces support | One-click cloud dev environment | Medium | Eliminates local setup entirely |
+| Version file auto-detection | mise/asdf reads `.tool-versions` on cd | Low | Ensures correct Node.js version |
+| Smart defaults with override | Works immediately, customize later | Low | Pattern from CLI guidelines |
+| Progress indicators | Show what's happening during multi-step setup | Low | Currently silent in some scripts |
+| Suggested next steps | After setup completes, show what to do next | Low | "Run `just preview` to start dev server" |
+| Dry-run mode | Preview setup actions without executing | Medium | Useful for understanding workflow |
+| Health check command | `just doctor` to diagnose issues | Medium | Common in mature CLI tools |
+
+### Prioritization
+
+**High value, low effort (do first):**
+1. **Version file** (`.tool-versions` or `.nvmrc`) - 5 minutes, prevents Node version issues
+2. **Zero-config preview** - Allow `just preview` without vault for site exploration
+3. **Next steps in output** - Add "What to do next" to setup completion message
+4. **README justfile section** - Document the `just` workflow for contributors
+
+**High value, medium effort (consider for this milestone):**
+1. **Devcontainer** - Eliminates "works on my machine" issues
+2. **Health check** (`just doctor`) - Diagnoses missing tools, bad config
+
+**Lower priority (defer):**
+1. **Dry-run for setup** - Interactive prompts make this less useful
+2. **Progress indicators** - Nice to have but setup is already fast
+
+---
+
+## First-Run Anti-Features
+
+Features to explicitly NOT build. Common over-engineering mistakes in this domain.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| Auto-install mise/asdf/nvm | Invasive; users have preferences | Document in README, let them choose |
+| npm postinstall hook | Breaks library consumers; unexpected side effects | Use explicit `just setup` command |
+| Required GUI for setup | Excludes CI, scripts, headless environments | Interactive prompts with flag overrides |
+| Prompt-only config | Breaks automation | Always allow `--vault-path /path` flag |
+| Hidden magic commands | Undiscoverable; confusing | All commands in justfile, `just --list` shows all |
+| Setup that modifies shell config | Invasive; breaks dotfile management | Keep changes to project directory only |
+| Required account/API key for local dev | Friction barrier for contributors | Mock/offline mode for exploration |
+| Multi-repo setup | Complex dependencies, harder to test | Keep everything in one repo |
+
+### Anti-Pattern: npm postinstall for Setup
+
+Many projects use `npm postinstall` to run setup scripts automatically. This is problematic because:
+
+1. **Runs on every install** - Even when you just want to install a new dependency
+2. **Confuses library consumers** - If this repo is ever used as a package, postinstall runs in their project
+3. **Unexpected in CI** - CI environments may not have interactive TTY for prompts
+4. **Hard to skip** - No clean way to skip when you know setup isn't needed
+
+**Instead:** Use explicit `just setup` after `npm install`. Make it obvious and intentional.
+
+### Anti-Pattern: Bundling Tool Installation
+
+It's tempting to detect missing tools and auto-install them:
+```bash
+# DON'T DO THIS
+if ! command -v just &> /dev/null; then
+    brew install just  # What about Linux? Windows?
+fi
+```
+
+Problems:
+- Package managers vary by OS (brew, apt, pacman, choco)
+- Users may prefer different versions or install locations
+- Some users run in containers where they can't install globally
+
+**Instead:** Check for required tools, provide clear error messages with install instructions for each platform.
+
+---
+
+## Real-World Patterns
+
+### Pattern 1: Single Entry Point
+
+From [Command Line Interface Guidelines](https://clig.dev/):
+> "When users run your command without arguments but it requires them, display brief help text."
+
+**Application:** Running bare `just` shows available commands via `just --list`. This is already implemented.
+
+### Pattern 2: Tiered Onboarding
+
+From developer experience research:
+1. **Tier 1 (30 seconds):** Clone and view site without configuration
+2. **Tier 2 (2 minutes):** Run setup, configure vault path
+3. **Tier 3 (5 minutes):** Understand full workflow, customize
+
+**Application:**
+- Tier 1: `npm install && just preview` should work without vault
+- Tier 2: `just setup` for full configuration
+- Tier 3: CONTRIBUTING.md with detailed workflow
+
+### Pattern 3: Non-Interactive Override
+
+From [UX patterns for CLI tools](https://lucasfcosta.com/2022/06/01/ux-patterns-cli-tools.html):
+> "If a user doesn't pass an argument or flag, prompt for it. Never require a prompt."
+
+**Application:** `just setup` is interactive, but `just setup --vault-path /path` should work for automation.
+
+### Pattern 4: Devcontainer for Zero Friction
+
+From [GitHub Codespaces documentation](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers):
+> "Want contributors to avoid long setup instructions? Just ship a .devcontainer folder. They'll launch the repo in GitHub Codespaces or locally and get working instantly."
+
+**Application:** Add `.devcontainer/devcontainer.json` with Node.js, just, and npm install in postCreateCommand.
+
+### Pattern 5: Version Pinning
+
+From [mise documentation](https://mise.jdx.dev/dev-tools/):
+> "Mise reads .tool-versions files in your project directories. When you enter a folder, mise automatically switches to the versions specified."
+
+**Application:** Add `.tool-versions` or `.nvmrc` to pin Node.js version. Prevents "works on my machine" issues.
+
+---
+
+## Recommended Implementation
+
+### MVP (This Milestone)
+
+1. **Add `.nvmrc`** with Node.js LTS version (e.g., `22.14.0`)
+2. **Update README** with justfile workflow:
+   ```markdown
+   ## Quick Start
+
+   ```bash
+   npm install
+   just setup     # Configure Obsidian vault path
+   just preview   # Start dev server at localhost:4321
+   ```
+
+   Don't have an Obsidian vault? You can still explore:
+   ```bash
+   npm install && npm run dev
+   ```
+   ```
+3. **Add next steps to setup.sh output:**
+   ```bash
+   echo ""
+   echo "What's next:"
+   echo "  just preview   - Start dev server"
+   echo "  just publish   - Publish posts from Obsidian"
+   echo "  just --list    - See all available commands"
+   ```
+4. **Add `just bootstrap` recipe:**
+   ```just
+   # Full first-time setup (install dependencies + configure vault)
+   bootstrap:
+       npm install
+       @just setup
+   ```
+5. **Allow zero-vault exploration:**
+   - `just preview` should work without vault configured
+   - Only `just publish` requires vault
+
+### Post-MVP (Future Milestone)
+
+1. **Devcontainer support:**
+   ```json
+   // .devcontainer/devcontainer.json
+   {
+     "name": "justcarlson.com",
+     "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+     "postCreateCommand": "npm install && just setup --vault-path /workspaces/vault",
+     "customizations": {
+       "vscode": {
+         "extensions": ["astro-build.astro-vscode"]
+       }
+     }
+   }
+   ```
+2. **Health check command:**
+   ```just
+   # Check development environment is properly configured
+   doctor:
+       @./scripts/doctor.sh
+   ```
+3. **Non-interactive setup flag:**
+   ```bash
+   just setup --vault-path /path/to/vault
+   ```
+
+---
+
+## Complexity vs Benefit Matrix
+
+| Feature | Effort | Benefit | Recommend |
+|---------|--------|---------|-----------|
+| .nvmrc file | 1 min | Prevents version issues | YES |
+| README quick start | 10 min | Reduces onboarding friction | YES |
+| Next steps in setup output | 5 min | Guides new users | YES |
+| `just bootstrap` recipe | 5 min | Single command setup | YES |
+| Zero-vault preview | 15 min | Allows exploration | YES |
+| Devcontainer | 30 min | Eliminates setup entirely | MAYBE (post-MVP) |
+| Health check | 1 hr | Diagnoses issues | MAYBE (post-MVP) |
+| Non-interactive setup | 30 min | CI/automation support | LATER |
+| Auto-install tools | 2 hr | Invasive | NO |
+| npm postinstall | 10 min | Breaks consumers | NO |
+
+---
+
+## Success Criteria
+
+A contributor cloning this repo should:
+
+1. **See clear instructions** - README explains the 3 commands to run
+2. **Get correct Node version** - .nvmrc/asdf/mise auto-switches
+3. **Have one command option** - `just bootstrap` for full setup
+4. **Explore without vault** - Site runs for browsing without Obsidian
+5. **Know what's next** - Setup output suggests next steps
+6. **Hit no surprises** - No hidden dependencies or magic steps
+
+Time to first successful `just preview`: **Under 2 minutes** (excluding npm install download time)
+
+---
+
+## First-Run Sources
+
+### Primary (HIGH confidence)
+- [Command Line Interface Guidelines (clig.dev)](https://clig.dev/) - Authoritative CLI UX patterns
+- [UX patterns for CLI tools](https://lucasfcosta.com/2022/06/01/ux-patterns-cli-tools.html) - Interactive vs non-interactive patterns
+- [GitHub Codespaces Dev Containers](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers) - Devcontainer configuration
+- [mise documentation](https://mise.jdx.dev/dev-tools/) - Version management auto-switching
+- [Just Programmer's Manual](https://just.systems/man/en/) - Justfile patterns
+
+### Secondary (MEDIUM confidence)
+- [Thoughtworks CLI Design Guidelines](https://www.thoughtworks.com/insights/blog/engineering-effectiveness/elevate-developer-experiences-cli-design-guidelines) - Enterprise CLI patterns
+- [getdx.com Developer Experience Guide](https://getdx.com/blog/developer-experience/) - DX measurement and improvement
+- [ITHAKA Developer Onboarding](https://medium.com/build-smarter/onboarding-a-developer-fast-5017fac5ef28) - Bootstrap script patterns
+
+### Existing Codebase (verified)
+- `/home/jc/developer/justcarlson.com/justfile` - Current recipes
+- `/home/jc/developer/justcarlson.com/scripts/setup.sh` - Interactive setup script
+- `/home/jc/developer/justcarlson.com/README.md` - Current documentation
+
+---
+
+*First-run research added: 2026-01-31*
+*Focus: First-run experience and bootstrap UX*

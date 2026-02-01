@@ -1,215 +1,209 @@
-# Project Research Summary
+# Research Summary: v0.3.0 Polish & Portability
 
-**Project:** justcarlson.com v0.2.0 Publishing Workflow
-**Domain:** justfile + Claude hooks for Obsidian-to-Astro publishing
-**Researched:** 2026-01-30
+**Project:** justcarlson.com
+**Domain:** Astro static blog with development workflow automation
+**Researched:** 2026-01-31
+**Milestone:** v0.3.0 Polish & Portability
 **Confidence:** HIGH
 
 ## Executive Summary
 
-This project implements a three-layer publishing workflow that enables frictionless Obsidian-to-Astro blog publishing with built-in validation and safety. The architecture separates deterministic commands (justfile), automated safety gates (hooks), and intelligent oversight (Claude skills). The critical insight: **the justfile is the source of truth** — all entry points (terminal, hooks, skills) execute the same justfile recipes, ensuring consistency.
+v0.3.0 focuses on making the blog repository portable and polished for contributors. The existing stack (Astro 5, Tailwind CSS 4, justfile-based automation) is complete; this milestone adds portability infrastructure with minimal additions. The core insight from research: **layered architecture already works**. The three-layer pattern (justfile commands, Claude hooks, skills) is proven. Now we add bootstrap automation and dev container support to eliminate "works on my machine" issues.
 
-The recommended approach leverages existing infrastructure (Astro 5, Tailwind CSS 4, Sharp for image optimization, Biome for linting) and requires zero additional dependencies. The workflow validates frontmatter, copies posts to year-based folders, handles image references, and runs build checks before committing. Safety is enforced through git hooks that block destructive operations while preserving developer productivity.
+The recommended approach: Add two configuration files (devcontainer.json, .nvmrc), extend the existing justfile with an idempotent bootstrap recipe, and update documentation. No new runtime dependencies. The main risk is hardcoded path assumptions breaking in containerized environments, mitigated by detecting container mode and providing mock/graceful-degradation modes for vault-dependent commands.
 
-The primary risks are cross-shell compatibility issues in justfile recipes, Obsidian-specific markdown syntax incompatibilities, and partial commits leaving the site broken. These are mitigated through explicit shell configuration, syntax conversion during publishing, and atomic operations with build-before-commit validation.
+Critical success factor: Bootstrap must be idempotent (run twice without breaking). Dev container must handle node_modules performance (named volume mount). Vault paths must gracefully degrade when unavailable (container contributors without Obsidian setup).
 
 ## Key Findings
 
 ### Recommended Stack
 
-All required tools are already present in the codebase. No new dependencies needed.
+**No new runtime dependencies needed.** Existing stack is complete (Astro 5.16.6, Tailwind CSS 4, sharp, Node 22 LTS). This milestone adds **configuration-only** infrastructure.
 
-**Core technologies:**
-- **justfile**: Command runner for deterministic publishing workflow — simpler than Makefile, portable, testable
-- **Claude hooks**: Setup automation (runs `just setup` on `--init`) and safety gates — official Claude Code feature
-- **Git hooks**: Block dangerous operations (`--force`, `reset --hard`) — works even without Claude
-- **Existing tools**: Astro 5.16.6, Biome, Sharp, gray-matter — already configured and working
+**Core additions:**
+- **devcontainer.json**: Single file using Microsoft's official typescript-node:22 base image with just feature from ghcr.io/guiyomh/features/just:0
+- **.nvmrc**: Pin Node.js 22 for nvm/fnm/mise auto-switching
+- **just bootstrap recipe**: Idempotent one-command setup (npm install + just setup with guards)
 
-**Key stack decisions:**
-- Use manual favicon generation with Sharp/resvg (already installed) instead of astro-favicons plugin
-- Use .githooks/ for safety (not Claude PreToolUse) so protection works outside Claude
-- Use settings.local.json for user config (gitignored, machine-specific paths)
-- Use bash explicitly (`set shell := ["bash", "-cu"]`) to avoid cross-platform issues
+**Rationale:** Dev containers eliminate environment setup friction. Node version lock prevents "works on my machine" version issues. Bootstrap recipe provides single entry point for new contributors.
+
+**Confidence:** HIGH — based on official VS Code devcontainer docs and just manual.
 
 ### Expected Features
 
 **Must have (table stakes):**
-- `just publish` — single command to validate, copy, lint, build, commit, push
-- `just setup` — interactive Obsidian vault path configuration
-- `just list-drafts` — show posts with `status: - Published` ready to publish
-- Frontmatter validation — required fields (title, pubDatetime, description)
-- Image copying — parse markdown for references, copy to `public/assets/blog/`
-- Git safety — block `--force`, `reset --hard`, `checkout .`, `clean -f`
+- `just bootstrap` command for one-step setup — users expect modern projects to have single-command bootstrap
+- Idempotent bootstrap (run twice = safe) — standard expectation for setup scripts
+- Dev container configuration — increasingly expected in 2025/2026 for open source projects
+- Node version file (.nvmrc) — prevents version-related issues across contributors
+- First-run documentation in README — users expect clear "Quick Start" section
 
-**Should have (competitive):**
-- Validation status per post — show "ready" vs "missing: title" in list-drafts
-- Automatic year folder detection — extract from pubDatetime, create YYYY/ folder
-- Dry-run mode — preview actions without executing (`just publish --dry-run`)
-- Claude skills (`/publish-blog`) — human-in-the-loop with disable-model-invocation: true
-- Progress reporting — echo step names during execution
+**Should have (differentiators):**
+- Zero-config preview mode (site works without vault) — allows exploration before full setup
+- Container-aware vault detection — gracefully handles missing Obsidian vault in container environments
+- Progress indicators in bootstrap — clear feedback during multi-step setup
+- Next-step suggestions after setup — guides new users on "what to run next"
 
 **Defer (v2+):**
-- Real-time sync (file watcher) — batch publish sufficient for manual workflow
-- Social auto-posting — API complexity, rate limits, defer to future
-- Newsletter integration — separate concern from publishing
+- Health check command (`just doctor`) — helpful but not essential for MVP
+- Non-interactive setup flags — automation nice-to-have, not critical for initial release
 - Multiple vault support — YAGNI for personal blog
+- Devcontainer Dockerfile customization — pre-built image sufficient
 
 ### Architecture Approach
 
-The three-layer pattern separates concerns into deterministic commands, automated safety, and optional intelligent oversight. **Layer 1 (justfile)** contains all business logic and works standalone. **Layer 2 (hooks)** triggers setup automatically and enforces safety without user action. **Layer 3 (skills)** provides Claude oversight with manual invocation only.
-
-**Three operational modes** (from [install-and-maintain](https://github.com/disler/install-and-maintain)):
-1. **Deterministic**: `just publish` — fast, predictable, CI-friendly, no LLM variance
-2. **Agentic**: `claude --init` — hook execution + agent analysis + status reporting
-3. **Interactive**: `/publish` skill — hook execution with human-in-the-loop oversight
+**Three-layer architecture remains unchanged.** This milestone adds bootstrap orchestration that sits alongside existing layers without modifying core patterns.
 
 **Major components:**
-1. **justfile** — source of truth for all publishing commands (setup, publish, unpublish, list-drafts, preview)
-2. **.claude/settings.json** — committed hook configuration with `Setup` event hook (runs `just setup` on `--init`)
-3. **.claude/settings.local.json** — gitignored user config (Obsidian vault path, blog subfolder)
-4. **.githooks/pre-push** — blocks dangerous git operations before they reach remote
-5. **.claude/skills/** — skill definitions that instruct Claude to run justfile recipes
+1. **Bootstrap layer** (new) — Orchestrates first-run setup, calls existing setup.sh via justfile, validates prerequisites
+2. **Justfile layer** (extended) — Add bootstrap recipe that chains npm install + just setup with idempotency guards
+3. **Dev container layer** (new) — Wraps entire environment, calls `just bootstrap` in postCreateCommand
+4. **Setup detection** (enhanced) — Detect container environment, adapt vault discovery accordingly
 
-**Setup hook configuration** (from [official hooks reference](https://code.claude.com/docs/en/hooks)):
-```json
-{
-  "hooks": {
-    "Setup": [{
-      "matcher": "init",
-      "hooks": [{
-        "type": "command",
-        "command": "just setup"
-      }]
-    }]
-  }
-}
-```
-- `Setup` event fires on `claude --init` or `claude --init-only`
-- Matchers: `init` (from --init flags), `maintenance` (from --maintenance flag)
-- Has access to `CLAUDE_ENV_FILE` for persisting environment variables
-- Different from `SessionStart` which runs on every session
-
-**Build order:** Layer 1 first (justfile recipes), then Layer 2 (safety), then Layer 1 expansion (remaining recipes), finally Layer 3 (skills that wrap Layer 1). This ensures terminal testing without Claude and allows rollback to justfile-only if skills have issues.
+**Key pattern:** Bootstrap follows install-and-maintain paradigm with three execution modes already established in research:
+- Deterministic: `just bootstrap` from terminal (no Claude)
+- Container: devcontainer.json postCreateCommand triggers bootstrap
+- Interactive: Existing `just setup` for vault configuration
 
 ### Critical Pitfalls
 
-1. **Justfile variable syntax confusion** — Use `{{var}}` for just variables, `$VAR` for shell environment variables. Mixing these causes undefined variable errors or empty strings.
+1. **Hardcoded vault path in container** — Obsidian vault paths from host filesystem don't exist in container. Detection: check for `/.dockerenv` or `REMOTE_CONTAINERS` env var. Solution: gracefully degrade vault-dependent commands, provide clear error with instructions for mounting vault or using mock mode.
 
-2. **Each recipe line runs in new shell** — Commands like `cd src` don't persist to next line. Prevention: chain with `&&` or use shebang recipes (`#!/usr/bin/env bash`).
+2. **Non-idempotent bootstrap script** — Running `just bootstrap` twice causes failures (mkdir without -p, config file duplication). Prevention: Use `mkdir -p`, `ln -sf`, guard before append (`grep -qF "entry" file || echo "entry" >> file`), detect already-configured state early.
 
-3. **Obsidian image syntax not standard markdown** — `![[image.png]]` doesn't render in Astro. Convert to `![alt](./image.png)` during publishing or configure Obsidian for relative paths.
+3. **node_modules performance disaster on macOS/Windows** — Bind-mounting node_modules through Docker VM makes npm operations 5-10x slower (1 min becomes 10 min). Prevention: Use named volume mount in devcontainer.json: `"mounts": ["source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"]`.
 
-4. **Relative image paths break in Astro** — Images with `./image.png` fail when Astro copies to `_astro/`. Copy images to `public/assets/blog/` and update paths to `/assets/blog/image.png`.
+4. **Interactive setup script in container** — Existing setup.sh uses `read -rp` for input, which fails in postCreateCommand (no TTY). Prevention: Add environment variable fallback (`OBSIDIAN_VAULT_PATH`), detect TTY availability with `[[ -t 0 ]]`, provide non-interactive mode.
 
-5. **Partial commits leave broken state** — Committing posts without images or vice versa breaks site. Prevention: atomic operations (copy all, validate all, build check, then commit all).
+5. **Windows path format incompatibility** — devcontainer.json mount paths break on Windows without Docker Desktop (backslash vs forward slash, drive letter translation). Prevention: Use `${localWorkspaceFolder}` variable (VS Code handles translation), avoid hardcoded absolute paths, document WSL2 as recommended Windows path.
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure follows dependency order: foundation (Layer 1 core), safety (Layer 2), publishing logic (Layer 1 expansion), skills (Layer 3).
+Based on research, this milestone naturally splits into two sequential phases:
 
-### Phase 1: Setup & Safety (07)
-**Rationale:** Configuration and safety must exist before publishing logic. Setup creates the config file that other recipes depend on.
-**Delivers:** Working `just setup` command, git safety hooks, config file format
-**Addresses:** `just setup` (table stakes), git safety blocking (table stakes), config storage (developer experience)
-**Avoids:** Variable syntax confusion (set shell explicitly), each line runs in new shell (establish shebang pattern)
-**Research needs:** SKIP — well-documented patterns in Just manual and Claude hooks docs
+### Phase 1: Fix Title Duplication & Bootstrap Foundation
+**Rationale:** Fix existing bug first, then add bootstrap infrastructure that depends on stable template behavior.
 
-### Phase 2: Core Publishing (08)
-**Rationale:** Publishing logic depends on setup being complete. This is the most complex phase with validation, copying, and commit logic.
-**Delivers:** Working `just publish` command with full pipeline (validate, copy posts, copy images, lint, build, commit, push)
-**Addresses:** `just publish` (table stakes), frontmatter validation (table stakes), image copying (table stakes), automatic year folder detection (differentiator)
-**Avoids:** Obsidian image syntax incompatibility (convert during publish), relative image paths breaking (copy to public/), partial commits (atomic operations), frontmatter validation gaps (validate values not just presence)
-**Research needs:** SKIP — patterns established in ARCHITECTURE.md and PITFALLS.md
+**Delivers:**
+- Fixed Obsidian template (title no longer duplicated)
+- `just bootstrap` recipe with idempotency guards
+- .nvmrc file for Node version consistency
+- README updated with Quick Start section
 
-### Phase 3: Utilities (09)
-**Rationale:** Utility commands are simpler and independent. Can be built in parallel or after core publishing.
-**Delivers:** `just list-drafts`, `just unpublish`, `just preview`
-**Addresses:** `just list-drafts` (table stakes), validation status per post (differentiator), rollback capability (unpublish)
-**Avoids:** Draft flag ambiguity (use yq for YAML boolean parsing)
-**Research needs:** SKIP — straightforward implementations
+**Addresses:**
+- Table stakes: Single-command setup, idempotent bootstrap, node version file
+- Pitfall: Non-idempotent bootstrap (guards prevent double-run failures)
 
-### Phase 4: Skills Layer (10)
-**Rationale:** Skills wrap justfile recipes, so justfile must be complete and tested first.
-**Delivers:** `/setup-blog`, `/publish-blog`, `/unpublish-blog`, `/list-drafts`, `/preview-blog` skills
-**Addresses:** Claude integration modes (differentiator), disable-model-invocation (safety), interactive mode (developer experience)
-**Avoids:** Skill without disable-model-invocation (prevent auto-invocation), duplicated logic (skills call justfile, not reimplemented)
-**Research needs:** SKIP — skill patterns well-documented in Claude Code docs
+**Avoids:**
+- Building devcontainer on broken foundation (template fix comes first)
+- Bootstrap recipe calling flawed setup script
+
+**Research flag:** Standard pattern — no additional research needed. Justfile patterns well-documented.
+
+### Phase 2: Dev Container & Documentation Polish
+**Rationale:** Bootstrap must exist first (devcontainer calls `just bootstrap`). Container environment reveals path assumption issues.
+
+**Delivers:**
+- .devcontainer/devcontainer.json with Node 22, just feature, named volume for node_modules
+- Container-aware vault detection in setup.sh
+- Environment variable fallback for non-interactive setup
+- README section on dev container usage
+
+**Addresses:**
+- Table stakes: Dev container configuration, first-run documentation
+- Differentiators: Zero-config preview mode, container-aware vault detection
+- Pitfalls: Hardcoded vault path, interactive script in container, node_modules performance
+
+**Uses:**
+- Stack: Microsoft devcontainer base image (typescript-node:22), just feature from ghcr.io/guiyomh/features
+- Architecture: Three-layer pattern (devcontainer wraps existing layers)
+
+**Avoids:**
+- Windows path issues (use ${localWorkspaceFolder} variable)
+- Performance disaster (named volume for node_modules)
+- Container hang (environment variable fallback for vault path)
+
+**Research flag:** Container-specific vault mounting may need trial-and-error during implementation. Consider documenting "for publishing workflow, mount vault via mounts config" vs "for code-only development, skip vault setup."
 
 ### Phase Ordering Rationale
 
-- **Layer 1 before Layer 3:** Justfile must be complete and testable from terminal before skills wrap it
-- **Setup before Publishing:** Publishing recipes depend on config file that setup creates
-- **Safety early:** Git hooks establish safety before destructive operations possible
-- **Core before Utilities:** `just publish` is complex and critical; utilities are simpler and can follow
-- **Atomic phases:** Each phase delivers working functionality that can be tested independently
+**Phase 1 before Phase 2 because:**
+- Bootstrap recipe must exist before devcontainer can call it in postCreateCommand
+- Idempotency patterns established in bootstrap inform container restart behavior
+- Template bug fix prevents confusion during container testing (clean foundation)
+
+**Within Phase 2:**
+- Dev container configuration comes first (defines environment constraints)
+- Container-aware detection added second (responds to environment)
+- Documentation last (captures tested workflow)
+
+**Dependency chain:**
+```
+Template fix → Bootstrap recipe → .nvmrc
+                      ↓
+              Devcontainer config → Container detection → Docs
+```
 
 ### Research Flags
 
-**Skip research for all phases:**
-- Phase 07: Justfile syntax and Claude hooks well-documented in official sources
-- Phase 08: Obsidian-to-Astro patterns established in ARCHITECTURE.md and PITFALLS.md
-- Phase 09: Utility commands are straightforward implementations
-- Phase 10: Claude skills patterns documented in official Claude Code skills reference
+**Phase 1 (Fix & Bootstrap):**
+- **Low risk** — Standard justfile patterns, npm install, bash guards. Well-documented territory.
+- **No additional research needed** — Patterns from just manual and idempotent bash articles cover all cases.
 
-**Standard patterns present:**
-- Justfile command runner: established tool with comprehensive manual
-- Claude hooks: official Claude Code feature with complete documentation
-- Git hooks: standard git functionality, widely documented
-- Astro content collections: well-documented in Astro 5 guides
+**Phase 2 (Dev Container):**
+- **Medium risk** — Container-specific path issues require testing in actual container environment.
+- **Potential research:** Vault mounting strategies (bind mount vs volume, host path translation, environment variable expansion). Consider `/gsd:research-phase` if mount config becomes complex.
+- **Testing required:** Windows container testing to validate path handling (if supporting Windows contributors).
+
+**Standard patterns (skip research-phase):**
+- .nvmrc creation — 1-line file, no complexity
+- README updates — documentation task, not technical research
+- Bootstrap idempotency — patterns already documented in PITFALLS.md
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All tools already installed and verified in package.json. No new dependencies needed. |
-| Features | HIGH | Table stakes features verified across multiple Obsidian-to-Astro workflows. Differentiators from authoritative Claude Code patterns. |
-| Architecture | HIGH | Three-layer pattern verified against official Claude Code documentation. Script-as-source-of-truth pattern from community best practices. |
-| Pitfalls | HIGH | All critical pitfalls sourced from official documentation (Just manual, Claude hooks reference, Astro guides). |
+| Stack | HIGH | No new dependencies; configuration files only. Official MS devcontainer image verified. |
+| Features | HIGH | Table stakes well-defined from UX research (clig.dev, CLI patterns). Bootstrap patterns from install-and-maintain repo. |
+| Architecture | HIGH | Three-layer pattern already proven in v0.2.0. Bootstrap is additive, doesn't modify existing layers. |
+| Pitfalls | HIGH | All critical pitfalls verified against official docs (VS Code, containers.dev, just manual). Container-specific pitfalls from known issues and performance docs. |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-No critical gaps identified. Research covered all necessary areas with authoritative sources:
+**During Phase 1 implementation:**
+- **Gap:** Exact idempotency guards for setup.sh — script may have undocumented side effects. **Resolution:** Test `just bootstrap` twice in clean environment before committing.
+- **Gap:** Prerequisites list completeness — setup.sh may use tools beyond jq. **Resolution:** Run prerequisite check against minimal container to discover all dependencies.
 
-- **Stack decisions:** Verified against existing codebase (package.json, astro.config.mjs, global.css)
-- **Feature expectations:** Cross-referenced multiple Obsidian-to-Astro workflows for table stakes
-- **Architecture patterns:** Validated against official Claude Code documentation
-- **Pitfall prevention:** Sourced from official documentation and known issues with GitHub issue numbers
+**During Phase 2 implementation:**
+- **Gap:** Vault mount configuration for contributors with Obsidian — unclear if bind mount or volume better for large vaults. **Resolution:** Document both approaches; let users choose based on vault size and sync tool (if using Obsidian Sync, bind mount better for file watching).
+- **Gap:** Windows testing coverage — no Windows machine available for testing. **Resolution:** Document WSL2 as recommended path, ask for community testing feedback in PR.
 
-**Minor validation during implementation:**
-- Test justfile recipes on actual Obsidian vault structure (once setup complete)
-- Verify image path conversion handles all edge cases (spaces, special characters, nested folders)
-- Confirm git hooks work with both Claude Code and direct terminal usage
+**Post-milestone validation:**
+- **Gap:** GitHub Codespaces compatibility — devcontainer.json should work but untested. **Resolution:** Test in actual Codespace environment after merge; add badge to README if working.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Just Programmer's Manual](https://just.systems/man/en/) — recipe syntax, shell configuration, variable scoping
-- [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks) — complete hook lifecycle, all events (Setup, SessionStart, PreToolUse, etc.), JSON output format, exit codes, matchers
-- [Claude Code Skills](https://code.claude.com/docs/en/skills) — skill structure, disable-model-invocation, allowed-tools
-- [Claude Code Settings](https://code.claude.com/docs/en/settings) — settings hierarchy, local vs committed
-- [Astro Images Guide](https://docs.astro.build/en/guides/images/) — image optimization, Sharp integration
-- [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/) — frontmatter schema, validation
-- **Codebase verification:** package.json, astro.config.mjs, src/styles/global.css, src/consts.ts
-
-### Pattern References (HIGH confidence)
-- [install.md Specification](https://github.com/mintlify/install-md) — LLM-executable installation format (OBJECTIVE, DONE WHEN, TODO checkboxes, EXECUTE NOW)
-- [installmd.org](https://installmd.org) — standard for AI-agent-executable setup instructions
-- [disler/install-and-maintain](https://github.com/disler/install-and-maintain) — deterministic + agentic patterns, three operational modes, justfile as command runner
+- [VS Code Create Dev Container](https://code.visualstudio.com/docs/devcontainers/create-dev-container) — Official devcontainer.json reference, lifecycle commands
+- [Dev Container Features Registry](https://containers.dev/features) — Just feature discovery and versioning
+- [Just Programmer's Manual](https://just.systems/man/en/) — Recipe patterns, shebang usage, idempotency
+- [VS Code Dev Container Performance](https://code.visualstudio.com/remote/advancedcontainers/improve-performance) — Named volume pattern for node_modules
+- [containers.dev Lifecycle Reference](https://containers.dev/implementors/json_reference/) — postCreateCommand vs postStartCommand
 
 ### Secondary (MEDIUM confidence)
-- [disler/claude-code-hooks-mastery](https://github.com/disler/claude-code-hooks-mastery) — script-as-source-of-truth pattern
-- [rachsmith.com: Automating Obsidian to Astro](https://rachsmith.com/automating-obsidian-to-astro/) — vault scanning, frontmatter detection
-- [walterra.dev: Obsidian/Astro Workflow](https://walterra.dev/blog/2025-03-02-obsidian-astro-workflow) — sync patterns, mobile capture
-- [hungrimind.com: Write Like a Pro with Astro and Obsidian](https://www.hungrimind.com/articles/obsidian-with-astro) — image syntax conversion
-- [anca.wtf: Configuring Obsidian and Astro Assets](https://www.anca.wtf/posts/configuring-obsidian-and-astro-assets-for-markdoc-content-in-an-astro-blog/) — special character handling
+- [Command Line Interface Guidelines (clig.dev)](https://clig.dev/) — Bootstrap UX patterns, single entry point principle
+- [UX patterns for CLI tools](https://lucasfcosta.com/2022/06/01/ux-patterns-cli-tools.html) — Interactive vs non-interactive modes
+- [Idempotent Bash Scripts](https://arslan.io/2019/07/03/how-to-write-idempotent-bash-scripts/) — Guard patterns, safe operations
+- [DevContainers Best Practices](https://atoms.dev/insights/6d0570e51ba4430296743ef234f4f74d) — Image pinning, volume optimization
 
-### Known Issues (verified with issue numbers)
-- [Claude Code Issue #3983](https://github.com/anthropics/claude-code/issues/3983) — PostToolUse JSON not processed
-- [Claude Code Issue #10875](https://github.com/anthropics/claude-code/issues/10875) — Plugin hooks stdout not captured
-- [Astro Issue #1188](https://github.com/withastro/astro/issues/1188) — Relative image paths in content collections
+### Tertiary (LOW confidence)
+- GitHub Issue #6130 (Windows path handling) — Community reports of path translation issues, not official guidance
+- Community devcontainer examples — Patterns vary; official docs take precedence
 
 ---
-*Research completed: 2026-01-30*
+*Research completed: 2026-01-31*
 *Ready for roadmap: yes*
+*Milestone context: v0.3.0 Polish & Portability*
