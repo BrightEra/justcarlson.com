@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Debug ANSI escape codes not rendering in scripts/publish.sh"
 created: 2026-01-31T00:00:00Z
 updated: 2026-01-31T00:00:00Z
@@ -75,5 +75,11 @@ started: Unknown
 
 root_cause: "Line 1090 uses plain echo without -e flag. The echo command in bash does not interpret backslash escape sequences by default. Since GREEN and RESET variables contain ANSI escape codes (\033[0;32m and \033[0m), they are printed as literal text instead of being interpreted as color codes."
 fix: "Change line 1090 from: echo \"Found ${GREEN}${#POST_FILES[@]}${RESET} post(s) ready to publish\" to: echo -e \"Found ${GREEN}${#POST_FILES[@]}${RESET} post(s) ready to publish\""
-verification: ""
+verification: "Confirmed: Line 1164 now uses echo -e. All 14 echo statements with color variables use -e flag."
 files_changed: [scripts/publish.sh]
+
+## Closure
+
+resolution_date: 2026-01-31
+resolution_type: already_fixed
+notes: Fix was already applied prior to this session. Line 1164 now reads `echo -e "Found ${GREEN}${#POST_FILES[@]}${RESET} post(s) ready to publish"` with proper -e flag.

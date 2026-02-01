@@ -1,5 +1,5 @@
 ---
-status: gathering
+status: resolved
 trigger: "Debug Session: Dry-Run Prompts Instead of Auto-Continue"
 created: 2026-01-31T13:45:00Z
 updated: 2026-01-31T13:45:00Z
@@ -10,7 +10,7 @@ updated: 2026-01-31T13:45:00Z
 hypothesis: CONFIRMED - validate_selected_posts() at line 347-349 prompts without checking DRY_RUN
 test: examined scripts/publish.sh validate_selected_posts function
 expecting: found prompt that doesn't check DRY_RUN flag
-next_action: document root cause and missing fix
+next_action: none - fix verified
 
 ## Symptoms
 
@@ -45,4 +45,10 @@ fix: "Wrap the partial-valid prompt block (lines 347-360) in an 'if [[ \"$DRY_RU
 verification: "When run with --dry-run and some posts invalid, dry-run should display validation errors but skip the prompt and auto-continue with valid posts, showing the complete dry-run summary at the end."
 
 files_changed:
-  - scripts/publish.sh: Add DRY_RUN check around partial-valid prompt (lines 347-360)
+  - scripts/publish.sh: Add DRY_RUN check around partial-valid prompt (lines 365-376)
+
+## Closure
+
+resolution_date: 2026-01-31
+resolution_type: fixed
+notes: Fix verified in scripts/publish.sh lines 365-376. The partial-valid prompt is now wrapped in `if [[ "$DRY_RUN" == "true" ]]` check that auto-continues with valid posts during dry-run mode.
