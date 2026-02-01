@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 ## Current Position
 
 Phase: 14 of 14 complete (v0.3.0)
-Plan: 14-01 complete (Dead Code Removal)
+Plan: 14-02 complete (Constants Consolidation)
 Status: v0.3.0 milestone complete
-Last activity: 2026-02-01 - Completed 14-01-PLAN.md (Knip + dead code removal)
+Last activity: 2026-02-01 - Completed 14-02-PLAN.md (Constants consolidation + CLI verification)
 
 Progress: [████████████████████] 100% (4/4 v0.3.0 phases)
 
@@ -31,9 +31,9 @@ Progress: [████████████████████] 100% (4
 - Timeline: 2 days (2026-01-30 to 2026-01-31)
 
 **v0.3.0 Milestone:**
-- Total plans completed: 9
-- Average duration: 2.3 min
-- Total execution time: 0.35 hours
+- Total plans completed: 10
+- Average duration: 2.2 min
+- Total execution time: 0.37 hours
 - Timeline: 1 day (2026-02-01)
 
 **By Phase:**
@@ -53,7 +53,7 @@ Progress: [████████████████████] 100% (4
 | 11-content-workflow-polish | 5 | 10 min | 2 min |
 | 12-bootstrap-portability | 2 | 6 min | 3 min |
 | 13-hook-infrastructure | 1 | 2 min | 2 min |
-| 14-refactor-cleanup | 1 | 3 min | 3 min |
+| 14-refactor-cleanup | 2 | 5 min | 2.5 min |
 
 ## Accumulated Context
 
@@ -82,6 +82,8 @@ All decisions documented in PROJECT.md Key Decisions table.
 | 2026-02-01 | quick-004 | trailingSlash: "ignore" to accept both /posts and /posts/ URLs |
 | 2026-02-01 | 14-01 | Keep FormattedDate/AboutLayout despite Knip false positives (MDX usage) |
 | 2026-02-01 | 14-01 | Knip added for ongoing dead code detection |
+| 2026-02-01 | 14-02 | Keep SOCIALS and SOCIAL_LINKS separate (different shapes for different use cases) |
+| 2026-02-01 | 14-02 | Config consolidation: consts.ts is single source of truth, config.ts re-exports |
 
 ### Pending Todos
 
@@ -94,7 +96,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: v0.3.0 milestone complete - Phase 14-01 executed
+Stopped at: v0.3.0 milestone complete - Phase 14-02 executed
 Resume file: None
 Next action: v0.3.0 complete - Ready for v0.4.0 planning or content creation
 
