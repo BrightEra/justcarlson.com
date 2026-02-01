@@ -73,11 +73,16 @@ Plans:
 - [x] 13-01-PLAN.md - Convert SessionStart to Python with full infrastructure
 
 ### Phase 14: Refactor Cleanup
-**Goal**: Clean codebase with consolidated patterns and no dead code
+**Goal**: Clean codebase with consolidated patterns, CLI discoverability, and no dead code
 **Depends on**: Phase 13
-**Requirements**: TBD
+**Requirements**: CLIX-01, CLIX-02, CLIX-03, CLEAN-01, CLEAN-02
 **Success Criteria** (what must be TRUE):
-  1. TBD - to be defined during planning
+  1. All scripts support `--help` flag for CLI discovery
+  2. All scripts with prompts support non-interactive mode for Claude Code (no TTY required)
+  3. `just publish --post <slug> --yes` publishes a post without TTY
+  4. `just setup --vault <path>` configures vault without TTY
+  5. No dead code or unused exports in src/
+  6. Consistent error handling patterns across all scripts
 **Plans**: TBD (to be planned)
 
 Plans:
