@@ -14,6 +14,10 @@ default:
 setup:
     ./scripts/setup.sh
 
+# Bootstrap development environment (idempotent)
+bootstrap:
+    ./scripts/bootstrap.sh
+
 # === Development ===
 
 # Start Astro dev server
