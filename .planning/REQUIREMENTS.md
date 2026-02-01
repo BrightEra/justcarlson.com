@@ -32,6 +32,13 @@ Requirements for Polish & Portability milestone. Focus: fix template bug, enable
 - [x] **DEVC-02**: node_modules uses named volume for macOS/Windows performance
 - [x] **DEVC-03**: postCreateCommand runs `just bootstrap` automatically
 
+### Hook Infrastructure
+
+- [x] **HOOK-01**: SessionStart hook is Python with uv, matching install-and-maintain pattern
+- [x] **HOOK-02**: Hook loads .env variables into CLAUDE_ENV_FILE for bash persistence
+- [x] **HOOK-03**: Hook logs to file (.claude/hooks/session_start.log) for debugging
+- [x] **HOOK-04**: Hook checks vault configuration and posts-ready status
+
 ## Future Requirements
 
 Deferred to later milestones.
@@ -73,12 +80,16 @@ Deferred to later milestones.
 | DEVC-01 | Phase 12 | Complete |
 | DEVC-02 | Phase 12 | Complete |
 | DEVC-03 | Phase 12 | Complete |
+| HOOK-01 | Phase 13 | Complete |
+| HOOK-02 | Phase 13 | Complete |
+| HOOK-03 | Phase 13 | Complete |
+| HOOK-04 | Phase 13 | Complete |
 
 **Coverage:**
-- v0.3.0 requirements: 13 total
-- Mapped to phases: 13
+- v0.3.0 requirements: 17 total
+- Mapped to phases: 17
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-31*
-*Last updated: 2026-02-01 after phase 12 completion*
+*Last updated: 2026-02-01 after phase 13 completion*
