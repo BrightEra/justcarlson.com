@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 
 ## Current Position
 
-Phase: 9 of 10 (Utilities) - COMPLETE
-Plan: 3 of 3 in current phase (including gap closure)
-Status: Phase complete with UAT gaps resolved
-Last activity: 2026-01-31 — Completed 09-03-PLAN.md (gap closure)
+Phase: 10 of 10 (Skills Layer) - COMPLETE
+Plan: 1 of 1 in current phase
+Status: v0.2.0 complete - all phases executed
+Last activity: 2026-02-01 — Completed 10-01-PLAN.md
 
-Progress: [████████████████░░░░] 90% (26/29 plans)
+Progress: [████████████████████] 100% (27/27 plans)
 
 ## Performance Metrics
 
@@ -35,13 +35,14 @@ Progress: [████████████████░░░░] 90% (26
 | 05-personal-brand-cleanup | 4 | 4 min | 1 min |
 | 06-about-page-photo | 1 | 1 min | 1 min |
 
-**v0.2.0 Milestone:** In progress (9/10 plans)
+**v0.2.0 Milestone:** Complete (10/10 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 07-setup-safety | 2/2 | 4 min | 2 min |
 | 08-core-publishing | 5/5 | 11 min | 2.2 min |
 | 09-utilities | 3/3 | 8 min | 2.7 min |
+| 10-skills-layer | 1/1 | 2 min | 2 min |
 
 ## Accumulated Context
 
@@ -110,6 +111,12 @@ v0.2.0 architecture decision:
 - User cancellation exits with code 0 (valid outcome, not error)
 - v0.1.0 historical docs remain unchanged
 
+10-01 decisions:
+- All skills use disable-model-invocation: true (manual-only)
+- Stop hooks use exit code 2 blocking pattern
+- Check stop_hook_active to prevent infinite loops
+- Startup hook suggests /install if vault unconfigured
+
 ### Pending Todos
 
 None.
@@ -128,8 +135,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-31T23:57:45Z
-Stopped at: Completed 09-03-PLAN.md — gap closure complete
+Last session: 2026-02-01T02:32:37Z
+Stopped at: Completed 10-01-PLAN.md — skills layer complete, v0.2.0 ready
 Resume file: None
 
 Config:
