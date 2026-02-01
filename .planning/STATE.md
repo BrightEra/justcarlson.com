@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-30)
 ## Current Position
 
 Phase: 10 of 10 (Skills Layer) - COMPLETE
-Plan: 1 of 1 in current phase
-Status: v0.2.0 complete - all phases executed
-Last activity: 2026-02-01 — Completed 10-01-PLAN.md
+Plan: 2 of 2 in current phase (gap closure)
+Status: v0.2.0 complete - all phases + UAT gaps closed
+Last activity: 2026-02-01 — Completed 10-02-PLAN.md (gap closure)
 
-Progress: [████████████████████] 100% (27/27 plans)
+Progress: [████████████████████] 100% (28/28 plans)
 
 ## Performance Metrics
 
@@ -42,7 +42,7 @@ Progress: [████████████████████] 100% (2
 | 07-setup-safety | 2/2 | 4 min | 2 min |
 | 08-core-publishing | 5/5 | 11 min | 2.2 min |
 | 09-utilities | 3/3 | 8 min | 2.7 min |
-| 10-skills-layer | 1/1 | 2 min | 2 min |
+| 10-skills-layer | 2/2 | 4 min | 2 min |
 
 ## Accumulated Context
 
@@ -117,6 +117,10 @@ v0.2.0 architecture decision:
 - Check stop_hook_active to prevent infinite loops
 - Startup hook suggests /install if vault unconfigured
 
+10-02 decisions (gap closure):
+- SessionStart is correct hook event (not Setup)
+- disable-model-invocation prevents Skill tool only, not Bash (documented as expected)
+
 ### Pending Todos
 
 None.
@@ -135,13 +139,13 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-01T02:32:37Z
-Stopped at: Completed 10-01-PLAN.md — skills layer complete, v0.2.0 ready
+Last session: 2026-02-01T03:08:44Z
+Stopped at: Completed 10-02-PLAN.md — all UAT gaps closed, v0.2.0 ready
 Resume file: None
 
 Config:
 {
-  "obsidianVaultPath": "/home/jc/obsidian/jc",
-  "model_profile": "balanced",
+  "obsidianVaultPath": "/home/jc/notes/personal-vault",
+  "model_profile": "quality",
   "commit_docs": true
 }
