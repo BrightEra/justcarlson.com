@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** A clean, personal space to write — with a publishing workflow that just works.
-**Current focus:** Planning next milestone
+**Current focus:** v0.4.0 Obsidian + Blog Integration Refactor
 
 ## Current Position
 
-Phase: v0.3.0 complete
-Plan: Not started
-Status: Ready for next milestone
-Last activity: 2026-02-01 — v0.3.0 milestone complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Researching v0.4.0
+Last activity: 2026-02-01 — Milestone v0.4.0 started
 
-Progress: [████████████████████] 100% (v0.1.0 + v0.2.0 + v0.3.0 shipped)
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (v0.4.0 in progress)
 
 ## Performance Metrics
 
@@ -59,9 +59,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: v0.3.0 milestone archived
+Stopped at: v0.4.0 milestone started, researching
 Resume file: None
-Next action: /gsd:new-milestone (define requirements and roadmap for next version)
+Next action: Complete research, then define requirements
 
 Config:
 {

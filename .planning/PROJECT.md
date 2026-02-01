@@ -48,17 +48,40 @@ A clean, personal space to write — with a publishing workflow that just works.
 
 ### Active
 
-**v0.4.0+ (Next milestone):**
-- [ ] Set up newsletter service (Buttondown or alternative)
-- [ ] Write actual About page bio content
-- [ ] `just doctor` health check command
+**v0.4.0: Obsidian + Blog Integration Refactor**
+
+Goal: Clean up redundancy, fix invalid assumptions, establish logical consistency across the publishing workflow.
+
+**Frontmatter model overhaul:**
+- [ ] `draft: true/false` becomes single source of truth (replaces `status: Published`)
+- [ ] `pubDatetime` set by publish script (not template creation time)
+- [ ] Remove redundant `published` and `status` fields from template
+- [ ] Update Obsidian template, types.json, and Base/Category views
+
+**Two-way sync:**
+- [ ] `just publish` updates Obsidian source: sets `draft: false`, sets `pubDatetime`
+- [ ] `just unpublish` updates Obsidian source: sets `draft: true`
+- [ ] Discovery trigger changes from `status: Published` to `draft: false`
+
+**Extract shared library:**
+- [ ] Centralize validation functions (currently duplicated in 3 scripts)
+- [ ] Centralize slugify, frontmatter extraction, config reading
+- [ ] Centralize constants (paths, patterns)
+
+**Clarify architecture:**
+- [ ] Clean boundaries between scripts, skills, hooks
+- [ ] Consistent user interaction patterns
+
+**Remove hardcoded assumptions:**
+- [ ] Author normalization from config (not hardcoded "Justin Carlson")
+- [ ] Configurable paths where sensible
 
 ### Deferred
 
-- Set up newsletter service (Buttondown or alternative) — v0.4.0+
+- Set up newsletter service (Buttondown or alternative) — v0.5.0+
 - Write actual About page bio content — content work
 - Social auto-posting (X, BlueSky, LinkedIn) — API complexity
-- `just doctor` health check command — v0.4.0+
+- `just doctor` health check command — v0.5.0+
 
 ### Out of Scope
 
