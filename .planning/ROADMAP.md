@@ -12,7 +12,7 @@ v0.3.0 delivers polish and portability for the blog repository. First, fix the t
 
 ## Phases
 
-- [ ] **Phase 11: Content & Workflow Polish** - Fix template bugs, add tags, rename skills
+- [x] **Phase 11: Content & Workflow Polish** - Fix template bugs, add tags, rename skills
 - [x] **Phase 12: Bootstrap & Portability** - One-command setup, dev container support
 - [ ] **Phase 13: Hook Infrastructure** - Python hooks with logging, env loading, timeout protection
 - [ ] **Phase 14: Refactor Cleanup** - Code cleanup, remove dead code, consolidate patterns
@@ -37,7 +37,7 @@ Plans:
 - [x] 11-02-PLAN.md - Rename skills to blog: prefix and enhance SessionStart (SKIL-01, SKIL-02)
 - [x] 11-03-PLAN.md - Fix command directory structure for discoverability (gap closure)
 - [x] 11-04-PLAN.md - Fix SessionStart hook JSON output for user visibility (gap closure)
-- [ ] 11-05-PLAN.md - Add timeout protection and update success criteria (gap closure)
+- [x] 11-05-PLAN.md - Add timeout protection and update success criteria (gap closure)
 
 ### Phase 12: Bootstrap & Portability
 **Goal**: Fresh clones work with one command; dev containers enable instant contribution
@@ -87,7 +87,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 11. Content & Workflow Polish | v0.3.0 | 4/5 | In Progress | - |
+| 11. Content & Workflow Polish | v0.3.0 | 5/5 | Complete | 2026-02-01 |
 | 12. Bootstrap & Portability | v0.3.0 | 2/2 | Complete | 2026-02-01 |
 | 13. Hook Infrastructure | v0.3.0 | 0/1 | Not Started | - |
 | 14. Refactor Cleanup | v0.3.0 | 0/? | Not Started | - |
