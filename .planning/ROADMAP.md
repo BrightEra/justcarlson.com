@@ -112,7 +112,7 @@ Plans:
 
 Plans:
 - [x] 10-01: Full skill suite with stop hooks
-- [ ] 10-02: UAT gap closure (install pre-check, unpublish listing, startup hook)
+- [x] 10-02: UAT gap closure (install pre-check, unpublish listing, startup hook)
 
 ## Progress
 
@@ -129,7 +129,7 @@ Plans:
 | 7. Setup & Safety | v0.2.0 | 2/2 | Complete | 2026-01-30 |
 | 8. Core Publishing | v0.2.0 | 5/5 | Complete | 2026-01-31 |
 | 9. Utilities | v0.2.0 | 3/3 | Complete | 2026-01-31 |
-| 10. Skills Layer | v0.2.0 | 1/2 | In Progress | - |
+| 10. Skills Layer | v0.2.0 | 2/2 | Complete | 2026-01-31 |
 
 ---
 *Roadmap created: 2026-01-30*
