@@ -29,10 +29,11 @@ This milestone eliminates technical debt in the publishing workflow by consolida
   2. All three scripts (publish.sh, unpublish.sh, list-posts.sh) source common.sh without errors
   3. Running `shellcheck scripts/*.sh scripts/lib/*.sh` produces no errors
   4. Frontmatter extraction using yq correctly handles quoted values, multiline fields, and arrays
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 15-01: [TBD - determined during plan-phase]
+- [ ] 15-01-PLAN.md — Install yq in devcontainer + create common.sh skeleton with constants
+- [ ] 15-02-PLAN.md — Extract functions to common.sh + migrate all scripts to source it
 
 ### Phase 16: Two-Way Sync
 
@@ -96,7 +97,7 @@ Phases execute in numeric order: 15 -> 16 -> 17
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 15. Library Extraction | 0/? | Not started | - |
+| 15. Library Extraction | 0/2 | Planned | - |
 | 16. Two-Way Sync | 0/? | Not started | - |
 | 17. Schema Migration | 0/? | Not started | - |
 
