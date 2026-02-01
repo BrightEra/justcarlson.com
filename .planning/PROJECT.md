@@ -40,10 +40,11 @@ A clean, personal space to write — with a publishing workflow that just works.
 
 **v0.3.0 Polish & Portability:**
 - [ ] Fix title duplication in Obsidian template and strip existing H1s from posts
+- [ ] Wire up tags — add field to template, publish script converts to Astro format
+- [ ] Rename skills with `blog:` prefix for discoverability
 - [ ] Add `just bootstrap` for one-command fresh clone setup
 - [ ] Update README with clear first-run instructions
-- [ ] Audit scripts for hardcoded assumptions
-- [ ] Document dev container preparation (foundation for future)
+- [ ] Add dev container support (devcontainer.json, node_modules volume, auto-bootstrap)
 
 ### Deferred
 
