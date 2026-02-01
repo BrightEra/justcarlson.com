@@ -54,6 +54,37 @@ declare -a PROCESSED_IS_UPDATE=()
 # Argument Parsing
 # ============================================================================
 
+print_help() {
+    cat <<EOF
+Usage: $0 [OPTIONS]
+
+Publish blog posts from Obsidian vault to the blog repository.
+
+Options:
+  --dry-run         Preview what would be published without making changes
+  --all, -a         Select all discovered posts (non-interactive)
+  --post, -p SLUG   Select a specific post by slug or filename
+  --yes, -y         Auto-confirm all prompts (validation, push)
+  --help, -h        Show this help message
+
+Interactive mode (default):
+  Without --all or --post, uses gum/fzf/numbered selection to choose posts.
+  This requires a TTY and won't work in Claude Code.
+
+Non-interactive mode (for Claude Code):
+  $0 --all --yes                    # Publish all posts
+  $0 --post hello-world --yes       # Publish specific post
+  $0 --dry-run --all                # Preview all posts
+
+Examples:
+  $0                          # Interactive selection
+  $0 --dry-run                # Preview what would be published
+  $0 --post my-post --yes     # Publish 'my-post' non-interactively
+  $0 --all --yes              # Publish all posts non-interactively
+EOF
+    exit 0
+}
+
 parse_args() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -72,6 +103,9 @@ parse_args() {
             --yes|-y)
                 AUTO_CONFIRM=true
                 shift
+                ;;
+            --help|-h)
+                print_help
                 ;;
             *)
                 shift

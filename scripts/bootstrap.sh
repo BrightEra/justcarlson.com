@@ -10,6 +10,44 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 RESET='\033[0m'
 
+# ============================================================================
+# Help
+# ============================================================================
+
+print_help() {
+    cat <<EOF
+Usage: $0 [--help|-h]
+
+Bootstrap development environment for justcarlson.com.
+
+This script:
+  - Checks Node.js and npm are installed
+  - Validates Node version matches .nvmrc
+  - Installs npm dependencies
+  - Runs build validation
+  - Verifies dev server starts
+
+Options:
+  --help, -h    Show this help message
+
+The script is idempotent - safe to run multiple times.
+
+Examples:
+  $0              # Run bootstrap
+  just bootstrap  # Same, via justfile
+EOF
+    exit 0
+}
+
+# Parse arguments
+for arg in "$@"; do
+    case "$arg" in
+        --help|-h)
+            print_help
+            ;;
+    esac
+done
+
 # Get the directory where this script lives
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
