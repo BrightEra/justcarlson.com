@@ -2,18 +2,19 @@
 
 ## Overview
 
-v0.3.0 delivers polish and portability for the blog repository. First, fix the title duplication bug and add tags support to complete the publishing workflow. Then, add one-command bootstrap and dev container support so contributors can spin up the project without friction. This milestone continues from v0.2.0 (phases 7-10) with phases 11-12.
+v0.3.0 delivers polish and portability for the blog repository. First, fix the title duplication bug and add tags support to complete the publishing workflow. Then, add one-command bootstrap and dev container support so contributors can spin up the project without friction. Finally, adopt robust Python hook infrastructure following install-and-maintain patterns. This milestone continues from v0.2.0 (phases 7-10) with phases 11-13.
 
 ## Milestones
 
 - [x] **v0.1.0 MVP** - Phases 1-6 (shipped 2026-01-29)
 - [x] **v0.2.0 Publishing Workflow** - Phases 7-10 (shipped 2026-01-31)
-- [ ] **v0.3.0 Polish & Portability** - Phases 11-12 (in progress)
+- [ ] **v0.3.0 Polish & Portability** - Phases 11-13 (in progress)
 
 ## Phases
 
 - [ ] **Phase 11: Content & Workflow Polish** - Fix template bugs, add tags, rename skills
 - [x] **Phase 12: Bootstrap & Portability** - One-command setup, dev container support
+- [ ] **Phase 13: Hook Infrastructure** - Python hooks with logging, env loading, timeout protection
 
 ## Phase Details
 
@@ -27,7 +28,7 @@ v0.3.0 delivers polish and portability for the blog repository. First, fix the t
   3. Tags added in Obsidian appear on published blog posts with proper formatting
   4. All skills discoverable via `/blog:` prefix in Claude (like GSD's `/gsd:` pattern)
   5. SessionStart hook references correct `/blog:install` skill name
-  6. SessionStart hook shows user-visible suggestion when vault not configured
+  6. SessionStart hook provides vault state context to Claude (timeout protected)
 **Plans**: 5 plans
 
 Plans:
@@ -35,7 +36,7 @@ Plans:
 - [x] 11-02-PLAN.md - Rename skills to blog: prefix and enhance SessionStart (SKIL-01, SKIL-02)
 - [x] 11-03-PLAN.md - Fix command directory structure for discoverability (gap closure)
 - [x] 11-04-PLAN.md - Fix SessionStart hook JSON output for user visibility (gap closure)
-- [ ] 11-05-PLAN.md - Add systemMessage field for user terminal visibility (gap closure)
+- [ ] 11-05-PLAN.md - Add timeout protection and update success criteria (gap closure)
 
 ### Phase 12: Bootstrap & Portability
 **Goal**: Fresh clones work with one command; dev containers enable instant contribution
@@ -54,12 +55,29 @@ Plans:
 - [x] 12-01-PLAN.md - Bootstrap script, .nvmrc, vault-optional mode, README Quick Start (BOOT-01, BOOT-02, BOOT-03, BOOT-04)
 - [x] 12-02-PLAN.md - Dev container configuration with auto-bootstrap (DEVC-01, DEVC-02, DEVC-03)
 
+### Phase 13: Hook Infrastructure
+**Goal**: Robust Python hook system following install-and-maintain patterns
+**Depends on**: Phase 11 (existing bash hook)
+**Requirements**: HOOK-01, HOOK-02, HOOK-03, HOOK-04
+**Success Criteria** (what must be TRUE):
+  1. SessionStart hook is Python with uv, matching install-and-maintain pattern
+  2. Hook loads .env variables into CLAUDE_ENV_FILE for bash persistence
+  3. Hook logs to file (.claude/hooks/session_start.log) for debugging
+  4. Hook checks vault configuration and posts-ready status
+  5. Hook has timeout protection (10s) in settings.json
+  6. Hook provides context to Claude via additionalContext
+**Plans**: TBD (to be planned)
+
+Plans:
+- [ ] 13-01-PLAN.md - Convert SessionStart to Python with full infrastructure
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 11. Content & Workflow Polish | v0.3.0 | 4/5 | In Progress | - |
 | 12. Bootstrap & Portability | v0.3.0 | 2/2 | Complete | 2026-02-01 |
+| 13. Hook Infrastructure | v0.3.0 | 0/1 | Not Started | - |
 
 ---
 *Roadmap created: 2026-01-31*
