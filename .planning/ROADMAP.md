@@ -2,19 +2,20 @@
 
 ## Overview
 
-v0.3.0 delivers polish and portability for the blog repository. First, fix the title duplication bug and add tags support to complete the publishing workflow. Then, add one-command bootstrap and dev container support so contributors can spin up the project without friction. Finally, adopt robust Python hook infrastructure following install-and-maintain patterns. This milestone continues from v0.2.0 (phases 7-10) with phases 11-13.
+v0.3.0 delivers polish and portability for the blog repository. First, fix the title duplication bug and add tags support to complete the publishing workflow. Then, add one-command bootstrap and dev container support so contributors can spin up the project without friction. Finally, adopt robust Python hook infrastructure and clean up accumulated technical debt. This milestone continues from v0.2.0 (phases 7-10) with phases 11-14.
 
 ## Milestones
 
 - [x] **v0.1.0 MVP** - Phases 1-6 (shipped 2026-01-29)
 - [x] **v0.2.0 Publishing Workflow** - Phases 7-10 (shipped 2026-01-31)
-- [ ] **v0.3.0 Polish & Portability** - Phases 11-13 (in progress)
+- [ ] **v0.3.0 Polish & Portability** - Phases 11-14 (in progress)
 
 ## Phases
 
 - [ ] **Phase 11: Content & Workflow Polish** - Fix template bugs, add tags, rename skills
 - [x] **Phase 12: Bootstrap & Portability** - One-command setup, dev container support
 - [ ] **Phase 13: Hook Infrastructure** - Python hooks with logging, env loading, timeout protection
+- [ ] **Phase 14: Refactor Cleanup** - Code cleanup, remove dead code, consolidate patterns
 
 ## Phase Details
 
@@ -71,6 +72,17 @@ Plans:
 Plans:
 - [ ] 13-01-PLAN.md - Convert SessionStart to Python with full infrastructure
 
+### Phase 14: Refactor Cleanup
+**Goal**: Clean codebase with consolidated patterns and no dead code
+**Depends on**: Phase 13
+**Requirements**: TBD
+**Success Criteria** (what must be TRUE):
+  1. TBD - to be defined during planning
+**Plans**: TBD (to be planned)
+
+Plans:
+- [ ] 14-01-PLAN.md - TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -78,6 +90,7 @@ Plans:
 | 11. Content & Workflow Polish | v0.3.0 | 4/5 | In Progress | - |
 | 12. Bootstrap & Portability | v0.3.0 | 2/2 | Complete | 2026-02-01 |
 | 13. Hook Infrastructure | v0.3.0 | 0/1 | Not Started | - |
+| 14. Refactor Cleanup | v0.3.0 | 0/? | Not Started | - |
 
 ---
 *Roadmap created: 2026-01-31*
