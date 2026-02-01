@@ -60,25 +60,25 @@ Deferred to later milestones.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TMPL-01 | TBD | Pending |
-| TMPL-02 | TBD | Pending |
-| TMPL-03 | TBD | Pending |
-| TMPL-04 | TBD | Pending |
-| SKIL-01 | TBD | Pending |
-| SKIL-02 | TBD | Pending |
-| BOOT-01 | TBD | Pending |
-| BOOT-02 | TBD | Pending |
-| BOOT-03 | TBD | Pending |
-| BOOT-04 | TBD | Pending |
-| DEVC-01 | TBD | Pending |
-| DEVC-02 | TBD | Pending |
-| DEVC-03 | TBD | Pending |
+| TMPL-01 | Phase 11 | Pending |
+| TMPL-02 | Phase 11 | Pending |
+| TMPL-03 | Phase 11 | Pending |
+| TMPL-04 | Phase 11 | Pending |
+| SKIL-01 | Phase 11 | Pending |
+| SKIL-02 | Phase 11 | Pending |
+| BOOT-01 | Phase 12 | Pending |
+| BOOT-02 | Phase 12 | Pending |
+| BOOT-03 | Phase 12 | Pending |
+| BOOT-04 | Phase 12 | Pending |
+| DEVC-01 | Phase 12 | Pending |
+| DEVC-02 | Phase 12 | Pending |
+| DEVC-03 | Phase 12 | Pending |
 
 **Coverage:**
 - v0.3.0 requirements: 13 total
-- Mapped to phases: 0 (awaiting roadmap)
-- Unmapped: 13
+- Mapped to phases: 13
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-31*
-*Last updated: 2026-01-31 after initial definition*
+*Last updated: 2026-01-31 after roadmap creation*
