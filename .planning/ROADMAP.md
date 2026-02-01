@@ -108,10 +108,10 @@ Plans:
   2. `/publish` skill wraps `just publish` (no duplicated logic)
   3. Skills use `disable-model-invocation: true` (manual invocation only, no auto-triggering)
 **Research recommended**: false
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 10-01: Publish skill with manual invocation
+- [ ] 10-01: Full skill suite with stop hooks
 
 ## Progress
 
@@ -132,4 +132,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-31 (Phase 9 gaps closed — 3 plans total)*
+*Last updated: 2026-01-31 (Phase 10 planned — 1 plan)*
