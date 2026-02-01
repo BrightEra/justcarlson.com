@@ -9,9 +9,9 @@
 ### Layer 1: justfile Commands
 
 #### Setup
-- [ ] **JUST-01**: User can run `just setup` to configure Obsidian vault path interactively
-- [ ] **JUST-02**: `just setup` writes vault path to `.claude/settings.local.json` (gitignored)
-- [ ] **JUST-03**: All other recipes read vault path from config
+- [x] **JUST-01**: User can run `just setup` to configure Obsidian vault path interactively
+- [x] **JUST-02**: `just setup` writes vault path to `.claude/settings.local.json` (gitignored)
+- [x] **JUST-03**: All other recipes read vault path from config
 
 #### Publishing
 - [x] **JUST-04**: User can run `just publish` to publish all ready posts
@@ -27,25 +27,25 @@
 - [x] **JUST-14**: `just publish` reports progress (echoes step names during execution)
 
 #### Utilities
-- [ ] **JUST-15**: User can run `just list-drafts` to see ready-to-publish posts
-- [ ] **JUST-16**: `just list-drafts` shows validation status per post (ready vs missing fields)
-- [ ] **JUST-17**: User can run `just unpublish [file]` to remove a post from repo
-- [ ] **JUST-18**: `just unpublish` keeps source file in Obsidian
-- [ ] **JUST-19**: `just unpublish` commits and pushes removal
-- [ ] **JUST-20**: User can run `just preview` to start Astro dev server
+- [x] **JUST-15**: User can run `just list-posts` to see ready-to-publish posts
+- [x] **JUST-16**: `just list-posts` shows validation status per post (ready vs missing fields)
+- [x] **JUST-17**: User can run `just unpublish [file]` to remove a post from repo
+- [x] **JUST-18**: `just unpublish` keeps source file in Obsidian
+- [x] **JUST-19**: `just unpublish` commits removal (does not push)
+- [x] **JUST-20**: User can run `just preview` to start Astro dev server
 
 ### Layer 2: Hooks & Safety
 
-- [ ] **HOOK-01**: Setup hook runs `just setup` on `claude --init`
-- [ ] **HOOK-02**: Hook configuration stored in `.claude/settings.json` (committed)
-- [ ] **HOOK-03**: Git safety hook blocks dangerous operations (`--force`, `reset --hard`, `checkout .`, `clean -f`)
-- [ ] **HOOK-04**: Maintenance hook runs health checks on `claude --maintenance`
+- [x] **HOOK-01**: Setup hook runs `just setup` on `claude --init`
+- [x] **HOOK-02**: Hook configuration stored in `.claude/settings.json` (committed)
+- [x] **HOOK-03**: Git safety hook blocks dangerous operations (`--force`, `reset --hard`, `checkout .`, `clean -f`)
+- [ ] **HOOK-04**: Maintenance hook runs health checks on `claude --maintenance` (deferred)
 
 ### Layer 3: Skills (Optional)
 
-- [ ] **SKILL-01**: User can run `/publish` skill for human-in-the-loop oversight
-- [ ] **SKILL-02**: `/publish` skill wraps `just publish` (doesn't duplicate logic)
-- [ ] **SKILL-03**: `/publish` uses `disable-model-invocation: true` (manual only)
+- [x] **SKILL-01**: User can run `/publish` skill for human-in-the-loop oversight
+- [x] **SKILL-02**: `/publish` skill wraps `just publish` (doesn't duplicate logic)
+- [x] **SKILL-03**: `/publish` uses `disable-model-invocation: true` (manual only)
 
 ## Future Requirements
 
@@ -83,19 +83,19 @@
 | JUST-12 | Phase 8 | Complete |
 | JUST-13 | Phase 8 | Complete |
 | JUST-14 | Phase 8 | Complete |
-| JUST-15 | Phase 9 | Pending |
-| JUST-16 | Phase 9 | Pending |
-| JUST-17 | Phase 9 | Pending |
-| JUST-18 | Phase 9 | Pending |
-| JUST-19 | Phase 9 | Pending |
-| JUST-20 | Phase 9 | Pending |
+| JUST-15 | Phase 9 | Complete |
+| JUST-16 | Phase 9 | Complete |
+| JUST-17 | Phase 9 | Complete |
+| JUST-18 | Phase 9 | Complete |
+| JUST-19 | Phase 9 | Complete |
+| JUST-20 | Phase 9 | Complete |
 | HOOK-01 | Phase 7 | Complete |
 | HOOK-02 | Phase 7 | Complete |
 | HOOK-03 | Phase 7 | Complete |
 | HOOK-04 | Deferred | Pending (not in Phase 7 success criteria) |
-| SKILL-01 | Phase 10 | Pending |
-| SKILL-02 | Phase 10 | Pending |
-| SKILL-03 | Phase 10 | Pending |
+| SKILL-01 | Phase 10 | Complete |
+| SKILL-02 | Phase 10 | Complete |
+| SKILL-03 | Phase 10 | Complete |
 
 **Coverage:**
 - v0.2.0 requirements: 27 total

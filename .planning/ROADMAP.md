@@ -3,7 +3,7 @@
 ## Milestones
 
 - v0.1.0 MVP Rebranding - Phases 1-6 (shipped 2026-01-30)
-- v0.2.0 Publishing Workflow - Phases 7-10 (in progress)
+- v0.2.0 Publishing Workflow - Phases 7-10 (shipped 2026-01-31)
 
 ## Phases
 
@@ -36,7 +36,7 @@
 
 </details>
 
-### v0.2.0 Publishing Workflow (In Progress)
+### v0.2.0 Publishing Workflow - SHIPPED 2026-01-31
 
 **Milestone Goal:** Frictionless publishing from Obsidian with validation, rollback, and confidence that builds always pass.
 
@@ -111,7 +111,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 10-01: Full skill suite with stop hooks
+- [x] 10-01: Full skill suite with stop hooks
 
 ## Progress
 
@@ -128,8 +128,8 @@ Plans:
 | 7. Setup & Safety | v0.2.0 | 2/2 | Complete | 2026-01-30 |
 | 8. Core Publishing | v0.2.0 | 5/5 | Complete | 2026-01-31 |
 | 9. Utilities | v0.2.0 | 3/3 | Complete | 2026-01-31 |
-| 10. Skills Layer | v0.2.0 | 0/1 | Not started | - |
+| 10. Skills Layer | v0.2.0 | 1/1 | Complete | 2026-01-31 |
 
 ---
 *Roadmap created: 2026-01-30*
-*Last updated: 2026-01-31 (Phase 10 planned — 1 plan)*
+*Last updated: 2026-01-31 (v0.2.0 complete — all phases shipped)*
