@@ -26,10 +26,16 @@ Requirements for the integration refactor. Each maps to roadmap phases.
 ### Schema Migration
 
 - [ ] **MIGR-01**: Discovery trigger changed from `status: Published` to `draft: false`
-- [ ] **MIGR-02**: Obsidian Post Template updated (remove status, published fields; add draft: true)
-- [ ] **MIGR-03**: Existing published posts migrated (add draft: false if missing)
+- [ ] **MIGR-02**: Obsidian Post Template updated:
+  - `draft: true` (source of truth, default unpublished)
+  - `pubDatetime:` empty (set by publish script)
+  - `created:` set at template time (when note made)
+  - Remove `status` field
+  - Remove `published` field (redundant with pubDatetime)
+- [ ] **MIGR-03**: Existing published posts migrated (add draft: false, preserve pubDatetime)
 - [ ] **MIGR-04**: Obsidian types.json updated (draft as boolean type)
 - [ ] **MIGR-05**: Obsidian Base/Category views configured to filter by draft field
+- [ ] **MIGR-06**: Astro content.config.ts updated (remove/deprecate status and published fields)
 
 ### Configuration
 
@@ -68,10 +74,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MIGR-03 | Phase 17 | Pending |
 | MIGR-04 | Phase 17 | Pending |
 | MIGR-05 | Phase 17 | Pending |
+| MIGR-06 | Phase 17 | Pending |
 
 **Coverage:**
-- v0.4.0 requirements: 17 total
-- Mapped to phases: 17
+- v0.4.0 requirements: 18 total
+- Mapped to phases: 18
 - Unmapped: 0
 
 ---

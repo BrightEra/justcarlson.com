@@ -54,12 +54,30 @@ Plans:
 
 **Goal**: `draft: true/false` becomes the single source of truth for publish state
 **Depends on**: Phase 16 (sync must work before changing source of truth)
-**Requirements**: MIGR-01, MIGR-02, MIGR-03, MIGR-04, MIGR-05
+**Requirements**: MIGR-01, MIGR-02, MIGR-03, MIGR-04, MIGR-05, MIGR-06
 **Success Criteria** (what must be TRUE):
+
+*Discovery:*
   1. `just list-posts` discovers posts by checking `draft: false` (not `status: Published`)
-  2. New posts created from Obsidian template have `draft: true` and no `status` or `published` fields
-  3. All existing published posts in vault have `draft: false` field present
-  4. Obsidian Base/Category views filter by draft field, not status field
+
+*Obsidian Template (new posts):*
+  2. `draft: true` present (source of truth, default unpublished)
+  3. `pubDatetime:` empty (set by publish script, not template)
+  4. `created:` set at template creation time (when note was made)
+  5. NO `status` field (removed, replaced by draft)
+  6. NO `published` field (removed, redundant with pubDatetime)
+
+*Existing Posts:*
+  7. All published posts in vault have `draft: false`
+  8. All published posts have valid `pubDatetime` (preserved or backfilled)
+
+*Obsidian Configuration:*
+  9. `types.json` updated: `draft` as boolean type
+  10. Base/Category views filter by `draft` field, not `status`
+
+*Astro Schema:*
+  11. `content.config.ts` updated: remove `status` and `published` from schema (or mark deprecated)
+
 **Plans**: TBD
 
 Plans:
