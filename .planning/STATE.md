@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-01-31)
 
 ## Current Position
 
-Phase: 12 of 12 (Bootstrap & Portability)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-01 — Completed 12-02-PLAN.md
+Phase: 11 of 12 (Content Workflow Polish) - Gap Closure
+Plan: 3 of 3 in current phase
+Status: Gap closure complete
+Last activity: 2026-02-01 — Completed 11-03-PLAN.md (gap closure)
 
 Progress: [█████████████████████] 100%
 
@@ -31,9 +31,9 @@ Progress: [█████████████████████] 100%
 - Timeline: 2 days (2026-01-30 to 2026-01-31)
 
 **v0.3.0 Milestone:**
-- Total plans completed: 4
-- Average duration: 2.75 min
-- Total execution time: 0.18 hours
+- Total plans completed: 5
+- Average duration: 2.6 min
+- Total execution time: 0.22 hours
 - Timeline: 1 day (2026-02-01)
 
 **By Phase:**
@@ -50,7 +50,7 @@ Progress: [█████████████████████] 100%
 | 08-core-publishing | 5 | 11 min | 2.2 min |
 | 09-utilities | 3 | 8 min | 2.7 min |
 | 10-skills-layer | 2 | 4 min | 2 min |
-| 11-content-workflow-polish | 2 | 4 min | 2 min |
+| 11-content-workflow-polish | 3 | 6 min | 2 min |
 | 12-bootstrap-portability | 2 | 6 min | 3 min |
 
 ## Accumulated Context
@@ -71,6 +71,7 @@ All decisions documented in PROJECT.md Key Decisions table.
 | 2026-02-01 | 12-02 | Named volume for node_modules to avoid macOS/Windows bind mount performance issues |
 | 2026-02-01 | 12-02 | Use openPreview instead of openBrowser for port forwarding |
 | 2026-02-01 | 12-02 | Add --host flag to dev server for container/network accessibility |
+| 2026-02-01 | 11-03 | Commands at .claude/commands/blog/<name>.md for Claude Code discovery |
 
 ### Pending Todos
 
@@ -83,9 +84,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 12-02-PLAN.md (Phase 12 complete)
+Stopped at: Completed 11-03-PLAN.md (Gap closure complete)
 Resume file: None
-Next action: v0.3.0 milestone complete - all phases done
+Next action: UAT gap closure complete - /blog: commands now discoverable
 
 Config:
 {
