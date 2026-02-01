@@ -16,6 +16,21 @@ Interactive setup guide for new developers working with justcarlson.com.
 
 ## Steps
 
+### Step 0: Check Existing Configuration
+
+First, check if vault is already configured:
+
+```bash
+cat .claude/settings.local.json 2>/dev/null | jq -r '.obsidianVaultPath // empty'
+```
+
+If the command outputs a valid path:
+- Report to user: "Vault already configured at: [path]"
+- Ask if they want to reconfigure or keep existing
+- If keeping existing, skip to Step 2 (Verify Dependencies)
+
+If empty or file missing, proceed to Step 1.
+
 ### Step 1: Configure Obsidian Vault
 
 Run the setup script to configure your vault path:

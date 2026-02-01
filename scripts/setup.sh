@@ -16,6 +16,19 @@ echo ""
 echo "=== Obsidian Vault Setup ==="
 echo ""
 
+# Check for existing config (idempotency)
+if [[ -f "$CONFIG_FILE" ]]; then
+    EXISTING_PATH=$(jq -r '.obsidianVaultPath // empty' "$CONFIG_FILE" 2>/dev/null)
+    if [[ -n "$EXISTING_PATH" && -d "$EXISTING_PATH/.obsidian" ]]; then
+        echo ""
+        echo -e "${GREEN}Already configured.${RESET}"
+        echo -e "Vault path: ${GREEN}$EXISTING_PATH${RESET}"
+        echo ""
+        echo "To reconfigure, delete $CONFIG_FILE and run again."
+        exit 0
+    fi
+fi
+
 # Auto-detect Obsidian vaults in home directory
 echo "Searching for Obsidian vaults..."
 mapfile -t VAULTS < <(find "$HOME" -maxdepth 4 -type d -name ".obsidian" 2>/dev/null | while read -r obsidian_dir; do
