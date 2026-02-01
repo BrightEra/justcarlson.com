@@ -662,3 +662,336 @@ Time to first successful `just preview`: **Under 2 minutes** (excluding npm inst
 
 *First-run research added: 2026-01-31*
 *Focus: First-run experience and bootstrap UX*
+
+---
+
+# Addendum: Two-Way Sync Workflow Behaviors
+
+**Added:** 2026-02-01
+**Focus:** CLI publishing workflow with two-way sync between Obsidian and blog
+**Context:** Refactoring milestone - improving existing CLI publishing workflow
+
+## Problem Statement
+
+Current workflow has gaps in two-way synchronization:
+1. **Unpublish doesn't update Obsidian** - After running `just unpublish`, user must manually update Obsidian to prevent re-publishing
+2. **pubDatetime set at wrong time** - Template creation sets date, but it should be set when actually publishing
+3. **Discovery uses array format** - Current `status: - Published` is unusual; standard is `draft: false`
+
+The goal: Bidirectional metadata sync so Obsidian and blog stay consistent without manual intervention.
+
+---
+
+## Two-Way Sync Table Stakes
+
+Features users expect from a two-way sync workflow. Missing = workflow feels broken.
+
+| Feature | Why Expected | Complexity | Current Status |
+|---------|--------------|------------|----------------|
+| **Publish updates existing posts** | Users expect `publish` to work idempotently - running it again updates rather than fails | Low | Implemented (detects changes) |
+| **Unpublish updates Obsidian source** | Two-way sync requires both sides stay consistent; manual Obsidian update is friction | Medium | Missing - current gap |
+| **pubDatetime set at publish time** | Publication date should reflect when content went live, not when template was created | Low | Missing - set at template creation |
+| **Confirmation before destructive actions** | Unpublish removes content; users expect a safety check | Low | Implemented (default N) |
+| **Dry-run mode for all operations** | Users want to preview changes before committing | Low | Publish only, missing for unpublish |
+| **Clear feedback on what changed** | CLI should report what files were modified, created, removed | Low | Implemented |
+| **Rollback on failure** | If lint/build fails, don't leave partial state | Medium | Implemented |
+
+---
+
+## Two-Way Sync Behavior Specification
+
+### Source of Truth Pattern
+
+**Obsidian is the source of truth for:**
+- Content body
+- Title, description, tags
+- Draft/publish intent (`draft` field)
+- Whether post should be published
+
+**Blog repo is the derived output:**
+- Receives transformed content from Obsidian
+- Gets normalized frontmatter (author array -> string, etc.)
+- Contains computed `pubDatetime` (set once at first publish)
+- May contain `modDatetime` for updates
+
+**Conflict resolution:** If Obsidian and blog diverge, Obsidian wins. The publish operation is one-way content flow with two-way metadata sync.
+
+### Publish Flow (Source -> Destination)
+
+**First-time publish:**
+1. Copy post from Obsidian to blog repo
+2. Set `pubDatetime` to current timestamp (if not already set)
+3. Update Obsidian source: change `draft: true` to `draft: false`
+4. Commit blog changes
+5. Report success with post URL
+
+**Re-publish (update):**
+1. Detect content/frontmatter differences between Obsidian and blog
+2. If identical: skip with "already up to date" message
+3. If different: copy updated content, preserve original `pubDatetime`
+4. Update `modDatetime` in blog copy (optional)
+5. Commit with "update" message
+6. Report what changed
+
+**Expected behaviors:**
+- Idempotent: running publish multiple times has same effect
+- Non-destructive: doesn't lose work in either location
+- Atomic: either fully succeeds or fully rolls back
+
+### Unpublish Flow (Destination -> Source)
+
+**Standard unpublish:**
+1. Confirm action (unless `--force`)
+2. Remove post from blog repo
+3. Update Obsidian source: change `draft: false` to `draft: true`
+4. Preserve `pubDatetime` in Obsidian (for potential republish)
+5. Commit blog removal
+6. Report success
+
+**Expected behaviors:**
+- Confirmation required by default (destructive action)
+- Source file preserved (never delete Obsidian content)
+- Two-way: Obsidian reflects unpublished state
+- Prevents accidental re-publish on next `just publish`
+
+---
+
+## pubDatetime Handling Options
+
+**Option A: Set once, preserve forever (Recommended)**
+- Set `pubDatetime` at first publish
+- Never modify, even on unpublish
+- On republish, reuse original date
+- Rationale: Publication date is historical fact
+
+**Option B: Clear on unpublish**
+- Set `pubDatetime` at publish
+- Clear on unpublish
+- Set fresh timestamp on republish
+- Rationale: Each publish is new publication event
+
+**Option C: User choice**
+- Flag `--preserve-date` or `--fresh-date` on republish
+- Default to preserve
+- Rationale: Flexibility for different use cases
+
+**Recommendation:** Option A. Publication date should be stable for URLs, RSS feeds, and SEO. "Last updated" is a separate concern handled by `modDatetime`.
+
+---
+
+## Two-Way Sync Differentiators
+
+Features that improve UX beyond basic expectations. Not required, but valued.
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Batch unpublish** | Remove multiple posts at once | Low | Currently only single-post unpublish |
+| **Dry-run for unpublish** | Preview what unpublish would do | Low | Matches publish --dry-run pattern |
+| **Preserve pubDatetime on unpublish** | Keeps publication history for potential republish | Low | Allows "republish" without losing original date |
+| **Interactive post selection for unpublish** | Use gum/fzf to select posts to unpublish | Medium | Matches publish selection pattern |
+| **modDatetime tracking** | Track last modification date separately from publish date | Low | Good for SEO "last updated" display |
+| **Validation before unpublish** | Warn if unpublishing breaks links from other posts | Medium | Prevents broken internal links |
+| **Undo unpublish** | Quick republish of recently unpublished post | Medium | Requires tracking unpublish history |
+
+---
+
+## Two-Way Sync Anti-Features
+
+Features to explicitly NOT build.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Auto-sync file watcher** | Complexity, battery drain, unintentional publishes | Explicit `just publish` command |
+| **Delete Obsidian source on unpublish** | Data loss risk, against source-of-truth principle | Only update frontmatter |
+| **Bi-directional content sync** | Blog edits should go in Obsidian first; prevents divergence | One-way content flow |
+| **Silent unpublish (no confirmation)** | Destructive action needs friction | Default to confirmation prompt |
+| **Multiple source of truth** | Leads to merge conflicts, confusion | Obsidian is always authoritative |
+| **Auto-resolve conflicts by overwriting** | Data loss risk | Warn user, require explicit resolution |
+| **Over-confirmation (confirm every step)** | Alert fatigue, users stop reading | Confirm once for batch, skip for non-destructive |
+
+---
+
+## Edge Cases
+
+Scenarios that need explicit handling.
+
+### Republish After Unpublish
+
+**Scenario:** User unpublishes a post, then wants to republish it later.
+
+**Expected behavior:**
+1. Post still exists in Obsidian with `draft: true`
+2. User changes to `draft: false` (or equivalent)
+3. Running `just publish` discovers and republishes
+4. Preserve original `pubDatetime` if it exists
+
+**Recommendation:** Preserve original `pubDatetime` if it exists in Obsidian frontmatter, otherwise set new timestamp.
+
+### Partial Failure During Publish
+
+**Scenario:** Post copied to blog, but lint fails.
+
+**Current behavior:** Rollback removes copied files, leaves Obsidian unchanged.
+
+**Expected behavior:** Same - Obsidian source should not be modified until operation fully succeeds.
+
+**Recommendation:** Update Obsidian frontmatter as final step, after commit. If any prior step fails, Obsidian remains unchanged.
+
+### Partial Failure During Unpublish
+
+**Scenario:** Post removed from blog, but Obsidian update fails.
+
+**Expected behavior:**
+1. Attempt to restore blog post (if possible)
+2. If restore fails, warn user about inconsistent state
+3. Provide manual recovery steps
+
+**Recommendation:** Unpublish in this order:
+1. Read and validate Obsidian file exists and is writable
+2. Remove from blog repo
+3. Update Obsidian frontmatter
+4. Commit blog changes
+5. If step 3 fails after step 2, restore blog file before commit
+
+### Post Exists in Blog But Not Obsidian
+
+**Scenario:** User deletes Obsidian source file but blog copy remains.
+
+**Expected behavior:**
+- `just list-posts --published` should still show it
+- `just unpublish` should work (remove blog copy)
+- No Obsidian update attempted (source missing)
+
+**Recommendation:** Handle gracefully. Unpublish should succeed even without Obsidian source.
+
+### Content Divergence
+
+**Scenario:** User manually edits blog copy (not Obsidian).
+
+**Expected behavior:**
+- Next `just publish` would overwrite blog with Obsidian content
+- This is correct - Obsidian is source of truth
+
+**Recommendation:** Could add `--preserve-blog` flag for edge cases, but default should be Obsidian wins.
+
+---
+
+## Feature Dependencies
+
+```
+draft field in Obsidian
+        |
+        v
+publish command -----> unpublish command
+    |                       |
+    v                       v
+[sets draft: false]    [sets draft: true]
+[sets pubDatetime]     [preserves pubDatetime]
+    |                       |
+    v                       v
+blog copy created       blog copy removed
+    |                       |
+    v                       v
+git commit              git commit
+```
+
+**Dependency chain:**
+1. Obsidian template must support `draft` field
+2. Publish must update `draft` field in Obsidian
+3. Unpublish must update `draft` field in Obsidian
+4. Both commands need write access to Obsidian vault
+
+---
+
+## Draft Field Semantics
+
+### Current: `status: Published`
+
+```yaml
+status:
+  - Published
+```
+
+**Issues:**
+- Array format is unusual for boolean intent
+- Mixes with other potential statuses
+- Requires multiline YAML parsing
+
+### Proposed: `draft: true/false`
+
+```yaml
+draft: false  # Published
+draft: true   # Not published
+```
+
+**Benefits:**
+- Standard pattern across static site generators (Hugo, Astro, Gatsby)
+- Boolean is cleaner than array
+- Single-line, easy to parse and update
+- Matches Astro content collection schema
+
+**Migration path:**
+1. New template uses `draft: true`
+2. Publish script sets `draft: false`
+3. Keep backward compatibility for `status: Published` during transition
+4. Eventually deprecate `status` field
+
+---
+
+## MVP Recommendation for Refactoring Milestone
+
+Prioritize these features:
+
+1. **Unpublish updates Obsidian** (Table stakes - closes the gap)
+   - Set `draft: true` in Obsidian source
+   - Prevents accidental re-publish
+
+2. **pubDatetime at publish time** (Table stakes - fixes template issue)
+   - Set timestamp when `just publish` runs (if not already set)
+   - Preserve existing `pubDatetime` on updates
+
+3. **Dry-run for unpublish** (Low effort, matches publish pattern)
+   - `just unpublish <slug> --dry-run`
+
+Defer to post-milestone:
+- Batch unpublish: adds complexity, single post sufficient for now
+- modDatetime tracking: nice-to-have, not blocking
+- Interactive unpublish selection: polish feature
+- Migration from `status` to `draft` field: can be separate task
+
+---
+
+## Two-Way Sync Sources
+
+### Industry Patterns
+- [Two-Way Sync Demystified: Key Principles And Best Practices](https://www.stacksync.com/blog/two-way-sync-demystified-key-principles-and-best-practices) - Source of truth patterns
+- [Confirmation Dialogs Can Prevent User Errors - NN/g](https://www.nngroup.com/articles/confirmation-dialog/) - When to confirm destructive actions
+- [How to Design Better Destructive Action Modals](https://uxpsychology.substack.com/p/how-to-design-better-destructive) - UX patterns for dangerous operations
+- [Smashing Magazine: How To Manage Dangerous Actions](https://www.smashingmagazine.com/2024/09/how-manage-dangerous-actions-user-interfaces/) - Friction proportional to impact
+
+### Static Site Publishing
+- [Date and Time with a Static Site Generator](https://blog.jim-nielsen.com/2023/date-and-time-in-ssg/) - pubDatetime best practices
+- [Published vs Last Updated Date: Which is Better for SEO?](https://www.contentpowered.com/blog/published-modified-date-seo/) - Date handling for SEO
+- [Creating Markdown Drafts with Gatsby](https://tina.io/blog/creating-markdown-drafts) - Draft mode workflow patterns
+- [Publishing from Obsidian](https://cassidoo.co/post/publishing-from-obsidian/) - Obsidian to blog workflow
+
+### CLI Patterns
+- [Introducing Idempotent Publishing](https://ably.com/blog/introducing-idempotent-publishing) - Idempotency in publishing
+- [cfn-create-or-update](https://cloudonaut.io/painlessly-create-or-update-cloudformation-stack-idempotent/) - CLI idempotent patterns
+
+---
+
+## Confidence Assessment
+
+| Area | Level | Reason |
+|------|-------|--------|
+| Two-way sync behavior | HIGH | Clear industry patterns, analyzed current implementation |
+| pubDatetime handling | HIGH | Standard practice: set once, preserve |
+| Unpublish UX | HIGH | Well-established destructive action patterns |
+| Draft field semantics | HIGH | Matches Astro/Hugo/Gatsby conventions |
+| Edge case handling | MEDIUM | Reasonable inference, needs validation in practice |
+
+---
+
+*Two-way sync research added: 2026-02-01*
+*Focus: CLI publishing workflow behaviors for refactoring milestone*

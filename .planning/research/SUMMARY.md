@@ -1,209 +1,232 @@
-# Research Summary: v0.3.0 Polish & Portability
+# Project Research Summary
 
-**Project:** justcarlson.com
-**Domain:** Astro static blog with development workflow automation
-**Researched:** 2026-01-31
-**Milestone:** v0.3.0 Polish & Portability
+**Project:** v0.4.0 Obsidian + Blog Integration Refactor
+**Domain:** Bash script refactoring, blog publishing workflow, two-way sync
+**Researched:** 2026-02-01
 **Confidence:** HIGH
 
 ## Executive Summary
 
-v0.3.0 focuses on making the blog repository portable and polished for contributors. The existing stack (Astro 5, Tailwind CSS 4, justfile-based automation) is complete; this milestone adds portability infrastructure with minimal additions. The core insight from research: **layered architecture already works**. The three-layer pattern (justfile commands, Claude hooks, skills) is proven. Now we add bootstrap automation and dev container support to eliminate "works on my machine" issues.
+This refactoring milestone addresses technical debt in the blog publishing workflow. The current scripts have ~280 lines of duplicated code across three files, use fragile sed/perl chains for YAML manipulation, and lack two-way sync between Obsidian and the blog. The research shows a clear path forward: adopt **yq (mikefarah/yq v4)** for YAML manipulation, consolidate duplicated code into a single shared library (`scripts/lib/common.sh`), and implement bidirectional metadata sync using `draft: true/false` as the source of truth.
 
-The recommended approach: Add two configuration files (devcontainer.json, .nvmrc), extend the existing justfile with an idempotent bootstrap recipe, and update documentation. No new runtime dependencies. The main risk is hardcoded path assumptions breaking in containerized environments, mitigated by detecting container mode and providing mock/graceful-degradation modes for vault-dependent commands.
+The recommended approach stays bash-only. Adding Python would create unnecessary complexity for what are fundamentally simple file operations with YAML parsing. yq provides the YAML reliability needed (proper boolean handling, frontmatter-aware processing, cross-platform consistency) without leaving bash. For code organization, a single shared library is appropriate for this codebase size - three scripts sharing ~150 lines of common functions doesn't justify multiple library files.
 
-Critical success factor: Bootstrap must be idempotent (run twice without breaking). Dev container must handle node_modules performance (named volume mount). Vault paths must gracefully degrade when unavailable (container contributors without Obsidian setup).
+The key risks are YAML corruption via regex manipulation and data loss during two-way sync. These are mitigated by: (1) using yq instead of sed/perl for all YAML modifications, (2) implementing atomic writes with backup before modifying Obsidian source files, and (3) phased schema migration from `status: Published` to `draft: false` with backward compatibility during transition. The refactoring should proceed incrementally: library extraction first, then YAML tooling replacement, then two-way sync features.
 
 ## Key Findings
 
 ### Recommended Stack
 
-**No new runtime dependencies needed.** Existing stack is complete (Astro 5.16.6, Tailwind CSS 4, sharp, Node 22 LTS). This milestone adds **configuration-only** infrastructure.
+The current scripts use fragile sed/grep/perl chains for YAML frontmatter manipulation. This breaks on edge cases (quoted values, multiline fields, YAML arrays) and creates cross-platform issues (BSD vs GNU sed). The solution is **yq (mikefarah/yq v4)**, a YAML-aware processor with dedicated frontmatter support.
 
-**Core additions:**
-- **devcontainer.json**: Single file using Microsoft's official typescript-node:22 base image with just feature from ghcr.io/guiyomh/features/just:0
-- **.nvmrc**: Pin Node.js 22 for nvm/fnm/mise auto-switching
-- **just bootstrap recipe**: Idempotent one-command setup (npm install + just setup with guards)
+**Core technologies:**
+- **yq v4 (mikefarah)**: YAML frontmatter manipulation - Provides `--front-matter=extract` and `--front-matter=process` flags for markdown files, handles boolean values correctly (YAML 1.2 spec), cross-platform consistent behavior
+- **Bash shared library pattern**: Code deduplication - Single `scripts/lib/common.sh` file consolidates ~280 lines of duplicated functions, sourced pattern with double-source guard, appropriate for 3-4 consuming scripts
+- **Atomic write pattern**: Safe file modifications - Write to temp file then `mv` to target, backup Obsidian files before modification, prevents data loss during two-way sync
 
-**Rationale:** Dev containers eliminate environment setup friction. Node version lock prevents "works on my machine" version issues. Bootstrap recipe provides single entry point for new contributors.
-
-**Confidence:** HIGH — based on official VS Code devcontainer docs and just manual.
+**Critical distinction:** The Arch Linux default `yq` (v3.4.3) is kislyuk/yq (Python wrapper around jq) which lacks `--front-matter` support. Must install mikefarah/yq v4 separately.
 
 ### Expected Features
 
-**Must have (table stakes):**
-- `just bootstrap` command for one-step setup — users expect modern projects to have single-command bootstrap
-- Idempotent bootstrap (run twice = safe) — standard expectation for setup scripts
-- Dev container configuration — increasingly expected in 2025/2026 for open source projects
-- Node version file (.nvmrc) — prevents version-related issues across contributors
-- First-run documentation in README — users expect clear "Quick Start" section
+Research focused on refactoring behaviors rather than new greenfield features. The workflow already has publishing capabilities; this milestone improves reliability and adds two-way sync.
 
-**Should have (differentiators):**
-- Zero-config preview mode (site works without vault) — allows exploration before full setup
-- Container-aware vault detection — gracefully handles missing Obsidian vault in container environments
-- Progress indicators in bootstrap — clear feedback during multi-step setup
-- Next-step suggestions after setup — guides new users on "what to run next"
+**Must have (table stakes):**
+- **Unpublish updates Obsidian source** - Two-way sync requires both sides stay consistent; without this, manual updates create friction
+- **pubDatetime set at publish time** - Publication date should reflect when content went live, not template creation time
+- **Reliable YAML manipulation** - Boolean fields, quoted values, arrays must survive round-trip without corruption
+- **Atomic operations** - All-or-nothing: copy all files, validate all, commit all
+
+**Should have (competitive):**
+- **Dry-run for unpublish** - Matches existing `just publish --dry-run` pattern
+- **Preserve pubDatetime on unpublish** - Keeps publication history for potential republish
+- **Cross-platform script compatibility** - Works on Linux (dev), macOS (potential contributors), devcontainer
 
 **Defer (v2+):**
-- Health check command (`just doctor`) — helpful but not essential for MVP
-- Non-interactive setup flags — automation nice-to-have, not critical for initial release
-- Multiple vault support — YAGNI for personal blog
-- Devcontainer Dockerfile customization — pre-built image sufficient
+- **Batch unpublish** - Single-post unpublish sufficient for personal blog
+- **modDatetime tracking** - Nice-to-have for SEO "last updated" display
+- **Interactive post selection (fzf/gum)** - Polish feature, not blocking
 
 ### Architecture Approach
 
-**Three-layer architecture remains unchanged.** This milestone adds bootstrap orchestration that sits alongside existing layers without modifying core patterns.
+The current architecture has significant code duplication: ~280 lines duplicated across `publish.sh`, `list-posts.sh`, and `unpublish.sh`. Functions like `slugify()`, `extract_frontmatter()`, `validate_frontmatter()`, and `load_config()` appear in multiple files. The solution is a single shared library with clear component boundaries.
 
 **Major components:**
-1. **Bootstrap layer** (new) — Orchestrates first-run setup, calls existing setup.sh via justfile, validates prerequisites
-2. **Justfile layer** (extended) — Add bootstrap recipe that chains npm install + just setup with idempotency guards
-3. **Dev container layer** (new) — Wraps entire environment, calls `just bootstrap` in postCreateCommand
-4. **Setup detection** (enhanced) — Detect container environment, adapt vault discovery accordingly
+1. **`scripts/lib/common.sh`** - Shared library containing: colors/exit codes/paths (constants), config loading, frontmatter extraction (using yq), validation functions, slug generation
+2. **Script-specific files** - Each script sources `common.sh` and keeps only script-specific logic: `publish.sh` (image handling, rollback, commits), `list-posts.sh` (table formatting, sorting), `unpublish.sh` (removal confirmation)
+3. **Two-way sync layer** - Manages bidirectional metadata: publish sets `draft: false` in Obsidian, unpublish sets `draft: true`, preserves `pubDatetime` across operations
 
-**Key pattern:** Bootstrap follows install-and-maintain paradigm with three execution modes already established in research:
-- Deterministic: `just bootstrap` from terminal (no Claude)
-- Container: devcontainer.json postCreateCommand triggers bootstrap
-- Interactive: Existing `just setup` for vault configuration
+**Sourcing pattern:**
+```bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
+```
+
+This pattern works regardless of where scripts are invoked from, handles symlinks correctly, and works in devcontainers.
 
 ### Critical Pitfalls
 
-1. **Hardcoded vault path in container** — Obsidian vault paths from host filesystem don't exist in container. Detection: check for `/.dockerenv` or `REMOTE_CONTAINERS` env var. Solution: gracefully degrade vault-dependent commands, provide clear error with instructions for mounting vault or using mock mode.
+From PITFALLS.md, filtered for refactoring-specific risks:
 
-2. **Non-idempotent bootstrap script** — Running `just bootstrap` twice causes failures (mkdir without -p, config file duplication). Prevention: Use `mkdir -p`, `ln -sf`, guard before append (`grep -qF "entry" file || echo "entry" >> file`), detect already-configured state early.
+1. **YAML Corruption via sed/regex** - Using sed or regex to modify YAML frontmatter corrupts whitespace, quoting, or multiline values. YAML is whitespace-significant; naive string manipulation breaks parsing. **Prevention:** Use yq with `--front-matter=process` for all modifications; validate with `yq '.' file.md` after changes.
 
-3. **node_modules performance disaster on macOS/Windows** — Bind-mounting node_modules through Docker VM makes npm operations 5-10x slower (1 min becomes 10 min). Prevention: Use named volume mount in devcontainer.json: `"mounts": ["source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"]`.
+2. **Data Loss via Two-Way Sync Without Backup** - Modifying Obsidian vault files without backup causes permanent data loss when scripts malfunction. **Prevention:** Atomic write pattern (write to temp, then mv); backup before modification; implement dry-run mode for sync operations.
 
-4. **Interactive setup script in container** — Existing setup.sh uses `read -rp` for input, which fails in postCreateCommand (no TTY). Prevention: Add environment variable fallback (`OBSIDIAN_VAULT_PATH`), detect TTY availability with `[[ -t 0 ]]`, provide non-interactive mode.
+3. **Cross-Platform sed Incompatibility** - Scripts work on Linux but fail on macOS due to BSD vs GNU sed differences. The `-i` flag requires different syntax. **Prevention:** Use yq instead of sed for YAML (consistent across platforms); or use `sed -i.bak` pattern (works on both).
 
-5. **Windows path format incompatibility** — devcontainer.json mount paths break on Windows without Docker Desktop (backslash vs forward slash, drive letter translation). Prevention: Use `${localWorkspaceFolder}` variable (VS Code handles translation), avoid hardcoded absolute paths, document WSL2 as recommended Windows path.
+4. **Schema Migration Breaks Existing Posts** - Migration from `status: Published` to `draft: false` can break existing published posts if edge cases are missed. **Prevention:** Phased migration with overlap period; explicit state mapping (`status: Published` → `draft: false`, `status: Draft` → `draft: true`, missing → `draft: true`); pre-migration audit of all posts.
+
+5. **Shared Library Variable Scope Leakage** - Bash variables are global by default; sourcing library overwrites caller's variables. **Prevention:** Use `local` in all functions; namespace global variables with prefix (`_BLOG_LIB_`); guard against double-sourcing.
 
 ## Implications for Roadmap
 
-Based on research, this milestone naturally splits into two sequential phases:
+Based on research, suggested phase structure prioritizes risk reduction and incremental validation:
 
-### Phase 1: Fix Title Duplication & Bootstrap Foundation
-**Rationale:** Fix existing bug first, then add bootstrap infrastructure that depends on stable template behavior.
+### Phase 1: Library Extraction + yq Integration
+**Rationale:** Deduplicates code before adding complexity; establishes yq patterns before two-way sync depends on them. Low-risk changes that improve maintainability immediately.
 
 **Delivers:**
-- Fixed Obsidian template (title no longer duplicated)
-- `just bootstrap` recipe with idempotency guards
-- .nvmrc file for Node version consistency
-- README updated with Quick Start section
+- `scripts/lib/common.sh` with all duplicated functions
+- yq-based frontmatter functions (`fm_get()`, `fm_set()`)
+- Platform-aware utility functions
+- Reduced codebase from ~2500 lines to ~2320 lines
 
 **Addresses:**
-- Table stakes: Single-command setup, idempotent bootstrap, node version file
-- Pitfall: Non-idempotent bootstrap (guards prevent double-run failures)
+- Must-have: Reliable YAML manipulation
+- Architecture: Single shared library pattern
+- Pitfall: YAML corruption via sed/regex
 
 **Avoids:**
-- Building devcontainer on broken foundation (template fix comes first)
-- Bootstrap recipe calling flawed setup script
+- Variable scope leakage (guard, locals, readonly)
+- Code drift (extract all-or-nothing)
+- Cross-platform sed issues (standardize on yq)
 
-**Research flag:** Standard pattern — no additional research needed. Justfile patterns well-documented.
-
-### Phase 2: Dev Container & Documentation Polish
-**Rationale:** Bootstrap must exist first (devcontainer calls `just bootstrap`). Container environment reveals path assumption issues.
+### Phase 2: Two-Way Sync Implementation
+**Rationale:** Builds on stable library foundation; implements core workflow improvement. Depends on yq being proven in Phase 1.
 
 **Delivers:**
-- .devcontainer/devcontainer.json with Node 22, just feature, named volume for node_modules
-- Container-aware vault detection in setup.sh
-- Environment variable fallback for non-interactive setup
-- README section on dev container usage
-
-**Addresses:**
-- Table stakes: Dev container configuration, first-run documentation
-- Differentiators: Zero-config preview mode, container-aware vault detection
-- Pitfalls: Hardcoded vault path, interactive script in container, node_modules performance
+- Unpublish updates Obsidian source (`draft: true`)
+- Publish sets `draft: false` in Obsidian
+- pubDatetime set at publish time (if not already set)
+- Atomic write pattern with backup
+- Dry-run mode for unpublish
 
 **Uses:**
-- Stack: Microsoft devcontainer base image (typescript-node:22), just feature from ghcr.io/guiyomh/features
-- Architecture: Three-layer pattern (devcontainer wraps existing layers)
+- yq for frontmatter modification (from Phase 1)
+- Atomic write helpers (from Phase 1)
+- Shared validation functions (from Phase 1)
+
+**Implements:**
+- Two-way sync layer (architecture component 3)
 
 **Avoids:**
-- Windows path issues (use ${localWorkspaceFolder} variable)
-- Performance disaster (named volume for node_modules)
-- Container hang (environment variable fallback for vault path)
+- Data loss (atomic writes, backup before modify)
+- Conflict detection gaps (track sync state, compare timestamps)
 
-**Research flag:** Container-specific vault mounting may need trial-and-error during implementation. Consider documenting "for publishing workflow, mount vault via mounts config" vs "for code-only development, skip vault setup."
+### Phase 3: Schema Migration (status → draft)
+**Rationale:** Deferred until two-way sync is stable; changes source of truth field. Risky migration happens last when tooling is proven.
+
+**Delivers:**
+- Migration script: `status: Published` → `draft: false`
+- Backward compatibility during transition
+- Deprecation of `status` field
+- Template updates
+
+**Addresses:**
+- Should-have: Standard `draft` field semantics
+- Pitfall: Migration breaks existing posts
+
+**Migration strategy:**
+- Phase A: Add `draft` alongside `status` (both fields coexist)
+- Phase B: Update detection to prefer `draft`, fall back to `status`
+- Phase C: Remove `status` field support after verification
 
 ### Phase Ordering Rationale
 
-**Phase 1 before Phase 2 because:**
-- Bootstrap recipe must exist before devcontainer can call it in postCreateCommand
-- Idempotency patterns established in bootstrap inform container restart behavior
-- Template bug fix prevents confusion during container testing (clean foundation)
+- **Library extraction first:** Eliminates duplication before adding features; yq patterns proven on read operations before write operations depend on them
+- **Two-way sync second:** Core workflow improvement; depends on stable library and yq tooling
+- **Schema migration last:** Changes source of truth; riskiest operation happens when all tooling is battle-tested
+- **Incremental validation:** Each phase produces working state; can pause after any phase without broken workflow
 
-**Within Phase 2:**
-- Dev container configuration comes first (defines environment constraints)
-- Container-aware detection added second (responds to environment)
-- Documentation last (captures tested workflow)
-
-**Dependency chain:**
-```
-Template fix → Bootstrap recipe → .nvmrc
-                      ↓
-              Devcontainer config → Container detection → Docs
-```
+This ordering minimizes risk by:
+1. Establishing safe patterns (yq, atomic writes) before using them in critical paths
+2. Proving tooling on read operations before write operations
+3. Keeping migration separate from feature work
+4. Allowing rollback at each phase boundary
 
 ### Research Flags
 
-**Phase 1 (Fix & Bootstrap):**
-- **Low risk** — Standard justfile patterns, npm install, bash guards. Well-documented territory.
-- **No additional research needed** — Patterns from just manual and idempotent bash articles cover all cases.
+Phases likely needing deeper research during planning:
+- **Phase 2 (Two-Way Sync):** Conflict detection strategy needs validation - how to handle Obsidian and blog both modified since last sync? Research didn't fully address this edge case.
+- **Phase 3 (Schema Migration):** Data migration testing approach - need strategy for validating migration without risking production posts.
 
-**Phase 2 (Dev Container):**
-- **Medium risk** — Container-specific path issues require testing in actual container environment.
-- **Potential research:** Vault mounting strategies (bind mount vs volume, host path translation, environment variable expansion). Consider `/gsd:research-phase` if mount config becomes complex.
-- **Testing required:** Windows container testing to validate path handling (if supporting Windows contributors).
-
-**Standard patterns (skip research-phase):**
-- .nvmrc creation — 1-line file, no complexity
-- README updates — documentation task, not technical research
-- Bootstrap idempotency — patterns already documented in PITFALLS.md
+Phases with standard patterns (skip research-phase):
+- **Phase 1 (Library Extraction):** Well-documented bash library patterns; yq usage is straightforward from official docs
+- **All phases:** Git safety hooks already researched in PITFALLS.md; no new research needed
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | No new dependencies; configuration files only. Official MS devcontainer image verified. |
-| Features | HIGH | Table stakes well-defined from UX research (clig.dev, CLI patterns). Bootstrap patterns from install-and-maintain repo. |
-| Architecture | HIGH | Three-layer pattern already proven in v0.2.0. Bootstrap is additive, doesn't modify existing layers. |
-| Pitfalls | HIGH | All critical pitfalls verified against official docs (VS Code, containers.dev, just manual). Container-specific pitfalls from known issues and performance docs. |
+| Stack | HIGH | yq official docs verified; `--front-matter` flag confirmed for mikefarah/yq v4; installation paths documented |
+| Features | HIGH | Two-way sync patterns from authoritative sources; current workflow analyzed in detail; clear gap identification |
+| Architecture | HIGH | Bash library patterns are established practice; component boundaries clear from code analysis; ~280 lines duplication measured |
+| Pitfalls | HIGH | Critical pitfalls backed by official docs and known issues; YAML corruption risks well-documented; cross-platform sed issues verified |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-**During Phase 1 implementation:**
-- **Gap:** Exact idempotency guards for setup.sh — script may have undocumented side effects. **Resolution:** Test `just bootstrap` twice in clean environment before committing.
-- **Gap:** Prerequisites list completeness — setup.sh may use tools beyond jq. **Resolution:** Run prerequisite check against minimal container to discover all dependencies.
+Research identified these areas needing attention during planning/execution:
 
-**During Phase 2 implementation:**
-- **Gap:** Vault mount configuration for contributors with Obsidian — unclear if bind mount or volume better for large vaults. **Resolution:** Document both approaches; let users choose based on vault size and sync tool (if using Obsidian Sync, bind mount better for file watching).
-- **Gap:** Windows testing coverage — no Windows machine available for testing. **Resolution:** Document WSL2 as recommended path, ask for community testing feedback in PR.
-
-**Post-milestone validation:**
-- **Gap:** GitHub Codespaces compatibility — devcontainer.json should work but untested. **Resolution:** Test in actual Codespace environment after merge; add badge to README if working.
+- **yq version verification:** Must verify correct yq version (mikefarah v4) during setup; existing Arch installation is kislyuk v3. Add prerequisite check to `scripts/lib/common.sh` or bootstrap script.
+- **Conflict detection strategy:** Two-way sync research covered basic cases but not full conflict resolution (both Obsidian and blog modified since last sync). Need to design conflict detection before Phase 2 implementation.
+- **Migration testing approach:** Schema migration needs testing strategy that doesn't risk production posts. Consider: test migration script on post copies, dry-run mode, or staging environment.
+- **Rollback enhancement:** Current rollback removes created files but doesn't restore git state. Should rollback include `git reset --hard $initial_commit`? Need to define rollback scope.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [VS Code Create Dev Container](https://code.visualstudio.com/docs/devcontainers/create-dev-container) — Official devcontainer.json reference, lifecycle commands
-- [Dev Container Features Registry](https://containers.dev/features) — Just feature discovery and versioning
-- [Just Programmer's Manual](https://just.systems/man/en/) — Recipe patterns, shebang usage, idempotency
-- [VS Code Dev Container Performance](https://code.visualstudio.com/remote/advancedcontainers/improve-performance) — Named volume pattern for node_modules
-- [containers.dev Lifecycle Reference](https://containers.dev/implementors/json_reference/) — postCreateCommand vs postStartCommand
+
+**YAML/yq:**
+- [yq Front Matter Documentation](https://mikefarah.gitbook.io/yq/usage/front-matter) - Official front-matter handling
+- [yq GitHub (mikefarah)](https://github.com/mikefarah/yq) - Installation and usage
+- [yq Boolean Operators](https://mikefarah.gitbook.io/yq/operators/boolean-operators) - Boolean handling in YAML 1.2
+- [YAML Multiline Strings](https://yaml-multiline.info/) - Whitespace-significant syntax rules
+
+**Bash Libraries:**
+- [Designing Modular Bash: Functions, Namespaces, and Library Patterns](https://www.lost-in-it.com/posts/designing-modular-bash-functions-namespaces-library-patterns/)
+- [Baeldung: Source Include Files](https://www.baeldung.com/linux/source-include-files)
+- [Gabriel Staples: Bash Libraries](https://gabrielstaples.com/bash-libraries/)
+
+**Two-Way Sync Patterns:**
+- [Two-Way Sync Demystified: Key Principles And Best Practices](https://www.stacksync.com/blog/two-way-sync-demystified-key-principles-and-best-practices)
+- [Atomic File Modifications](https://dev.to/martinhaeusler/towards-atomic-file-modifications-2a9n)
+
+**Publishing Workflows:**
+- [Date and Time with a Static Site Generator](https://blog.jim-nielsen.com/2023/date-and-time-in-ssg/) - pubDatetime best practices
+- [Publishing from Obsidian](https://cassidoo.co/post/publishing-from-obsidian/) - Obsidian to blog workflow
 
 ### Secondary (MEDIUM confidence)
-- [Command Line Interface Guidelines (clig.dev)](https://clig.dev/) — Bootstrap UX patterns, single entry point principle
-- [UX patterns for CLI tools](https://lucasfcosta.com/2022/06/01/ux-patterns-cli-tools.html) — Interactive vs non-interactive modes
-- [Idempotent Bash Scripts](https://arslan.io/2019/07/03/how-to-write-idempotent-bash-scripts/) — Guard patterns, safe operations
-- [DevContainers Best Practices](https://atoms.dev/insights/6d0570e51ba4430296743ef234f4f74d) — Image pinning, volume optimization
 
-### Tertiary (LOW confidence)
-- GitHub Issue #6130 (Windows path handling) — Community reports of path translation issues, not official guidance
-- Community devcontainer examples — Patterns vary; official docs take precedence
+**Cross-Platform Compatibility:**
+- [GNU sed vs BSD sed (Baeldung)](https://www.baeldung.com/linux/gnu-bsd-stream-editor)
+- [sed in-place portability fix](https://sqlpey.com/bash/sed-in-place-portability-fix/)
+
+**Schema Migration:**
+- [Database Schema Migration Best Practices](https://amasucci.com/posts/database-migrations-best-practices/) - Phased migration patterns
+
+**UX Patterns:**
+- [Confirmation Dialogs Can Prevent User Errors - NN/g](https://www.nngroup.com/articles/confirmation-dialog/)
+- [How To Manage Dangerous Actions](https://www.smashingmagazine.com/2024/09/how-manage-dangerous-actions-user-interfaces/)
+
+### Tertiary (existing codebase analysis)
+
+**Code Analysis:**
+- `/home/jc/developer/justcarlson.com/scripts/publish.sh` - Current implementation patterns
+- `/home/jc/developer/justcarlson.com/scripts/list-posts.sh` - Validation and frontmatter extraction
+- `/home/jc/developer/justcarlson.com/scripts/unpublish.sh` - Post removal logic
+- Measured duplication: ~280 lines across 3 scripts
 
 ---
-*Research completed: 2026-01-31*
+*Research completed: 2026-02-01*
 *Ready for roadmap: yes*
-*Milestone context: v0.3.0 Polish & Portability*

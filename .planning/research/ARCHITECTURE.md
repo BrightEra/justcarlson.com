@@ -1,466 +1,514 @@
-# Architecture Research: Three-Layer Pattern
+# Architecture: Bash Script Refactoring
 
-**Domain:** Publishing workflow for Astro blog
-**Researched:** 2026-01-30
-**Confidence:** HIGH (official docs verified via Claude Code documentation)
+**Domain:** Bash script modularization for blog publishing workflow
+**Researched:** 2026-02-01
+**Confidence:** HIGH (established patterns, well-documented practices)
 
 ## Executive Summary
 
-The three-layer architecture separates concerns into deterministic commands (justfile), automated safety (hooks), and intelligent oversight (skills). The key insight: **the script is the source of truth**. Both hooks and skills execute the same justfile commands, ensuring consistency whether invoked from terminal, automation, or Claude.
+The current scripts have significant code duplication (~280 lines duplicated across 3 scripts). The recommended solution is a **single shared library** (`scripts/lib/common.sh`) that consolidates all duplicated functions, sourced by each script. This follows established bash library patterns while staying appropriate for a personal blog project.
 
-## Layer Overview
+## Current State Analysis
+
+### Script Inventory
+
+| Script | Lines | Primary Purpose | Duplication |
+|--------|-------|-----------------|-------------|
+| `publish.sh` | 1326 | Full publish workflow | Source of truth for most functions |
+| `list-posts.sh` | 510 | List posts with validation | Duplicates validation, frontmatter |
+| `unpublish.sh` | 297 | Remove published posts | Duplicates slugify, config loading |
+| `setup.sh` | 205 | Configure vault path | Minimal duplication (color codes) |
+| `bootstrap.sh` | 142 | Bootstrap dev environment | Standalone (different domain) |
+
+### Identified Duplications
+
+**1. Color Constants** (12 lines x 4 scripts = 48 lines)
+```bash
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
+```
+Duplicated in: `publish.sh`, `list-posts.sh`, `unpublish.sh`, `setup.sh`
+
+**2. Config Loading** (25 lines x 3 scripts = 75 lines)
+```bash
+load_config() {
+    # Validate CONFIG_FILE exists
+    # Check jq installed
+    # Extract VAULT_PATH
+    # Validate vault directory
+}
+```
+Duplicated in: `publish.sh`, `list-posts.sh`, `unpublish.sh`
+
+**3. Exit Codes** (4 lines x 3 scripts = 12 lines)
+```bash
+EXIT_SUCCESS=0
+EXIT_ERROR=1
+EXIT_CANCELLED=130
+```
+Duplicated in: `publish.sh`, `list-posts.sh`, `unpublish.sh`
+
+**4. Frontmatter Functions** (45 lines x 2 scripts = 90 lines)
+```bash
+extract_frontmatter()
+get_frontmatter_field()
+extract_frontmatter_value()
+validate_iso8601()
+validate_frontmatter()
+```
+Duplicated in: `publish.sh`, `list-posts.sh`
+
+**5. Slugify Function** (15 lines x 3 scripts = 45 lines)
+```bash
+slugify() {
+    local name="$1"
+    name="${name%.md}"
+    # lowercase, spaces to hyphens, remove special chars
+}
+```
+Duplicated in: `publish.sh`, `list-posts.sh`, `unpublish.sh`
+
+**6. Project Paths** (3 lines x 3 scripts = 9 lines)
+```bash
+CONFIG_FILE=".claude/settings.local.json"
+BLOG_DIR="src/content/blog"
+ASSETS_DIR="public/assets/blog"
+```
+Duplicated in: `publish.sh`, `list-posts.sh`, `unpublish.sh`
+
+**Total duplicated code: ~280 lines**
+
+## Recommended Architecture
+
+### Directory Structure
 
 ```
-+------------------------------------------------------------------+
-|                        USER INTERFACE                             |
-+------------------------------------------------------------------+
-|  Terminal          |  Claude --init    |  Claude /skill          |
-|  $ just publish    |  (triggers Setup  |  (human-in-the-loop     |
-|  $ just setup      |   hook)           |   via /publish-blog)    |
-+---------+----------+---------+---------+-----------+-------------+
-          |                    |                     |
-          v                    v                     v
-+------------------------------------------------------------------+
-|                    LAYER 3: SKILLS (optional)                     |
-|  .claude/skills/*/SKILL.md                                        |
-|  - Human-in-the-loop oversight                                    |
-|  - disable-model-invocation: true (user must invoke)              |
-|  - Calls justfile commands with validation                        |
-|  - allowed-tools restricts to safe operations                     |
-+-----------------------------+------------------------------------+
-                              |
-                              v
-+------------------------------------------------------------------+
-|                    LAYER 2: HOOKS (safety)                        |
-|  .claude/settings.json (hooks section)                            |
-|  - Setup hook: runs `just setup` on --init                        |
-|  - PreToolUse/Bash: blocks dangerous git operations               |
-|  - Automatic, no user action required                             |
-+-----------------------------+------------------------------------+
-                              |
-                              v
-+------------------------------------------------------------------+
-|                LAYER 1: JUSTFILE (deterministic)                  |
-|  justfile (project root)                                          |
-|  - Source of truth for all commands                               |
-|  - Works standalone: `just publish` from terminal                 |
-|  - Portable, repeatable, testable                                 |
-|  - No Claude dependency                                           |
-+------------------------------------------------------------------+
+scripts/
+  lib/
+    common.sh      # Shared library (sourced by other scripts)
+  publish.sh       # Main publish workflow (uses lib/common.sh)
+  list-posts.sh    # List posts utility (uses lib/common.sh)
+  unpublish.sh     # Remove post utility (uses lib/common.sh)
+  setup.sh         # Setup wizard (uses lib/common.sh for colors only)
+  bootstrap.sh     # Dev environment bootstrap (standalone)
 ```
 
-### Layer Responsibilities
+### Library Organization
 
-| Layer | File | Responsibility | Invocation |
-|-------|------|----------------|------------|
-| **1. Justfile** | `justfile` | Deterministic commands | `just <recipe>` |
-| **2. Hooks** | `.claude/settings.json` | Safety gates, automation triggers | Automatic on events |
-| **3. Skills** | `.claude/skills/*/SKILL.md` | Intelligent oversight, user invocation | `/skill-name` |
+**Single library is sufficient.** With ~280 lines of shared code and only 4 consuming scripts, a single `common.sh` library is the right level of abstraction. Creating multiple libraries (e.g., `colors.sh`, `config.sh`, `frontmatter.sh`) would be over-engineering for this codebase.
 
-### Key Principle: Script as Source of Truth
+### Library Contents: `scripts/lib/common.sh`
 
-From [disler/claude-code-hooks-mastery](https://github.com/disler/claude-code-hooks-mastery):
+```bash
+#!/usr/bin/env bash
+# Shared library for blog publishing scripts
+# Source with: source "${SCRIPT_DIR}/lib/common.sh"
 
-> "Hooks are thin wrappers. They parse incoming JSON, invoke core scripts, and return standardized responses. Scripts contain business logic."
+# Guard against double-sourcing
+if [[ -n "${_COMMON_LIB_LOADED:-}" ]]; then
+    return 0
+fi
+_COMMON_LIB_LOADED=1
 
-Applied to this architecture:
+# ============================================================================
+# Colors
+# ============================================================================
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly CYAN='\033[0;36m'
+readonly BLUE='\033[0;34m'
+readonly RESET='\033[0m'
 
-```
-Terminal:     $ just publish          -> runs justfile directly
-Hook:         Setup hook              -> runs `just setup`
-Skill:        /publish-blog           -> instructs Claude to run `just publish`
-```
+# ============================================================================
+# Exit Codes
+# ============================================================================
+readonly EXIT_SUCCESS=0
+readonly EXIT_ERROR=1
+readonly EXIT_CANCELLED=130
 
-Same command, three entry points. The justfile is always the source of truth.
+# ============================================================================
+# Project Paths
+# ============================================================================
+readonly CONFIG_FILE=".claude/settings.local.json"
+readonly BLOG_DIR="src/content/blog"
+readonly ASSETS_DIR="public/assets/blog"
 
-## File Structure
+# ============================================================================
+# Configuration
+# ============================================================================
 
-### Complete Directory Layout
+# Load and validate configuration
+# Sets: VAULT_PATH (global)
+# Exits on error
+load_config() {
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+        echo -e "${RED}Error: Config file not found: $CONFIG_FILE${RESET}" >&2
+        echo -e "${YELLOW}Run 'just setup' first to configure your Obsidian vault path.${RESET}" >&2
+        exit $EXIT_ERROR
+    fi
 
-```
-justcarlson.com/
-|-- justfile                          # LAYER 1: Source of truth
-|
-|-- .githooks/                        # Git hooks (not Claude hooks)
-|   +-- pre-push                      # Block dangerous git operations
-|
-|-- .claude/
-|   |-- settings.json                 # LAYER 2: Hook configuration (committed)
-|   |-- settings.local.json           # User config: Obsidian path (gitignored)
-|   |
-|   +-- skills/                       # LAYER 3: Skills
-|       |-- setup-blog/
-|       |   +-- SKILL.md              # /setup-blog
-|       |-- publish-blog/
-|       |   +-- SKILL.md              # /publish-blog
-|       |-- unpublish-blog/
-|       |   +-- SKILL.md              # /unpublish-blog
-|       |-- list-drafts/
-|       |   +-- SKILL.md              # /list-drafts
-|       +-- preview-blog/
-|           +-- SKILL.md              # /preview-blog
-|
-|-- scripts/                          # Supporting scripts (if needed)
-|   +-- find-obsidian-vaults.sh       # Helper for setup
-|
-+-- src/content/blog/                 # Astro content (existing)
-    +-- YYYY/*.md
-```
+    if ! command -v jq &>/dev/null; then
+        echo -e "${RED}Error: jq is required but not installed.${RESET}" >&2
+        echo -e "${YELLOW}Install with: pacman -S jq (Arch) or brew install jq (macOS)${RESET}" >&2
+        exit $EXIT_ERROR
+    fi
 
-### File Purposes
+    VAULT_PATH=$(jq -r '.obsidianVaultPath // empty' "$CONFIG_FILE")
 
-| File | Purpose | Committed |
-|------|---------|-----------|
-| `justfile` | All publishing commands | Yes |
-| `.githooks/pre-push` | Block dangerous git ops | Yes |
-| `.claude/settings.json` | Hook configuration | Yes |
-| `.claude/settings.local.json` | User's Obsidian vault path | No (gitignored) |
-| `.claude/skills/*/SKILL.md` | Skill definitions | Yes |
-| `scripts/*.sh` | Complex helper scripts | Yes |
+    if [[ -z "$VAULT_PATH" ]]; then
+        echo -e "${RED}Error: Obsidian vault path not configured.${RESET}" >&2
+        echo -e "${YELLOW}Run 'just setup' to configure your vault path.${RESET}" >&2
+        exit $EXIT_ERROR
+    fi
 
-## Data Flow
+    if [[ ! -d "$VAULT_PATH" ]]; then
+        echo -e "${RED}Error: Vault directory does not exist: $VAULT_PATH${RESET}" >&2
+        echo -e "${YELLOW}Run 'just setup' to reconfigure your vault path.${RESET}" >&2
+        exit $EXIT_ERROR
+    fi
+}
 
-### Setup Flow
+# ============================================================================
+# Slug Generation
+# ============================================================================
 
-```
-claude --init
-    |
-    v
-+---------------------------------------------------+
-| Setup Hook (settings.json)                        |
-| "matcher": "init"                                 |
-| "command": "just setup"                           |
-+------------------------+--------------------------+
-                         |
-                         v
-+---------------------------------------------------+
-| just setup                                        |
-| 1. Find .obsidian folders                         |
-| 2. Prompt user to select vault                    |
-| 3. Validate blog/ subfolder exists                |
-| 4. Write to .claude/settings.local.json           |
-| 5. Configure git core.hooksPath -> .githooks      |
-+---------------------------------------------------+
-```
+# Convert filename to URL-safe slug
+# Args: $1 - filename or string to slugify
+# Output: slug on stdout
+slugify() {
+    local name="$1"
+    name="${name%.md}"
+    name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+    name=$(echo "$name" | tr ' ' '-')
+    name=$(echo "$name" | sed 's/[^a-z0-9-]//g')
+    name=$(echo "$name" | sed 's/-\+/-/g')
+    name=$(echo "$name" | sed 's/^-//' | sed 's/-$//')
+    echo "$name"
+}
 
-### Publish Flow (via Skill)
+# ============================================================================
+# Frontmatter Extraction
+# ============================================================================
 
-```
-User: /publish-blog
-    |
-    v
-+---------------------------------------------------+
-| SKILL.md Instructions                             |
-| disable-model-invocation: true                    |
-| allowed-tools: Bash(just *), Read, Glob           |
-|                                                   |
-| 1. Read .claude/settings.local.json               |
-| 2. If no config, prompt: "Run /setup-blog first"  |
-| 3. Run: just publish                              |
-| 4. Report results to user                         |
-+------------------------+--------------------------+
-                         |
-                         v
-+---------------------------------------------------+
-| just publish                                      |
-| 1. Read vault path from settings.local.json       |
-| 2. Find posts with status: - Published in vault   |
-| 3. Validate frontmatter                           |
-| 4. Copy posts to src/content/blog/YYYY/           |
-| 5. Copy referenced images                         |
-| 6. Run biome lint                                 |
-| 7. Run npm run build                              |
-| 8. git commit (conventional message)              |
-| 9. git push                                       |
-+---------------------------------------------------+
-```
+# Extract YAML frontmatter content (between --- markers)
+# Args: $1 - file path
+# Output: frontmatter content on stdout (without --- markers)
+extract_frontmatter() {
+    local file="$1"
+    sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d'
+}
 
-### Safety Flow (Git Hooks)
+# Extract a field value from frontmatter content
+# Args: $1 - frontmatter content, $2 - field name
+# Output: field value on stdout
+get_frontmatter_field() {
+    local frontmatter="$1"
+    local field="$2"
+    local value
+    value=$(echo "$frontmatter" | grep -E "^${field}:" | head -1 | sed "s/^${field}:[[:space:]]*//" | sed 's/^["\x27]//' | sed 's/["\x27]$//' | tr -d '\r')
+    echo "$value"
+}
 
-```
-Claude or User: git push --force
-    |
-    v
-+---------------------------------------------------+
-| .githooks/pre-push                                |
-| Check for dangerous patterns:                     |
-| - --force, -f                                     |
-| - reset --hard                                    |
-| - clean -f                                        |
-| - stash drop, stash clear                         |
-| - branch -D                                       |
-|                                                   |
-| Bypass: command contains "# UNSAFE" comment       |
-+------------------------+--------------------------+
-                         |
-          +--------------+--------------+
-          |                             |
-     Dangerous                     Safe
-          |                             |
-          v                             v
-    Exit code 1              Continue push
-    (blocks operation)
-```
+# Extract a field directly from a file
+# Args: $1 - file path, $2 - field name
+# Output: field value on stdout
+extract_frontmatter_value() {
+    local file="$1"
+    local key="$2"
+    sed -n '/^---$/,/^---$/p' "$file" | grep -E "^${key}:" | head -1 | sed "s/^${key}:[[:space:]]*//" | sed 's/^"//' | sed 's/"$//' | tr -d '\r'
+}
 
-## Configuration
+# ============================================================================
+# Validation
+# ============================================================================
 
-### .claude/settings.json (Committed)
+# Validate ISO 8601 datetime format
+# Args: $1 - datetime string
+# Returns: 0 if valid, 1 if invalid
+validate_iso8601() {
+    local datetime="$1"
+    if [[ "$datetime" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2} ]]; then
+        return 0
+    fi
+    if [[ "$datetime" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+        return 0
+    fi
+    return 1
+}
 
-```json
-{
-  "hooks": {
-    "Setup": [
-      {
-        "matcher": "init",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "just setup",
-            "timeout": 120
-          }
-        ]
-      }
-    ]
-  }
+# Validate frontmatter for required fields
+# Args: $1 - file path
+# Output: error messages on stdout (one per line)
+# Returns: 0 if valid, 1 if invalid
+validate_frontmatter() {
+    local file="$1"
+    local errors=()
+    local frontmatter
+    frontmatter=$(extract_frontmatter "$file")
+
+    if [[ -z "$frontmatter" ]]; then
+        errors+=("No frontmatter found (YAML block between --- markers)")
+        printf '%s\n' "${errors[@]}"
+        return 1
+    fi
+
+    local title pubDatetime description
+    title=$(get_frontmatter_field "$frontmatter" "title")
+    pubDatetime=$(get_frontmatter_field "$frontmatter" "pubDatetime")
+    description=$(get_frontmatter_field "$frontmatter" "description")
+
+    if [[ -z "$title" ]]; then
+        errors+=("Missing title (required for SEO and display)")
+    fi
+    if [[ -z "$pubDatetime" ]]; then
+        errors+=("Missing pubDatetime (required for post ordering and URLs)")
+    elif ! validate_iso8601 "$pubDatetime"; then
+        errors+=("Invalid pubDatetime format: '$pubDatetime' (expected YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD)")
+    fi
+    if [[ -z "$description" ]]; then
+        errors+=("Missing description (required for SEO and previews)")
+    fi
+
+    if [[ ${#errors[@]} -gt 0 ]]; then
+        printf '%s\n' "${errors[@]}"
+        return 1
+    fi
+    return 0
 }
 ```
 
-**Note:** Git safety is handled via `.githooks/` (committed to repo) rather than Claude hooks. This ensures protection works even when Claude Code is not involved.
+### Sourcing Pattern
 
-### .claude/settings.local.json (Gitignored)
+Each script should source the library using a robust path resolution:
 
-```json
-{
-  "blog": {
-    "obsidianVault": "/home/jc/obsidian/personal",
-    "blogSubfolder": "blog"
-  }
-}
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Resolve script directory for relative imports
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
+
+# Script-specific code follows...
 ```
 
-**Key design decisions:**
+This pattern:
+1. Works regardless of where the script is called from
+2. Uses `${BASH_SOURCE[0]}` which is correct even when sourced
+3. Creates absolute path to library
 
-1. **Separate namespace** (`blog`) to avoid conflicts with Claude settings
-2. **Both vault and subfolder** stored for flexibility
-3. **Gitignored** because paths are machine-specific
+### Justfile Integration
 
-### Skill Frontmatter Pattern
-
-All publishing skills use consistent frontmatter:
-
-```yaml
----
-name: publish-blog
-description: Publish blog posts from Obsidian to Astro site
-disable-model-invocation: true
-allowed-tools: Bash(just *), Read, Glob, Grep
----
-```
-
-| Field | Value | Rationale |
-|-------|-------|-----------|
-| `disable-model-invocation` | `true` | User must explicitly invoke |
-| `allowed-tools` | `Bash(just *)` | Only allow justfile commands |
-
-### Justfile Structure
+The justfile remains unchanged - it already uses thin wrappers:
 
 ```just
-# Default recipe shows help
-default:
-    @just --list
+publish *args='':
+    ./scripts/publish.sh {{args}}
 
-# === SETUP ===
-
-# Interactive setup for Obsidian vault path
-setup:
-    #!/usr/bin/env bash
-    # Find .obsidian folders, let user pick, validate, save config
-
-# === PUBLISHING ===
-
-# Publish all ready posts from Obsidian
-publish: _check-config
-    #!/usr/bin/env bash
-    # Find, validate, copy, lint, build, commit, push
-
-# Unpublish a post (remove from repo, keep in Obsidian)
-unpublish file: _check-config
-    #!/usr/bin/env bash
-    # Remove from src/content/blog/, commit, push
-
-# === UTILITIES ===
-
-# List posts ready to publish
-list-drafts: _check-config
-    #!/usr/bin/env bash
-    # Find posts with status: - Published, show validation status
-
-# Start preview server
-preview:
-    npm run dev
-
-# === PRIVATE RECIPES ===
-
-# Check if setup has been run
-_check-config:
-    @test -f .claude/settings.local.json || \
-      (echo "Setup required. Run: just setup" && exit 1)
+list-posts *args='':
+    ./scripts/list-posts.sh {{args}}
 ```
 
-## Build Order
+The library extraction is transparent to justfile consumers.
 
-Implementation should follow dependency order:
+## Refactoring Order
 
-### Phase 1: Foundation (Layer 1 first)
+Based on dependencies and risk, refactor in this order:
 
-| Order | Component | Rationale |
-|-------|-----------|-----------|
-| 1 | `justfile` skeleton | Source of truth must exist first |
-| 2 | `just setup` recipe | Other commands depend on config |
-| 3 | `.claude/settings.local.json` format | Setup writes this, others read it |
+### Phase 1: Create Library (LOW RISK)
 
-### Phase 2: Safety (Layer 2)
+1. Create `scripts/lib/common.sh` with extracted functions
+2. Add double-source guard
+3. Document each function with comments
 
-| Order | Component | Rationale |
-|-------|-----------|-----------|
-| 4 | `.githooks/pre-push` | Git safety independent of Claude |
-| 5 | `.claude/settings.json` (Setup hook) | Triggers `just setup` on `--init` |
-| 6 | Test: `claude --init` | Verify hook to justfile flow |
+No scripts change yet - library exists but is not used.
 
-### Phase 3: Publishing (Layer 1 expansion)
+### Phase 2: Migrate `unpublish.sh` (LOW RISK)
 
-| Order | Component | Rationale |
-|-------|-----------|-----------|
-| 7 | `just list-posts` | Non-destructive, good for testing |
-| 8 | `just publish` | Core publishing logic |
-| 9 | `just unpublish` | Rollback capability |
-| 10 | `just preview` | Simple wrapper, low risk |
+**Why first:** Smallest script (297 lines), simplest dependencies, lowest usage frequency.
 
-### Phase 4: Skills (Layer 3)
+Changes:
+- Add SCRIPT_DIR resolution
+- Source common.sh
+- Remove: color constants, exit codes, slugify, extract_frontmatter_value, load_config (partial)
 
-| Order | Component | Rationale |
-|-------|-----------|-----------|
-| 11 | `/setup-blog` skill | Wraps `just setup` |
-| 12 | `/list-drafts` skill | Wraps `just list-drafts` |
-| 13 | `/publish-blog` skill | Wraps `just publish` |
-| 14 | `/unpublish-blog` skill | Wraps `just unpublish` |
-| 15 | `/preview-blog` skill | Wraps `just preview` |
+### Phase 3: Migrate `list-posts.sh` (MEDIUM RISK)
 
-**Rationale:** Layer 1 must be complete and testable before Layer 3 wraps it. This allows:
-- Terminal testing without Claude
-- Incremental verification
-- Rollback to justfile-only if skills have issues
+**Why second:** Medium complexity, uses validation functions.
 
-## Integration Points
+Changes:
+- Add SCRIPT_DIR resolution
+- Source common.sh
+- Remove: all duplicated functions
 
-### Existing Structure Integration
+### Phase 4: Migrate `publish.sh` (MEDIUM RISK)
 
-| Existing | Integration |
-|----------|-------------|
-| `src/content/blog/YYYY/` | `just publish` writes here |
-| `public/assets/blog/` | `just publish` copies images here |
-| `package.json` scripts | `just preview` calls `npm run dev` |
-| `biome.json` | `just publish` runs `npx biome check` |
-| `.gitignore` | Already ignores `settings.local.json` pattern |
+**Why third:** Largest script, but shared functions are now proven.
 
-### Settings Precedence
+Changes:
+- Add SCRIPT_DIR resolution
+- Source common.sh
+- Remove: all duplicated functions
+- Keep publish-specific functions (rollback, image handling, commits)
 
-Claude Code merges settings in this order (highest priority first):
+### Phase 5: Migrate `setup.sh` (LOW RISK)
 
-1. Managed (enterprise) - N/A for personal project
-2. Command line arguments
-3. `.claude/settings.local.json` - User's Obsidian path
-4. `.claude/settings.json` - Hook configuration
-5. `~/.claude/settings.json` - Global user settings
+**Why last:** Only uses color constants, standalone otherwise.
 
-For this project, `settings.local.json` stores user config, `settings.json` stores hooks.
+Changes:
+- Add SCRIPT_DIR resolution
+- Source common.sh
+- Remove: color constants only
 
-## Anti-Patterns to Avoid
+**Note:** `bootstrap.sh` stays standalone - different domain, no meaningful overlap.
 
-### 1. Logic in Hooks
+## What NOT to Over-Engineer
 
-**Bad:**
-```json
-{
-  "hooks": {
-    "PreToolUse": [{
-      "matcher": "Bash",
-      "hooks": [{
-        "command": "if echo '$INPUT' | grep -q 'git push --force'; then exit 2; fi"
-      }]
-    }]
-  }
+This is a personal blog, not a framework. Avoid these temptations:
+
+### 1. Multiple Library Files
+**Do not:** `lib/colors.sh`, `lib/config.sh`, `lib/frontmatter.sh`, `lib/validation.sh`
+
+**Why not:** With 4 consuming scripts and ~150 lines of shared code, one file is cleaner. Multiple files add cognitive overhead and require managing multiple sources.
+
+### 2. Namespace Prefixes
+**Do not:** `blog_slugify()`, `blog_validate_frontmatter()`
+
+**Why not:** We have no namespace collision risks. These scripts are consumed only by this project. Prefixes add verbosity without benefit.
+
+### 3. Testing Framework
+**Do not:** Add BATS, create `tests/` directory, write unit tests for each function.
+
+**Why not:** These scripts are:
+- Simple transformations (easily verified manually)
+- Integration-focused (actual test is "does publish work?")
+- Low change frequency
+
+A `--dry-run` flag (which already exists on publish.sh) is sufficient.
+
+### 4. Configuration Override Pattern
+**Do not:** `export BLOG_DIR="${BLOG_DIR:-src/content/blog}"`
+
+**Why not:** These paths are project constants, not user configuration. They only change if the Astro project structure changes, which would require code changes anyway.
+
+### 5. Splitting publish.sh Into Multiple Scripts
+**Do not:** `discover.sh`, `validate.sh`, `copy.sh`, `commit.sh`
+
+**Why not:** The publish workflow is a single logical operation. Breaking it up would:
+- Require orchestration logic
+- Lose the rollback capability (which depends on tracking state)
+- Make the workflow harder to understand
+
+**Do:** Keep `publish.sh` as a single script with well-organized internal sections.
+
+## Patterns to Follow
+
+### 1. Double-Source Guard
+Prevent issues when library is sourced multiple times:
+```bash
+if [[ -n "${_COMMON_LIB_LOADED:-}" ]]; then
+    return 0
+fi
+_COMMON_LIB_LOADED=1
+```
+
+### 2. Function Documentation
+Document each function's purpose and parameters:
+```bash
+# Validate frontmatter for required fields
+# Args: $1 - file path
+# Output: error messages on stdout (one per line)
+# Returns: 0 if valid, 1 if invalid
+validate_frontmatter() {
+```
+
+### 3. Readonly Constants
+Use `readonly` for values that should never change:
+```bash
+readonly RED='\033[0;31m'
+readonly EXIT_SUCCESS=0
+readonly CONFIG_FILE=".claude/settings.local.json"
+```
+
+### 4. Local Variables in Functions
+Prevent global scope pollution:
+```bash
+slugify() {
+    local name="$1"  # local, not global
+    # ...
 }
 ```
 
-**Good:** Use `.githooks/` for git safety (works without Claude).
-
-### 2. Duplicated Logic
-
-**Bad:** Skill contains full publishing logic separate from justfile.
-
-**Good:** Skill instructs Claude to run `just publish`.
-
-### 3. Skill Without disable-model-invocation
-
-**Bad:**
-```yaml
----
-name: publish-blog
-description: Publish blog posts
----
+### 5. Robust Path Resolution
+Handle being called from any directory:
+```bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/lib/common.sh"
 ```
 
-Claude might auto-invoke publishing when user mentions "post".
+## Estimated Line Changes
 
-**Good:**
-```yaml
----
-name: publish-blog
-description: Publish blog posts
-disable-model-invocation: true
----
-```
+| Script | Current | After Refactor | Reduction |
+|--------|---------|----------------|-----------|
+| `common.sh` | 0 | ~150 | (new file) |
+| `publish.sh` | 1326 | ~1180 | -146 (11%) |
+| `list-posts.sh` | 510 | ~400 | -110 (22%) |
+| `unpublish.sh` | 297 | ~230 | -67 (23%) |
+| `setup.sh` | 205 | ~195 | -10 (5%) |
 
-User must explicitly type `/publish-blog`.
+**Net reduction:** ~180 lines (duplicates consolidated)
 
-### 4. Hardcoded Paths
+## Component Boundaries
 
-**Bad:** Justfile contains `/home/jc/obsidian/personal`.
+### What Goes in common.sh
 
-**Good:** Justfile reads from `.claude/settings.local.json`.
+| Function | Rationale |
+|----------|-----------|
+| Color constants | Used by all scripts |
+| Exit codes | Used by all publishing scripts |
+| Project paths | Used by all publishing scripts |
+| `load_config()` | Used by publish, list-posts, unpublish |
+| `slugify()` | Used by publish, list-posts, unpublish |
+| `extract_frontmatter()` | Used by publish, list-posts |
+| `get_frontmatter_field()` | Used by publish, list-posts |
+| `extract_frontmatter_value()` | Used by publish, list-posts, unpublish |
+| `validate_iso8601()` | Used by publish, list-posts |
+| `validate_frontmatter()` | Used by publish, list-posts |
 
-## Scalability Considerations
+### What Stays in Each Script
 
-| Concern | Current Scale | Future Scale |
-|---------|---------------|--------------|
-| Multiple vaults | Single vault path | Could add vault selection to `just publish` |
-| Multiple blogs | Single blog | Could add blog parameter to recipes |
-| Team usage | Single user | `settings.local.json` per user works |
-| CI/CD | Not needed | Justfile works in CI without Claude |
+| Script | Script-Specific Functions |
+|--------|--------------------------|
+| `publish.sh` | Image handling, wiki-link conversion, rollback, commits, git push |
+| `list-posts.sh` | Table formatting, sorting logic |
+| `unpublish.sh` | Post resolution, removal confirmation |
+| `setup.sh` | Vault discovery, interactive prompts |
+| `bootstrap.sh` | Everything (standalone script) |
+
+## Success Criteria
+
+After refactoring:
+
+- [ ] `scripts/lib/common.sh` exists with all shared functions
+- [ ] Each script sources common.sh correctly
+- [ ] `just publish --dry-run` works unchanged
+- [ ] `just list-posts` works unchanged
+- [ ] `just unpublish` (on test post) works unchanged
+- [ ] `just setup --help` works unchanged
+- [ ] No duplicate function definitions across scripts
+- [ ] Color codes, exit codes, paths defined in one place only
 
 ## Sources
 
-### Official Documentation (HIGH confidence)
-
-- [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks) - Hook events, configuration, JSON output
-- [Claude Code Skills](https://code.claude.com/docs/en/skills) - Skill structure, frontmatter, invocation control
-- [Claude Code Settings](https://code.claude.com/docs/en/settings) - Settings hierarchy, merging behavior
-- [Just Manual](https://just.systems/man/en/) - Recipe syntax, parameters, modules
-
-### Community Patterns (MEDIUM confidence)
-
-- [disler/claude-code-hooks-mastery](https://github.com/disler/claude-code-hooks-mastery) - Script-as-source-of-truth pattern
-- [ChrisWiles/claude-code-showcase](https://github.com/ChrisWiles/claude-code-showcase) - Directory structure reference
-- [just skill on claude-plugins.dev](https://claude-plugins.dev/skills/@lanej/dotfiles/just) - Justfile + Claude integration patterns
-
-### WebSearch (LOW confidence, verified against official docs)
-
-- Setup hook uses `"matcher": "init"` for `--init` flag
-- Skills merged with slash commands as of Claude Code 2.1.3
-- `settings.local.json` auto-gitignored by Claude Code
+- [Designing Modular Bash: Functions, Namespaces, and Library Patterns](https://www.lost-in-it.com/posts/designing-modular-bash-functions-namespaces-library-patterns/)
+- [How to Write and Test Bash Libraries](https://gabrielstaples.com/bash-libraries/)
+- [Advanced Bash Scripting: Mastering Functions and Libraries](https://www.turing.com/blog/advanced-bash-scripting-mastering-functions-and-libraries)
+- [Shell Functions Library - Linux Bash Tutorial](https://bash.cyberciti.biz/guide/Shell_functions_library)
 
 ---
 
-*Architecture research completed: 2026-01-30*
-*Confidence: HIGH - all critical patterns verified against official Claude Code documentation*
+*Architecture research: 2026-02-01*

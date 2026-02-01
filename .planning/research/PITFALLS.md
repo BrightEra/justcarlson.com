@@ -951,6 +951,489 @@ Pin to specific version. Update deliberately with changelog review.
 
 ---
 
+## Bash and YAML Refactoring Pitfalls
+
+**Added:** 2026-02-01
+**Context:** Refactoring milestone - updating bash scripts and YAML handling for two-way sync, schema migration (`status: Published` to `draft: false`), and shared library extraction
+
+### Critical: YAML Corruption via sed/regex
+
+**What goes wrong:** Using `sed` or regex to modify YAML frontmatter corrupts whitespace, quoting, or multiline values. YAML is whitespace-significant; naive string manipulation breaks parsing.
+
+**Why it happens:** The current scripts use patterns like:
+```bash
+sed -n '/^---$/,/^---$/p' "$file"
+perl -0777 -pe 's/^author:\s*\n\s*-\s*.*$/author: "Justin Carlson"/m'
+```
+These work for simple cases but fail on:
+- Multiline values (descriptions with line breaks)
+- Values containing colons, quotes, or special characters
+- Inconsistent indentation
+- Trailing whitespace preservation
+
+**Consequences:**
+- Post frontmatter becomes unparsable
+- Astro build fails with cryptic YAML errors
+- User's Obsidian source corrupted if two-way sync writes back
+
+**Detection (warning signs):**
+- Build errors mentioning "mapping values" or "unexpected character"
+- Frontmatter fields appearing in content body
+- Quotes appearing where none existed before
+
+**Prevention:**
+1. **Use yq instead of sed for YAML modifications.** yq is a YAML-aware processor that preserves structure:
+   ```bash
+   yq --front-matter="process" -i '.draft = false' file.md
+   ```
+2. **Extract, modify, reassemble.** If yq isn't available, extract frontmatter to temp file, modify with proper YAML tools, reassemble.
+3. **Validate after modification.** Run `yq '.' file.md` to verify YAML is still valid before writing.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Replace sed-based YAML manipulation with yq-based functions.
+
+**Sources:**
+- [yq Front Matter Documentation](https://mikefarah.gitbook.io/yq/usage/front-matter)
+- [YAML Multiline Strings](https://yaml-multiline.info/)
+
+---
+
+### Critical: Data Loss via Two-Way Sync Without Backup
+
+**What goes wrong:** Modifying user's Obsidian vault files without backup causes permanent data loss when scripts malfunction or have bugs.
+
+**Why it happens:** Current `publish.sh` only reads from Obsidian; new two-way sync will write back. Any bug in write logic corrupts the user's source of truth.
+
+**Consequences:**
+- User loses post content they've been drafting
+- Frontmatter modifications overwrite user's metadata
+- No recovery path without manual git operations (if vault is even in git)
+
+**Detection (warning signs):**
+- User reports "my post disappeared"
+- Frontmatter shows unexpected values
+- File modification timestamps change unexpectedly
+
+**Prevention:**
+1. **Atomic write pattern.** Write to temp file, then `mv` to target:
+   ```bash
+   tmp="${file}.tmp.$$"
+   echo "$content" > "$tmp" && mv "$tmp" "$file"
+   ```
+2. **Backup before any modification:**
+   ```bash
+   backup="${file}.backup.$(date +%s)"
+   cp "$file" "$backup"
+   # ... make modifications ...
+   # On success, remove backup
+   rm "$backup"
+   ```
+3. **Never modify in-place.** Always read -> transform -> write new.
+4. **Implement dry-run for sync.** Show what would change without changing.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Build `safe_write()` function with atomic writes and backup before any Obsidian file modification.
+
+**Sources:**
+- [Atomic File Modifications](https://dev.to/martinhaeusler/towards-atomic-file-modifications-2a9n)
+- [Two-Way Sync Best Practices](https://www.stacksync.com/blog/two-way-sync-demystified-key-principles-and-best-practices)
+
+---
+
+### Critical: Cross-Platform sed Incompatibility (macOS vs Linux)
+
+**What goes wrong:** Scripts work on developer's machine (Linux) but fail on user's machine (macOS) due to BSD vs GNU sed differences.
+
+**Why it happens:** The `-i` flag behaves differently:
+- **GNU sed (Linux):** `sed -i 's/old/new/' file` (no backup)
+- **BSD sed (macOS):** `sed -i '' 's/old/new/' file` (requires empty string)
+
+Running Linux syntax on macOS: `sed -i 's/old/new/' file` interprets `'s/old/new/'` as the backup extension, causing bizarre errors.
+
+**Consequences:**
+- "undefined label" or "invalid command code" errors
+- Unexpected backup files created (e.g., `file's/old/new/'`)
+- Scripts work in CI but fail locally (or vice versa)
+
+**Detection (warning signs):**
+- Error messages containing "invalid command code" followed by a letter
+- Backup files with weird names appearing
+- Works on one machine, fails on another
+
+**Prevention:**
+1. **Always use backup extension (works on both):**
+   ```bash
+   sed -i.bak -e 's/old/new/' file && rm file.bak
+   ```
+2. **Detect platform and branch:**
+   ```bash
+   if [[ "$OSTYPE" == "darwin"* ]]; then
+       sed -i '' -e 's/old/new/' file
+   else
+       sed -i -e 's/old/new/' file
+   fi
+   ```
+3. **Prefer yq over sed for YAML.** yq is consistent across platforms.
+4. **Document macOS requirements.** If using GNU tools, tell macOS users to install via Homebrew.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Create platform-aware utility functions or standardize on yq.
+
+**Sources:**
+- [GNU sed vs BSD sed (Baeldung)](https://www.baeldung.com/linux/gnu-bsd-stream-editor)
+- [sed in-place portability fix](https://sqlpey.com/bash/sed-in-place-portability-fix/)
+
+---
+
+### Critical: Migration Breaks Existing Published Posts
+
+**What goes wrong:** Schema migration from `status: Published` to `draft: false` breaks existing published posts or causes them to be re-published/unpublished unexpectedly.
+
+**Why it happens:**
+- Migration script misses edge cases (empty values, different formats)
+- Both old and new detection logic runs simultaneously during transition
+- Posts in intermediate state (has `status` but not `draft`) handled inconsistently
+
+**Consequences:**
+- Published posts disappear from site
+- Draft posts accidentally published
+- Duplicate posts if migration creates new files instead of updating
+
+**Detection (warning signs):**
+- Post count changes unexpectedly after migration
+- Build output shows different posts than expected
+- Posts with neither old nor new field exist
+
+**Prevention:**
+1. **Migration phases:**
+   - Phase A: Add new field alongside old (both `status` and `draft`)
+   - Phase B: Update detection to prefer new field, fall back to old
+   - Phase C: Remove old field support
+2. **Explicit state mapping:**
+   ```
+   status: Published  ->  draft: false
+   status: Draft      ->  draft: true
+   status: (missing)  ->  draft: true (safe default)
+   ```
+3. **Pre-migration audit:** List all posts with their current status before migrating.
+4. **Post-migration verification:** Compare published post count before/after.
+5. **Rollback plan:** Keep old detection logic available for quick revert.
+
+**Which phase addresses:** Dedicated migration phase after library extraction is stable.
+
+**Sources:**
+- [Database Schema Migration Best Practices](https://amasucci.com/posts/database-migrations-best-practices/)
+
+---
+
+### Moderate: Shared Library Variable Scope Leakage
+
+**What goes wrong:** Extracting shared functions into a library causes variable conflicts because bash variables are global by default.
+
+**Why it happens:** Current scripts declare variables at top level:
+```bash
+CONFIG_FILE=".claude/settings.local.json"
+BLOG_DIR="src/content/blog"
+RED='\033[0;31m'
+```
+When sourced into another script, these overwrite caller's variables with same names.
+
+**Detection:**
+- Functions behave differently when called from different scripts
+- Variables have unexpected values
+- "variable unbound" errors in strict mode
+
+**Prevention:**
+1. **Use `local` in all functions:**
+   ```bash
+   my_function() {
+       local config_file=".claude/settings.local.json"
+       local result
+       # ...
+   }
+   ```
+2. **Namespace prefix for library globals:**
+   ```bash
+   _BLOG_LIB_CONFIG_FILE=".claude/settings.local.json"
+   _BLOG_LIB_RED='\033[0;31m'
+   ```
+3. **Guard against double-sourcing:**
+   ```bash
+   if [[ -n "${_BLOG_LIB_LOADED:-}" ]]; then
+       return 0
+   fi
+   _BLOG_LIB_LOADED=1
+   ```
+4. **Document public vs private functions:** Prefix private helpers with underscore.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Define naming conventions before extracting.
+
+**Sources:**
+- [Designing Modular Bash: Functions, Namespaces, and Library Patterns](https://www.lost-in-it.com/posts/designing-modular-bash-functions-namespaces-library-patterns/)
+
+---
+
+### Moderate: Duplicated Code Drift
+
+**What goes wrong:** During refactoring, the shared library and individual scripts both contain the same function, and they drift out of sync.
+
+**Why it happens:** Incremental refactoring leaves temporary duplication:
+- Library has `slugify()`
+- `publish.sh` still has its own `slugify()` (not yet updated to source library)
+- Bug fix applied to one but not the other
+
+**Detection:**
+- Same function name appears in multiple files
+- Behavior differs between scripts for same input
+- Bug fixes needed in multiple places
+
+**Prevention:**
+1. **Extract all-or-nothing per function.** When moving `slugify()` to library, update ALL callers in same commit.
+2. **Delete after extraction.** Don't leave old implementations "just in case."
+3. **Add tests for library functions.** Catch drift via test failures.
+4. **Use shellcheck:** It can warn about function redefinitions.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Plan extraction order to avoid partial states.
+
+---
+
+### Moderate: Two-Way Sync Conflict Detection Failure
+
+**What goes wrong:** User modifies post in Obsidian while the blog also modified it (via an earlier publish). Sync overwrites one version without warning.
+
+**Why it happens:**
+- No conflict detection: sync assumes source always wins
+- No modification timestamp comparison
+- No diff presentation to user
+
+**Detection:**
+- User complains about lost changes
+- Unexpected content in either Obsidian or blog
+- Same content appearing in both places when it shouldn't
+
+**Prevention:**
+1. **Track last sync time per file.** Store hash or timestamp of last synced version.
+2. **Detect conflicts before writing:**
+   ```bash
+   local obsidian_mtime=$(stat -c %Y "$obsidian_file")
+   local blog_mtime=$(stat -c %Y "$blog_file")
+   local last_sync_time=$(get_last_sync_time "$slug")
+
+   if [[ $obsidian_mtime -gt $last_sync_time && $blog_mtime -gt $last_sync_time ]]; then
+       warn "Conflict detected: both files modified since last sync"
+       # Show diff, prompt user
+   fi
+   ```
+3. **Default to read-only sync.** Only write back when explicitly requested.
+4. **Store sync state.** Create `.sync-state.json` tracking last sync per file.
+
+**Which phase addresses:** Phase 2 (Two-Way Sync) - Design conflict detection before implementing write-back.
+
+**Sources:**
+- [Two-Way Data Synchronization Best Practices](https://www.ubackup.com/synchronization/two-way-data-synchronization-5740.html)
+
+---
+
+### Moderate: YAML Quoting Inconsistency
+
+**What goes wrong:** Some values get quoted, others don't, leading to parsing differences or invalid YAML.
+
+**Why it happens:** Different code paths handle quoting differently:
+```bash
+# Current pattern - inconsistent quoting
+title=$(echo "$frontmatter" | sed "s/^title:[[:space:]]*//" | sed 's/^"//' | sed 's/"$//')
+```
+This strips quotes on read but doesn't preserve the original format on write.
+
+**Consequences:**
+- Values with colons break: `title: Foo: A Story` becomes invalid
+- Special characters in descriptions cause YAML errors
+- Round-trip through sync changes file format
+
+**Detection:**
+- YAML parse errors after round-trip
+- Values look different after sync
+- Colons or quotes appearing/disappearing in frontmatter
+
+**Prevention:**
+1. **Always quote string values in YAML output:**
+   ```bash
+   echo "title: \"$title\""
+   ```
+2. **Use yq for consistent quoting:**
+   ```bash
+   yq -i '.title = "'"$title"'"' file.md
+   ```
+3. **Preserve original quoting style.** If it was single-quoted, keep it single-quoted.
+4. **Escape special characters:** Handle `"`, `\`, and newlines in values.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Standardize YAML output format.
+
+**Sources:**
+- [YAML Multiline Strings](https://yaml-multiline.info/)
+
+---
+
+### Minor: Color Codes Breaking Non-TTY Output
+
+**What goes wrong:** Color escape codes appear as garbage in logs, pipes, or non-terminal output.
+
+**Why it happens:** Current scripts unconditionally emit ANSI color codes:
+```bash
+RED='\033[0;31m'
+echo -e "${RED}Error${RESET}"
+```
+
+**Detection:**
+- Log files contain `[0;31m` sequences
+- Output looks garbled when piped
+
+**Prevention:**
+```bash
+if [[ -t 1 ]]; then
+    RED='\033[0;31m'
+    RESET='\033[0m'
+else
+    RED=''
+    RESET=''
+fi
+```
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Add TTY detection to color definitions.
+
+---
+
+### Minor: Perl Dependency Not Checked
+
+**What goes wrong:** Scripts fail with "perl: command not found" on minimal systems.
+
+**Why it happens:** Current scripts use perl for multiline regex:
+```bash
+perl -0777 -ne 'exit(!/status:\s*\n\s*-\s*[Pp]ublished/i)' "$file"
+```
+Perl is assumed but not checked.
+
+**Detection:**
+- Scripts fail on Docker containers or minimal installs
+- "command not found" errors
+
+**Prevention:**
+```bash
+if ! command -v perl &>/dev/null; then
+    echo "Error: perl is required" >&2
+    exit 1
+fi
+```
+Or better: replace perl with yq which handles multiline YAML natively.
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Add dependency checks or replace perl usage.
+
+---
+
+### Minor: Rollback Doesn't Restore Git State
+
+**What goes wrong:** Rollback removes created files but doesn't undo git operations like `git add` or `git commit`.
+
+**Why it happens:** Current `rollback_changes()` tracks files but not git state:
+```bash
+rollback_changes() {
+    for ((i=${#CREATED_FILES[@]}-1; i>=0; i--)); do
+        rm -f "${CREATED_FILES[$i]}"
+    done
+}
+```
+
+**Detection:**
+- After rollback, `git status` shows unexpected staged files
+- Commits exist that should have been rolled back
+
+**Prevention:**
+1. **Track git state before operations:**
+   ```bash
+   local initial_commit=$(git rev-parse HEAD)
+   ```
+2. **Rollback includes git reset:**
+   ```bash
+   git reset --hard "$initial_commit"
+   ```
+3. **Use git stash for uncommitted changes.**
+
+**Which phase addresses:** Phase 1 (Library Extraction) - Enhance rollback to include git state.
+
+---
+
+## Existing Code Analysis: Current Fragile Patterns
+
+**Analyzed:** 2026-02-01
+**Files:** `/home/jc/developer/justcarlson.com/scripts/`
+
+| File | Pattern | Risk | Recommendation |
+|------|---------|------|----------------|
+| `publish.sh` | `sed -n '/^---$/,/^---$/p'` | MEDIUM | Replace with yq extraction |
+| `publish.sh` | `perl -0777 -pe 's/...'` | HIGH | Replace with yq modification |
+| `publish.sh` | No backup before normalize | HIGH | Add backup to normalize_frontmatter |
+| `publish.sh` | Hardcoded color codes | LOW | Add TTY detection |
+| `list-posts.sh` | Duplicate validation code | MEDIUM | Extract to shared library |
+| `list-posts.sh` | Duplicate extract_frontmatter | MEDIUM | Share with publish.sh |
+| `unpublish.sh` | Duplicate slugify function | LOW | Extract to shared library |
+| `unpublish.sh` | Duplicate extract_frontmatter_value | MEDIUM | Share with other scripts |
+| All scripts | No yq dependency check | MEDIUM | Add to prerequisites |
+| All scripts | perl assumed available | MEDIUM | Check or replace |
+
+---
+
+## Recommended Tool Adoption: yq
+
+**Replace sed/perl with yq for YAML operations:**
+
+```bash
+# Instead of:
+perl -0777 -pe 's/^author:\s*\n\s*-\s*.*$/author: "Justin Carlson"/m'
+
+# Use:
+yq --front-matter="process" -i '.author = "Justin Carlson"' "$file"
+```
+
+```bash
+# Instead of:
+perl -0777 -ne 'exit(!/status:\s*\n\s*-\s*[Pp]ublished/i)' "$file"
+
+# Use:
+yq --front-matter="extract" '.status[] | select(. == "Published" or . == "published")' "$file"
+```
+
+**Benefits:**
+- YAML-aware: preserves whitespace, quoting, multiline values
+- Cross-platform: same behavior on macOS and Linux
+- Composable: can chain operations
+- Safer: won't corrupt malformed YAML (fails loudly instead)
+
+**Installation:**
+```bash
+# Arch
+pacman -S yq
+
+# macOS
+brew install yq
+
+# Check version (need mikefarah/yq, not kislyuk/yq)
+yq --version  # should show "yq (https://github.com/mikefarah/yq/)"
+```
+
+---
+
+## Bash/YAML Refactoring Phase-Specific Warnings
+
+| Phase | Topic | Likely Pitfall | Mitigation |
+|-------|-------|----------------|------------|
+| Library extraction | Variable scope | Leakage between scripts | Use `local`, namespace prefixes, guard against double-source |
+| Library extraction | Code drift | Duplicated functions diverge | Extract all-or-nothing, delete after extraction |
+| YAML manipulation | sed/regex corruption | Whitespace/quoting destroyed | Use yq with `--front-matter` flag |
+| YAML manipulation | Platform differences | BSD vs GNU sed | Platform detection or yq standardization |
+| Two-way sync | Data loss on write | User's source corrupted | Atomic writes, backup before modify |
+| Two-way sync | Conflict detection | Silent overwrite | Track sync state, compare timestamps |
+| Schema migration | Breaking posts | Published posts disappear | Phased migration with overlap period |
+| Schema migration | Edge cases | Empty values, mixed formats | Pre-migration audit, explicit state mapping |
+
+---
+
 ## Bootstrap/Dev Container Phase-Specific Warnings
 
 | Phase | Topic | Likely Pitfall | Mitigation |
@@ -1027,6 +1510,18 @@ Before declaring milestone complete:
 - [ ] Recommend GitHub branch protection as additional layer
 - [ ] Validate at commit time, not just push time
 
+### Bash/YAML Refactoring (NEW)
+- [ ] Use yq instead of sed for YAML modifications
+- [ ] Back up files before any write to Obsidian vault
+- [ ] Use atomic writes (temp file + mv)
+- [ ] Use `local` for all function variables
+- [ ] Namespace global variables with prefix (e.g., `_BLOG_LIB_`)
+- [ ] Guard against double-sourcing in shared library
+- [ ] Test cross-platform (macOS and Linux)
+- [ ] Add yq to prerequisite checks
+- [ ] Extract functions all-or-nothing (no partial duplication)
+- [ ] Implement phased schema migration with overlap
+
 ## Sources
 
 ### Official Documentation (HIGH confidence)
@@ -1041,6 +1536,8 @@ Before declaring milestone complete:
 - [Dev Container Performance Guide](https://code.visualstudio.com/remote/advancedcontainers/improve-performance)
 - [Dev Container Environment Variables](https://code.visualstudio.com/remote/advancedcontainers/environment-variables)
 - [Dev Container Lifecycle Commands](https://containers.dev/implementors/json_reference/)
+- [yq Front Matter Documentation](https://mikefarah.gitbook.io/yq/usage/front-matter)
+- [YAML Multiline Strings](https://yaml-multiline.info/)
 
 ### Known Issues (MEDIUM confidence)
 - [PostToolUse JSON Bug - Issue #3983](https://github.com/anthropics/claude-code/issues/3983)
@@ -1055,8 +1552,15 @@ Before declaring milestone complete:
 - [Idempotent Bash Scripts](https://arslan.io/2019/07/03/how-to-write-idempotent-bash-scripts/)
 - [DevContainers Best Practices](https://atoms.dev/insights/6d0570e51ba4430296743ef234f4f74d)
 - [Node.js Named Volumes Pattern](https://www.kenmuse.com/blog/dev-containers-and-node_modules/)
+- [GNU sed vs BSD sed (Baeldung)](https://www.baeldung.com/linux/gnu-bsd-stream-editor)
+- [sed in-place portability fix](https://sqlpey.com/bash/sed-in-place-portability-fix/)
+- [Designing Modular Bash: Functions, Namespaces, and Library Patterns](https://www.lost-in-it.com/posts/designing-modular-bash-functions-namespaces-library-patterns/)
+- [BashPitfalls - Greg's Wiki](https://mywiki.wooledge.org/BashPitfalls)
+- [Atomic File Modifications](https://dev.to/martinhaeusler/towards-atomic-file-modifications-2a9n)
+- [Two-Way Sync Best Practices](https://www.stacksync.com/blog/two-way-sync-demystified-key-principles-and-best-practices)
+- [Database Schema Migration Best Practices](https://amasucci.com/posts/database-migrations-best-practices/)
 
 ---
 *Research completed: 2026-01-31*
-*Last updated: 2026-01-31 (Bootstrap and Dev Container pitfalls added)*
+*Last updated: 2026-02-01 (Bash and YAML Refactoring pitfalls added)*
 *Confidence: HIGH - Official documentation verified for all critical pitfalls*
