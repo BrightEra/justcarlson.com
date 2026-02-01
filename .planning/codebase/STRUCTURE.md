@@ -39,8 +39,9 @@ justcarlson.com/
 │   │   ├── archives.md.ts         # Archives page
 │   │   ├── posts.md.ts            # Posts index page
 │   │   ├── posts/
-│   │   │   ├── [...slug].astro    # Individual post routes
-│   │   │   └── [...page].astro    # Paginated post list routes
+│   │   │   ├── index.astro        # Posts listing page (/posts)
+│   │   │   └── [...slug]/
+│   │   │       └── index.astro    # Individual post routes (/posts/YYYY/slug)
 │   │   ├── page/
 │   │   │   └── [page].astro       # Home page pagination
 │   │   ├── tags/
@@ -176,8 +177,8 @@ justcarlson.com/
 **Entry Points:**
 
 - `src/pages/index.astro`: Homepage (blog listing with featured posts)
-- `src/pages/posts/[...slug].astro`: Individual blog post route
-- `src/pages/posts/[...page].astro`: Paginated blog post list
+- `src/pages/posts/index.astro`: Posts listing page (/posts)
+- `src/pages/posts/[...slug]/index.astro`: Individual blog post route (/posts/YYYY/slug)
 - `src/middleware.js`: Request-level redirects (legacy /blog/ → /posts/)
 - `astro.config.mjs`: Astro build configuration
 
@@ -229,8 +230,9 @@ justcarlson.com/
 
 - Index routes: `index.astro` (becomes `/`)
 - Dynamic segments: `[param].astro` (single segment), `[...slug].astro` (catch-all)
-- Post routes: `/posts/[...slug].astro` (becomes `/posts/2025/post-title`)
-- Pagination: `/posts/[...page].astro` (becomes `/posts/page/1`, `/posts/page/2`)
+- Posts index: `posts/index.astro` (becomes `/posts`)
+- Post routes: `posts/[...slug]/index.astro` (becomes `/posts/2025/post-title`)
+- Trailing slashes: Config uses `trailingSlash: "ignore"` - both `/posts` and `/posts/` work
 
 **Variables & Functions:**
 
@@ -312,3 +314,4 @@ justcarlson.com/
 ---
 
 *Structure analysis: 2026-01-28*
+*Updated: 2026-02-01 (routing structure after quick fix 004)*

@@ -14,7 +14,7 @@ import buildValidator from "./src/integrations/build-validator.ts";
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
-  trailingSlash: "never",
+  trailingSlash: "ignore",
   markdown: {
     remarkPlugins: [
       remarkToc,

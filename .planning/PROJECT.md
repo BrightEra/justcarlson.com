@@ -35,23 +35,30 @@ A clean, personal space to write — with a publishing workflow that just works.
 - ✓ Image handling — copy referenced images to public/assets/ — v0.2.0
 - ✓ Validation — frontmatter valid, Biome lint, build check before commit — v0.2.0
 - ✓ Optional `/publish` skill for human-in-the-loop oversight — v0.2.0
+- ✓ Fixed title duplication in Obsidian template and stripped existing H1s — v0.3.0
+- ✓ Tags wired up — template field, publish script converts to Astro format — v0.3.0
+- ✓ Skills renamed with `blog:` prefix for discoverability — v0.3.0
+- ✓ `just bootstrap` for one-command fresh clone setup — v0.3.0
+- ✓ README with clear first-run instructions (Quick Start) — v0.3.0
+- ✓ Dev container support (devcontainer.json, node_modules volume, auto-bootstrap) — v0.3.0
+- ✓ Python SessionStart hook with logging, env loading, timeout protection — v0.3.0
+- ✓ All scripts support `--help` and non-interactive mode — v0.3.0
+- ✓ No dead code (verified via Knip) — v0.3.0
+- ✓ Consolidated constants to single source of truth (consts.ts) — v0.3.0
 
 ### Active
 
-**v0.3.0 Polish & Portability:**
-- [ ] Fix title duplication in Obsidian template and strip existing H1s from posts
-- [ ] Wire up tags — add field to template, publish script converts to Astro format
-- [ ] Rename skills with `blog:` prefix for discoverability
-- [ ] Add `just bootstrap` for one-command fresh clone setup
-- [ ] Update README with clear first-run instructions
-- [ ] Add dev container support (devcontainer.json, node_modules volume, auto-bootstrap)
+**v0.4.0+ (Next milestone):**
+- [ ] Set up newsletter service (Buttondown or alternative)
+- [ ] Write actual About page bio content
+- [ ] `just doctor` health check command
 
 ### Deferred
 
-- Set up newsletter service (Buttondown or alternative) — v0.3.0+
+- Set up newsletter service (Buttondown or alternative) — v0.4.0+
 - Write actual About page bio content — content work
 - Social auto-posting (X, BlueSky, LinkedIn) — API complexity
-- Maintenance hook for health checks (HOOK-04) — v0.3.0+
+- `just doctor` health check command — v0.4.0+
 
 ### Out of Scope
 
@@ -62,11 +69,11 @@ A clean, personal space to write — with a publishing workflow that just works.
 
 ## Context
 
-**Shipped:** v0.2.0 Publishing Workflow (2026-01-31)
-- 4 phases, 12 plans executed
-- 62 files changed (+8,543 / -112 lines)
-- 2,393 lines of Bash scripts + justfile + hooks
-- 5 Claude skills with stop hook verification
+**Shipped:** v0.3.0 Polish & Portability (2026-02-01)
+- 4 phases, 10 plans executed
+- 78 files changed (+7,145 / -1,676 lines)
+- 3,630 LOC total (TS/Astro/Bash/Python)
+- 22 requirements satisfied with 100% audit pass
 
 **Tech stack:**
 - Astro 5.x with content collections
@@ -74,15 +81,21 @@ A clean, personal space to write — with a publishing workflow that just works.
 - TypeScript
 - Vercel deployment with analytics
 - justfile + Bash scripts for publishing workflow
+- Python hooks with uv + PEP 723 inline deps
 - Claude Code hooks for safety and setup
+- Dev container for portable development
 
 **Current state:**
 - All Peter Steinberger content removed (110 posts, 191 images)
 - Justin Carlson identity applied throughout
 - Publishing workflow: `just publish` from Obsidian with full validation
 - Git safety hooks blocking dangerous operations
-- 5 Claude skills for human-in-the-loop oversight
+- 6 Claude /blog: skills for human-in-the-loop oversight
 - Obsidian vault integration with automatic post discovery
+- One-command bootstrap (`just bootstrap`) for fresh clones
+- Dev container support for instant contribution
+- Python SessionStart hook with logging and timeout protection
+- Knip-configured for ongoing dead code detection
 
 ## Constraints
 
@@ -109,6 +122,16 @@ A clean, personal space to write — with a publishing workflow that just works.
 | Unpublish commits but doesn't push | User controls push timing | ✓ Good — safer design |
 | Skills require manual invocation | disable-model-invocation prevents auto-triggering | ✓ Good — user stays in control |
 | Frontmatter normalization | Handle Obsidian→Astro schema differences | ✓ Good — author array→string, empty heroImage removed |
+| Template defaults to draft: true | New posts start unpublished | ✓ Good — prevents accidental publishing |
+| Kepano fields as optional nullable | Accept empty YAML values from vault | ✓ Good — schema flexibility |
+| Skills renamed with blog: prefix | Discoverability, matches GSD convention | ✓ Good — 6 /blog: commands |
+| Node 22 major version in .nvmrc | Auto patch updates via nvm/fnm/mise | ✓ Good — stays current |
+| Named volume for node_modules | macOS/Windows bind mount performance | ✓ Good — dev container works fast |
+| Python hooks with PEP 723 + uv | Single-file deps, no venv management | ✓ Good — clean hook pattern |
+| Logger with dual output | stderr for terminal, file for debugging | ✓ Good — debug without noise |
+| trailingSlash: "ignore" | Accept both /posts and /posts/ URLs | ✓ Good — flexible routing |
+| Knip for dead code detection | Ongoing codebase hygiene | ✓ Good — removed 16 files |
+| Config consolidation to consts.ts | Single source of truth for site config | ✓ Good — cleaner imports |
 
 ---
-*Last updated: 2026-01-31 after v0.3.0 milestone start*
+*Last updated: 2026-02-01 after v0.3.0 milestone*

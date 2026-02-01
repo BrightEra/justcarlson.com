@@ -1,5 +1,31 @@
 # Project Milestones: justcarlson.com
 
+## v0.3.0 Polish & Portability (Shipped: 2026-02-01)
+
+**Delivered:** Developer experience improvements — one-command bootstrap, dev container support, robust Python hooks, and codebase cleanup
+
+**Phases completed:** 11-14 (10 plans total)
+
+**Key accomplishments:**
+- Fixed Obsidian template (no duplicate H1), extended schema for Kepano vault compatibility
+- One-command bootstrap (`just bootstrap`) with .nvmrc and comprehensive README Quick Start
+- Dev container support with auto-bootstrap for instant contribution
+- Python SessionStart hook with logging, env loading, and 10s timeout protection
+- Knip-based dead code removal (16 files, 1,467 lines cleaned)
+- Consolidated configuration to single source of truth (consts.ts)
+
+**Stats:**
+- 78 files changed (+7,145 / -1,676 lines)
+- 3,630 lines of TS/Astro/Bash/Python
+- 4 phases, 10 plans, 22 requirements satisfied
+- 1 day from v0.2.0 to ship (2026-02-01)
+
+**Git range:** `docs(11)` → `docs(14)` (tagged v0.3.0)
+
+**What's next:** Newsletter setup, actual blog content, About page bio
+
+---
+
 ## v0.2.0 Publishing Workflow (Shipped: 2026-01-31)
 
 **Delivered:** Frictionless Obsidian-to-blog publishing with validation, git safety, and optional Claude oversight
