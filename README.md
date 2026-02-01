@@ -2,29 +2,43 @@
 
 My personal website and blog, built with [Astro](https://astro.build) and deployed on [Vercel](https://vercel.com).
 
-## Overview
+## Prerequisites
 
-This site is a personal space for writing about software development, technology, and whatever else catches my interest.
+- [Node.js 22+](https://nodejs.org/) (or use [nvm](https://github.com/nvm-sh/nvm) / [fnm](https://github.com/Schniz/fnm) to auto-switch)
+- [just](https://just.systems/man/en/) command runner
+- npm (included with Node.js)
 
-## Setup
+## Quick Start
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+git clone https://github.com/justcarlson/justcarlson.com.git
+cd justcarlson.com
+just bootstrap
+just preview
 ```
 
-The dev server runs at `localhost:4321`.
+Open http://localhost:4321 in your browser.
+
+## Obsidian Integration
+
+This blog supports publishing directly from an Obsidian vault.
+
+```bash
+just setup      # Configure your vault path (one-time)
+just publish    # Publish posts marked with status: Published
+just list-posts # List available posts in your vault
+```
+
+Run `just --list` to see all available commands.
 
 ## Development
 
 | Command | Action |
 |---------|--------|
-| `npm run dev` | Start local dev server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build locally |
+| `just preview` | Start local dev server |
+| `just build` | Build for production with type checking |
+| `just lint` | Run Biome linter |
+| `just format` | Format code with Biome |
 
 ### Adding Blog Posts
 
@@ -41,6 +55,23 @@ draft: false
 
 Your content here.
 ```
+
+## Common Issues
+
+**Node version mismatch**
+Run `nvm use` or `fnm use` to switch to the correct Node version. The project uses Node 22 (specified in `.nvmrc`).
+
+**`just` command not found**
+Install the just command runner from [just.systems](https://just.systems/man/en/chapter_4.html).
+
+**Permission denied on scripts**
+Run `chmod +x scripts/*.sh` to make scripts executable.
+
+**Port 4321 already in use**
+Another dev server is running. Kill it with `lsof -i :4321 | grep LISTEN | awk '{print $2}' | xargs kill` or use a different port.
+
+**Build fails with type errors**
+Run `npm run sync` to regenerate Astro types, then retry the build.
 
 ## Deployment
 
