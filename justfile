@@ -20,9 +20,9 @@ bootstrap:
 
 # === Development ===
 
-# Start Astro dev server
+# Start Astro dev server (accessible from container/network)
 preview:
-    npm run dev
+    npm run dev -- --host
 
 # Run Biome lint
 lint:
