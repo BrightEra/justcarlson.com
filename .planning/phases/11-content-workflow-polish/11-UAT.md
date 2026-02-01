@@ -1,9 +1,9 @@
 ---
 status: diagnosed
 phase: 11-content-workflow-polish
-source: [11-01-SUMMARY.md, 11-02-SUMMARY.md]
+source: [11-01-SUMMARY.md, 11-02-SUMMARY.md, 11-03-SUMMARY.md, 11-04-SUMMARY.md]
 started: 2026-02-01T06:00:00Z
-updated: 2026-02-01T08:00:00Z
+updated: 2026-02-01T17:20:00Z
 ---
 
 ## Current Test
@@ -35,10 +35,11 @@ result: pass
 note: Re-verified after 11-03 fix (commands moved to .claude/commands/blog/)
 
 ### 6. Smart SessionStart Hook
-expected: In a fresh session without vault configured, SessionStart suggests running /blog:install.
+expected: In a fresh session with Published posts, user sees visible message suggesting /blog:publish.
 result: issue
-reported: "Hook runs and outputs text, but plain stdout is not user-visible. Needs JSON format with additionalContext for Claude Code to display it."
+reported: "Hook outputs JSON with additionalContext but message only goes to Claude's context, not visible to user in terminal UI."
 severity: major
+note: Re-tested after 11-04 fix - still failing. additionalContext goes to Claude context, not user terminal.
 
 ## Summary
 
@@ -50,15 +51,17 @@ skipped: 0
 
 ## Gaps
 
-- truth: "SessionStart hook shows user-visible suggestion to run /blog:install when vault not configured"
-  status: failed
-  reason: "User reported: Hook runs and outputs text, but plain stdout is not user-visible. Needs JSON format with additionalContext for Claude Code to display it."
+- truth: "SessionStart hook shows user-visible message in terminal UI when posts are ready to publish"
+  status: diagnosed
+  reason: "User reported: Hook outputs JSON with additionalContext but message only goes to Claude's context, not visible to user in terminal UI."
   severity: major
   test: 6
-  root_cause: "SessionStart hook stdout goes to Claude's context, not user terminal. Claude Code requires JSON output with hookSpecificOutput.additionalContext for user visibility."
+  root_cause: "additionalContext is designed to add context FOR CLAUDE (system-reminder), not display to users. This is working as intended but doesn't meet the requirement. The `systemMessage` JSON field exists for user-visible warnings."
   artifacts:
     - path: ".claude/hooks/blog-session-start.sh"
-      issue: "Uses plain echo instead of JSON format required by Claude Code"
+      issue: "Uses additionalContext (Claude-facing) instead of systemMessage (user-facing)"
   missing:
-    - "Update hook to output JSON: {\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": \"message\"}}"
-  debug_session: "inline"
+    - "Change hook to output systemMessage instead of additionalContext for user visibility"
+    - "Keep additionalContext as well so Claude gets the context"
+  debug_session: "claude-code-guide research 2026-02-01"
+  fix_approach: "Output both systemMessage (for user) and additionalContext (for Claude)"
