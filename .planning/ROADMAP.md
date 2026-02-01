@@ -44,18 +44,18 @@ Plans:
   4. `just preview` works without vault configured for code exploration
   5. Opening project in VS Code with Dev Containers extension offers "Reopen in Container"
   6. Dev container starts successfully with all dependencies installed
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 12-01: TBD
-- [ ] 12-02: TBD
+- [ ] 12-01-PLAN.md - Bootstrap script, .nvmrc, vault-optional mode, README Quick Start (BOOT-01, BOOT-02, BOOT-03, BOOT-04)
+- [ ] 12-02-PLAN.md - Dev container configuration with auto-bootstrap (DEVC-01, DEVC-02, DEVC-03)
 
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 11. Content & Workflow Polish | v0.3.0 | 2/2 | Complete | 2026-02-01 |
-| 12. Bootstrap & Portability | v0.3.0 | 0/TBD | Not started | - |
+| 12. Bootstrap & Portability | v0.3.0 | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-31*
