@@ -36,6 +36,8 @@ const {
   tags,
   hideEditPost,
   heroImage,
+  heroImageAlt,
+  heroImageCaption,
 } = post.data;
 
 const { Content } = await render(post);
@@ -140,12 +142,19 @@ const wordCount = (post.body ?? "").split(/\s+/).length;
     <article id="article" class="mx-auto prose mt-6 max-w-3xl">
       {
         heroImage && (
-          <img
-            src={heroImage}
-            alt=""
-            class="mb-8 aspect-video w-full rounded-md object-cover"
-            loading="lazy"
-          />
+          <figure class="mb-8">
+            <img
+              src={heroImage}
+              alt={heroImageAlt || title}
+              class="aspect-video w-full rounded-md object-cover"
+              loading="lazy"
+            />
+            {heroImageCaption && (
+              <figcaption class="mt-2 text-center text-sm">
+                {heroImageCaption}
+              </figcaption>
+            )}
+          </figure>
         )
       }
       <Content />
