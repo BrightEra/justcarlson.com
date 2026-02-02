@@ -45,36 +45,20 @@ A clean, personal space to write — with a publishing workflow that just works.
 - ✓ All scripts support `--help` and non-interactive mode — v0.3.0
 - ✓ No dead code (verified via Knip) — v0.3.0
 - ✓ Consolidated constants to single source of truth (consts.ts) — v0.3.0
+- ✓ `draft: true/false` as single source of truth (replaces `status: Published`) — v0.4.0
+- ✓ `pubDatetime` set by publish script (not template creation time) — v0.4.0
+- ✓ Removed redundant `published` and `status` fields from template — v0.4.0
+- ✓ Updated Obsidian template, types.json, and Base/Category views — v0.4.0
+- ✓ `just publish` updates Obsidian source: sets `draft: false`, sets `pubDatetime` — v0.4.0
+- ✓ `just unpublish` updates Obsidian source: sets `draft: true` — v0.4.0
+- ✓ Discovery trigger uses `draft: false` — v0.4.0
+- ✓ Shared library (scripts/lib/common.sh) with validation and utility functions — v0.4.0
+- ✓ Author normalization from config (not hardcoded) — v0.4.0
+- ✓ yq integration for reliable YAML frontmatter manipulation — v0.4.0
 
 ### Active
 
-**v0.4.0: Obsidian + Blog Integration Refactor**
-
-Goal: Clean up redundancy, fix invalid assumptions, establish logical consistency across the publishing workflow.
-
-**Frontmatter model overhaul:**
-- [ ] `draft: true/false` becomes single source of truth (replaces `status: Published`)
-- [ ] `pubDatetime` set by publish script (not template creation time)
-- [ ] Remove redundant `published` and `status` fields from template
-- [ ] Update Obsidian template, types.json, and Base/Category views
-
-**Two-way sync:**
-- [ ] `just publish` updates Obsidian source: sets `draft: false`, sets `pubDatetime`
-- [ ] `just unpublish` updates Obsidian source: sets `draft: true`
-- [ ] Discovery trigger changes from `status: Published` to `draft: false`
-
-**Extract shared library:**
-- [ ] Centralize validation functions (currently duplicated in 3 scripts)
-- [ ] Centralize slugify, frontmatter extraction, config reading
-- [ ] Centralize constants (paths, patterns)
-
-**Clarify architecture:**
-- [ ] Clean boundaries between scripts, skills, hooks
-- [ ] Consistent user interaction patterns
-
-**Remove hardcoded assumptions:**
-- [ ] Author normalization from config (not hardcoded "Justin Carlson")
-- [ ] Configurable paths where sensible
+(No active requirements — next milestone not yet defined)
 
 ### Deferred
 
@@ -92,11 +76,11 @@ Goal: Clean up redundancy, fix invalid assumptions, establish logical consistenc
 
 ## Context
 
-**Shipped:** v0.3.0 Polish & Portability (2026-02-01)
-- 4 phases, 10 plans executed
-- 78 files changed (+7,145 / -1,676 lines)
-- 3,630 LOC total (TS/Astro/Bash/Python)
-- 22 requirements satisfied with 100% audit pass
+**Shipped:** v0.4.0 Obsidian + Blog Integration Refactor (2026-02-02)
+- 3 phases, 8 plans executed
+- 37 files changed (+4,556 / -510 lines)
+- 2,831 LOC shell scripts
+- 19 requirements satisfied with 100% audit pass
 
 **Tech stack:**
 - Astro 5.x with content collections
@@ -104,6 +88,8 @@ Goal: Clean up redundancy, fix invalid assumptions, establish logical consistenc
 - TypeScript
 - Vercel deployment with analytics
 - justfile + Bash scripts for publishing workflow
+- scripts/lib/common.sh shared library (311 lines)
+- mikefarah/yq v4 for YAML frontmatter manipulation
 - Python hooks with uv + PEP 723 inline deps
 - Claude Code hooks for safety and setup
 - Dev container for portable development
@@ -112,9 +98,11 @@ Goal: Clean up redundancy, fix invalid assumptions, establish logical consistenc
 - All Peter Steinberger content removed (110 posts, 191 images)
 - Justin Carlson identity applied throughout
 - Publishing workflow: `just publish` from Obsidian with full validation
+- Two-way sync: publish/unpublish update Obsidian source files
+- `draft: true/false` is single source of truth for publish state
 - Git safety hooks blocking dangerous operations
 - 6 Claude /blog: skills for human-in-the-loop oversight
-- Obsidian vault integration with automatic post discovery
+- Obsidian vault integration with automatic post discovery (draft: false)
 - One-command bootstrap (`just bootstrap`) for fresh clones
 - Dev container support for instant contribution
 - Python SessionStart hook with logging and timeout protection
@@ -155,6 +143,14 @@ Goal: Clean up redundancy, fix invalid assumptions, establish logical consistenc
 | trailingSlash: "ignore" | Accept both /posts and /posts/ URLs | ✓ Good — flexible routing |
 | Knip for dead code detection | Ongoing codebase hygiene | ✓ Good — removed 16 files |
 | Config consolidation to consts.ts | Single source of truth for site config | ✓ Good — cleaner imports |
+| draft: false as publish state | Single source of truth, replaces status field | ✓ Good — simpler schema |
+| yq for YAML manipulation | Reliable frontmatter editing vs fragile sed/regex | ✓ Good — handles edge cases |
+| Shared library common.sh | Eliminate code duplication across scripts | ✓ Good — ~280 lines consolidated |
+| Two-way sync on publish/unpublish | Keep Obsidian and blog in sync | ✓ Good — source files updated |
+| strenv() for yq variables | Pass shell variables to yq expressions safely | ✓ Good — no injection issues |
+| Backup before source modification | .bak files for safety on Obsidian file changes | ✓ Good — recoverable |
+| yq has() for boolean detection | Correctly handle draft: false | ✓ Good — false != missing |
+| Config-driven author | Author from settings.local.json with fallback | ✓ Good — portable |
 
 ---
-*Last updated: 2026-02-01 after v0.3.0 milestone*
+*Last updated: 2026-02-02 after v0.4.0 milestone*

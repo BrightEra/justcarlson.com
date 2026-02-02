@@ -1,5 +1,30 @@
 # Project Milestones: justcarlson.com
 
+## v0.4.0 Obsidian + Blog Integration Refactor (Shipped: 2026-02-02)
+
+**Delivered:** `draft: true/false` as single source of truth for publish state, with bidirectional sync between Obsidian and blog
+
+**Phases completed:** 15-17 (8 plans total)
+
+**Key accomplishments:**
+- Consolidated ~280 lines of duplicated code into shared library (scripts/lib/common.sh)
+- Replaced fragile sed/regex YAML manipulation with yq for reliable frontmatter handling
+- Implemented bidirectional sync — publish sets `draft: false` + `pubDatetime`, unpublish sets `draft: true`
+- Migrated from `status: Published` to `draft: false` as canonical publish state
+- All 4 E2E workflows verified working (publish, unpublish, list-posts, new post from template)
+
+**Stats:**
+- 37 files changed (+4,556 / -510 lines)
+- 2,831 lines of shell scripts
+- 3 phases, 8 plans, 19 requirements satisfied
+- 2 days (2026-02-01 → 2026-02-02)
+
+**Git range:** `feat(15-01)` → `feat(17-01)` (tagged v0.4.0)
+
+**What's next:** Newsletter setup, actual blog content, About page bio
+
+---
+
 ## v0.3.0 Polish & Portability (Shipped: 2026-02-01)
 
 **Delivered:** Developer experience improvements — one-command bootstrap, dev container support, robust Python hooks, and codebase cleanup
