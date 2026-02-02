@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 19-justfile-hero-image-support
-source: 19-01-SUMMARY.md
-started: 2026-02-02T06:30:00Z
-updated: 2026-02-02T06:55:00Z
+source: 19-01-SUMMARY.md, 19-02-SUMMARY.md
+started: 2026-02-02T07:00:00Z
+updated: 2026-02-02T07:10:00Z
 ---
 
 ## Current Test
@@ -12,41 +12,48 @@ updated: 2026-02-02T06:55:00Z
 
 ## Tests
 
-### 1. Hero Image Alt Change Detection
-expected: Changing heroImageAlt in a published post triggers republish detection. The post should appear as "changed" in publish workflow when only alt text differs from published version.
+### 1. Hero Image Field Preservation
+expected: When publishing a post with heroImage, heroImageAlt, and heroImageCaption fields, all three fields appear in the published frontmatter with their values intact.
 result: issue
-reported: "Build fails with YAML parse error. The heroImage: key is being stripped from frontmatter, leaving orphaned value 'Attachments/fresh-coat-on-solid-foundation.jpg' which breaks YAML parsing."
+reported: "heroImage path not transformed - still shows [[forrest-gump-quote.png]] instead of /assets/blog/hello-world/forrest-gump-quote.png. Warning: Image not found during publish. 404 errors in dev server."
 severity: blocker
 
-### 2. Hero Image Caption Change Detection
-expected: Changing heroImageCaption in a published post triggers republish detection. The post should appear as "changed" in publish workflow when only caption differs from published version.
-result: skipped
-reason: Blocked by blocker issue #1 - publish workflow broken
+### 2. Hero Image Path Transformation
+expected: The heroImage path is transformed from Obsidian format (e.g., "Attachments/image.jpg") to web format (e.g., "/assets/blog/slug/image.jpg") in published frontmatter.
+result: issue
+reported: "failed, same issue - heroImage still shows [[forrest-gump-quote.png]] not transformed"
+severity: blocker
 
-### 3. Empty Hero Image Fields Cleanup
-expected: When publishing a post with empty heroImageAlt or heroImageCaption fields, those empty fields are stripped from the published frontmatter (not left as empty strings).
-result: skipped
-reason: Blocked by blocker issue #1 - same regex bug affects this feature
+### 3. Hero Image Asset Copying
+expected: The hero image file is copied to /public/assets/blog/{slug}/ alongside inline images.
+result: issue
+reported: "failed, same issue - image not copied because wiki-link not resolved"
+severity: blocker
+
+### 4. Build Success with Hero Image
+expected: Running `npm run build` succeeds without YAML parse errors or LocalImageUsedWrongly errors when posts have hero images.
+result: pass
+
+### 5. Empty Hero Image Field Cleanup
+expected: Publishing a post with empty heroImageAlt or heroImageCaption fields results in those empty fields being stripped from published frontmatter (not left as empty strings).
+result: pass
 
 ## Summary
 
-total: 3
-passed: 0
-issues: 1
+total: 5
+passed: 2
+issues: 3
 pending: 0
-skipped: 2
+skipped: 0
 
 ## Gaps
 
-- truth: "heroImage field preserved in published frontmatter when post has hero image"
+- truth: "heroImage field value preserved and transformed correctly in published frontmatter"
   status: failed
-  reason: "User reported: Build fails with YAML parse error. The heroImage: key is being stripped from frontmatter, leaving orphaned value."
+  reason: "User reported: heroImage path not transformed - still shows [[forrest-gump-quote.png]] instead of /assets/blog/hello-world/forrest-gump-quote.png. Warning: Image not found during publish. 404 errors in dev server."
   severity: blocker
   test: 1
-  root_cause: "Perl variable interpolation bug. The regex pattern `s/^heroImage:\\s*$\\n?//m` contains `$\\n` which Perl interprets as the variable `$\\` (output record separator, empty) followed by literal 'n'. The compiled regex becomes `^heroImage:\\s*n?` which matches and strips the 'heroImage: ' key even when a value is present."
-  artifacts:
-    - path: "scripts/publish.sh"
-      issue: "Lines 278, 281, 284 use `\\s*$\\n?` pattern where `$\\n` is interpreted by Perl as variable interpolation, not end-of-line anchor"
-  missing:
-    - "Change `\\s*$\\n?` to `[ \\t]*\\n` - use explicit space/tab class (not \\s which includes newlines) and required newline (not optional)"
+  root_cause: ""
+  artifacts: []
+  missing: []
   debug_session: ""
