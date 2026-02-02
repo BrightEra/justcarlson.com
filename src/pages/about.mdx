@@ -6,6 +6,7 @@ description: "Technician turned builder, shipping projects with AI tools."
 
 import { Image } from 'astro:assets';
 import aboutPhoto from '../assets/images/about-photo.jpg';
+import GitHubChart from '../components/GitHubChart.astro';
 
 <div class="flex flex-col md:flex-row gap-8 items-start">
   <div class="w-full md:w-auto md:flex-shrink-0 md:max-w-[281px]">
@@ -30,15 +31,7 @@ import aboutPhoto from '../assets/images/about-photo.jpg';
 
 ## GitHub Activity
 
-<div class="bg-secondary p-0 rounded-lg">
-  <img
-    src="https://ghchart.rshah.org/justcarlson"
-    alt="Just Carlson's GitHub Contribution Graph"
-    class="w-full"
-    style="max-width: 100%; height: auto;"
-    loading="lazy"
-  />
-</div>
+<GitHubChart />
 
 My first public project is [QuickTab](https://github.com/justcarlson/QuickTab), a Chrome extension for Zendesk power users. Built it with Claude Code after resurrecting a five-year-old codebase. Wrote about that [here](/posts/2026/claude-code-helped-me-resurrect-a-five-year-old-codebase).
 
