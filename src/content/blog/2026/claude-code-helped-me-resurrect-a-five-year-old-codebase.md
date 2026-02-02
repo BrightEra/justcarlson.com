@@ -1,6 +1,6 @@
 ---
 title: Claude Code Helped Me Resurrect a Five Year Old Codebase
-pubDatetime: "2026-02-02T02:57:45-05:00"
+pubDatetime: "2026-02-02T03:01:13-05:00"
 description: How AI showed me what is possible in brownfield open source software
 heroImage: /assets/blog/claude-code-helped-me-resurrect-a-five-year-old-codebase/fresh-coat-on-solid-foundation.jpg
 categories:
@@ -46,7 +46,7 @@ Google's ever-stricter extension requirements weren't just a technical hurdle. T
 
 ## The Spark: Zach's MVP
 
-Then [Zach Vivier](https://github.com/zachvier) built something that changed my perspective. Using Gemini, he put together an MVP, a proof of concept that actually worked. It wasn't polished, but it proved the concept was tractable with AI assistance.
+Then [a friend of mine](https://github.com/zachvier) built something that changed my perspective. Using Gemini, he put together an MVP, a proof of concept that actually worked. It wasn't polished, but it proved the concept was tractable with AI assistance.
 
 If AI could help him build a working prototype, maybe it could help me finish the project properly.
 
