@@ -134,6 +134,26 @@ const structuredData = {
   <body>
     <slot />
     <Analytics />
+    <script is:inline>
+      (function() {
+        if (!document.querySelector('.twitter-tweet, blockquote[data-twitter]')) {
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://platform.twitter.com/widgets.js';
+        script.async = true;
+        script.charset = 'utf-8';
+        script.onerror = function() {
+          console.log('Twitter widget script blocked or unavailable');
+        };
+        script.onload = function() {
+          if (window.twttr && window.twttr.widgets) {
+            window.twttr.widgets.load();
+          }
+        };
+        document.head.appendChild(script);
+      })();
+    </script>
   </body>
 </html>
 

@@ -117,4 +117,17 @@ test.describe("Image fallback behavior", () => {
     await expect(page.locator("main h1").first()).toBeVisible();
     await expect(page.locator("main")).toBeVisible();
   });
+
+  test("GitHub chart shows link fallback when blocked", async ({ page }) => {
+    // Block ghchart.rshah.org before navigation
+    await page.route("**/ghchart.rshah.org/**", (route) => route.abort("blockedbyclient"));
+
+    await page.goto("/about");
+    await page.waitForLoadState("networkidle");
+
+    // Wait for fallback (5 second timeout + processing)
+    const fallbackLink = page.locator('#github-chart a[href="https://github.com/justcarlson"]');
+    await expect(fallbackLink).toBeVisible({ timeout: 7000 });
+    await expect(fallbackLink).toHaveText("View my contributions on GitHub");
+  });
 });
