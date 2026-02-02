@@ -1,5 +1,29 @@
 # Project Milestones: justcarlson.com
 
+## v0.4.1 Image & Caption Support (Shipped: 2026-02-02)
+
+**Delivered:** Hero images and inline image captions with accessibility support and wiki-link format handling in publishing workflow
+
+**Phases completed:** 18-19 (5 plans total)
+
+**Key accomplishments:**
+- Added heroImageAlt and heroImageCaption optional schema fields with title fallback
+- Wrapped hero images in semantic `<figure>` element with optional figcaption
+- Extended publish.sh to handle hero image fields in change detection and normalization
+- Fixed Perl regex bug preventing heroImage field preservation
+- Added wiki-link `[[image.png]]` format support in publishing workflow
+
+**Stats:**
+- 27 files changed (+2,921 / -30 lines)
+- 2 phases, 5 plans (3 gap closures), 43 commits
+- 1 day (2026-02-02)
+
+**Git range:** `feat(18-01)` → `test(19): complete UAT` (tagged v0.4.1)
+
+**What's next:** Newsletter setup, About page bio, next content-focused milestone
+
+---
+
 ## v0.4.0 Obsidian + Blog Integration Refactor (Shipped: 2026-02-02)
 
 **Delivered:** `draft: true/false` as single source of truth for publish state, with bidirectional sync between Obsidian and blog

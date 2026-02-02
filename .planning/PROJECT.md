@@ -55,17 +55,16 @@ A clean, personal space to write — with a publishing workflow that just works.
 - ✓ Shared library (scripts/lib/common.sh) with validation and utility functions — v0.4.0
 - ✓ Author normalization from config (not hardcoded) — v0.4.0
 - ✓ yq integration for reliable YAML frontmatter manipulation — v0.4.0
+- ✓ heroImage renders with proper alt text (heroImageAlt with title fallback) — v0.4.1
+- ✓ heroImage supports optional caption (heroImageCaption) — v0.4.1
+- ✓ Schema includes heroImageAlt and heroImageCaption fields — v0.4.1
+- ✓ Inline figure/figcaption renders with prose styling — v0.4.1
+- ✓ Publishing workflow handles hero image fields (change detection, normalization) — v0.4.1
+- ✓ Wiki-link format [[image.png]] supported in heroImage — v0.4.1
 
 ### Active
 
-**Current Milestone: v0.4.1 Image & Caption Support**
-
-**Goal:** Ensure hero images and inline image captions work correctly in posts.
-
-**Target features:**
-- heroImage frontmatter property renders correctly
-- Hero images support captions
-- Inline figure/figcaption works in post body
+(Planning next milestone)
 
 ### Deferred
 
@@ -83,11 +82,11 @@ A clean, personal space to write — with a publishing workflow that just works.
 
 ## Context
 
-**Shipped:** v0.4.0 Obsidian + Blog Integration Refactor (2026-02-02)
-- 3 phases, 8 plans executed
-- 37 files changed (+4,556 / -510 lines)
-- 2,831 LOC shell scripts
-- 19 requirements satisfied with 100% audit pass
+**Shipped:** v0.4.1 Image & Caption Support (2026-02-02)
+- 2 phases (18-19), 5 plans executed
+- 27 files changed (+2,921 / -30 lines)
+- Hero image rendering with accessibility support
+- Publishing workflow extended for hero image fields
 
 **Tech stack:**
 - Astro 5.x with content collections
@@ -158,6 +157,11 @@ A clean, personal space to write — with a publishing workflow that just works.
 | Backup before source modification | .bak files for safety on Obsidian file changes | ✓ Good — recoverable |
 | yq has() for boolean detection | Correctly handle draft: false | ✓ Good — false != missing |
 | Config-driven author | Author from settings.local.json with fallback | ✓ Good — portable |
+| Alt text fallback to title | Ensures every hero image has meaningful alt text | ✓ Good — accessibility |
+| Optional heroImage fields | Backward compatible schema extension | ✓ Good — existing posts work |
+| Perl [ \t]*\n pattern | Avoids variable interpolation bug with \s*$\n? | ✓ Good — regex fixed |
+| Hero image path transformation | Consistent with inline image handling | ✓ Good — Astro compatible |
+| Early wiki-link sanitization | Strip brackets before URL/basename checks | ✓ Good — clean processing |
 
 ---
-*Last updated: 2026-02-02 after v0.4.1 milestone started*
+*Last updated: 2026-02-02 after v0.4.1 milestone complete*
