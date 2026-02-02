@@ -1,4 +1,13 @@
 {
+  "images": {
+    "sizes": [256, 640, 1080, 2048, 3840],
+    "remotePatterns": [
+      { "protocol": "https", "hostname": "gravatar.com", "pathname": "/avatar/**" },
+      { "protocol": "https", "hostname": "ghchart.rshah.org", "pathname": "/**" }
+    ],
+    "formats": ["image/webp", "image/avif"],
+    "minimumCacheTTL": 3600
+  },
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
@@ -108,7 +117,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self' https://*.vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https://*.vercel.app https://platform.twitter.com https://cdn.syndication.twimg.com https://player.vimeo.com https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://*.vercel.app https://platform.twitter.com; img-src 'self' data: https: blob: https://ghchart.rshah.org; font-src 'self' https://*.vercel.app; connect-src 'self' https://*.vercel.app https://platform.twitter.com https://player.vimeo.com https://vimeo.com https://vitals.vercel-insights.com https://va.vercel-scripts.com; media-src 'self' https://*.vercel.app https://player.vimeo.com https://vimeo.com; object-src 'none'; frame-ancestors 'none'; frame-src https://platform.twitter.com https://syndication.twitter.com https://player.vimeo.com https://vercel.live https://www.youtube.com https://youtube.com https://*.youtube.com https://www.youtube-nocookie.com https://*.youtube-nocookie.com; worker-src 'self' blob:"
+          "value": "default-src 'self' https://*.vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https://*.vercel.app https://platform.twitter.com https://cdn.syndication.twimg.com https://player.vimeo.com https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://*.vercel.app https://platform.twitter.com; img-src 'self' data: blob:; font-src 'self' https://*.vercel.app; connect-src 'self' https://*.vercel.app https://platform.twitter.com https://player.vimeo.com https://vimeo.com https://vitals.vercel-insights.com https://va.vercel-scripts.com; media-src 'self' https://*.vercel.app https://player.vimeo.com https://vimeo.com; object-src 'none'; frame-ancestors 'none'; frame-src https://platform.twitter.com https://syndication.twitter.com https://player.vimeo.com https://vercel.live https://www.youtube.com https://youtube.com https://*.youtube.com https://www.youtube-nocookie.com https://*.youtube-nocookie.com; worker-src 'self' blob:"
         }
       ]
     }
