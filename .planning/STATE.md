@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 18 (Image & Caption Support) — not started
 Plan: —
-Status: Defining requirements
-Last activity: 2026-02-02 — Milestone v0.4.1 started
+Status: Ready to plan phase 18
+Last activity: 2026-02-02 — Roadmap created
 
 Progress: [░░░░░░░░░░░░░░░░░░░░] 0%
 
@@ -47,9 +47,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: v0.4.1 milestone started, defining requirements
+Stopped at: v0.4.1 roadmap created
 Resume file: None
-Next action: Define requirements, create roadmap
+Next action: `/gsd:plan-phase 18` to plan implementation
 
 Config:
 {
