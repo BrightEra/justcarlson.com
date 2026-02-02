@@ -15,7 +15,7 @@ This milestone eliminates technical debt in the publishing workflow by consolida
 
 - [x] **Phase 15: Library Extraction + yq Integration** - Consolidate duplicated code and establish reliable YAML tooling
 - [x] **Phase 16: Two-Way Sync** - Bidirectional metadata sync between Obsidian and blog
-- [ ] **Phase 17: Schema Migration** - Replace status field with draft as source of truth
+- [x] **Phase 17: Schema Migration** - Replace status field with draft as source of truth
 
 ## Phase Details
 
@@ -91,8 +91,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 17-01-PLAN.md — Create and execute migrate-schema.sh for existing vault posts
-- [ ] 17-02-PLAN.md — Update Obsidian template, types.json, views, and Astro schema
+- [x] 17-01-PLAN.md — Create and execute migrate-schema.sh for existing vault posts
+- [x] 17-02-PLAN.md — Update Obsidian template, types.json, views, and Astro schema
 
 ## Progress
 
@@ -103,7 +103,7 @@ Phases execute in numeric order: 15 -> 16 -> 17
 |-------|----------------|--------|-----------|
 | 15. Library Extraction | 2/2 | Complete | 2026-02-01 |
 | 16. Two-Way Sync | 4/4 | Complete | 2026-02-02 |
-| 17. Schema Migration | 0/2 | Not started | - |
+| 17. Schema Migration | 2/2 | Complete | 2026-02-02 |
 
 ---
 *Roadmap created: 2026-02-01*

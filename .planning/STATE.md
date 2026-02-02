@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-01)
 ## Current Position
 
 Phase: 17 of 17 (Schema Migration)
-Plan: 2 of 4 (Obsidian & Astro Schema Updates)
-Status: In progress
-Last activity: 2026-02-02 — Completed 17-02-PLAN.md
+Plan: 2 of 2 (all plans complete)
+Status: Phase complete
+Last activity: 2026-02-02 — Completed 17-01-PLAN.md (migration script executed)
 
-Progress: [██████████░░░░░░░░░░] 52% (v0.4.0)
+Progress: [████████████████████] 100% (v0.4.0)
 
 ## Performance Metrics
 
@@ -34,7 +34,7 @@ Progress: [██████████░░░░░░░░░░] 52% (v0
 - Phases: 15-17 (3 phases, 17 requirements)
 - Phase 15 complete: Library Extraction + yq Integration
 - Phase 16 complete: Two-Way Sync (4/4 plans, including gap closure)
-- Phase 17 in progress: Schema Migration (2/4 plans)
+- Phase 17 complete: Schema Migration (2/2 plans)
 
 ## Accumulated Context
 
@@ -62,6 +62,8 @@ All decisions documented in PROJECT.md Key Decisions table.
 - New posts default to draft: true (unpublished)
 - Deprecated fields kept in Astro schema for backward compatibility
 - Posts.base sorts by created date (newest first)
+- yq has() used for boolean field detection (handles false correctly)
+- VARIABLE=$((VARIABLE + 1)) syntax for set -e compatible incrementing
 
 ### Pending Todos
 
@@ -74,9 +76,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 17-02-PLAN.md
+Stopped at: Completed 17-01-PLAN.md (Phase 17 complete)
 Resume file: None
-Next action: `/gsd:execute-phase 17` to run 17-03-PLAN.md
+Next action: `/gsd:complete-milestone` to finish v0.4.0
 
 Config:
 {
