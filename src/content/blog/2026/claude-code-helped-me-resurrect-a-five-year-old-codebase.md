@@ -19,17 +19,17 @@ heroImageCaption: The foundation was never the problem.
 
 If you've ever worked as a Zendesk agent, you know the tab problem. Click a ticket link in Slack, new tab. Click another in email, another tab. Before lunch you're drowning in fifteen Zendesk tabs, all showing slightly different states of the same workspace.
 
-QuickTab, a classic browser extension, solved this. It intercepted Zendesk links and routed them to your existing agent tab instead of spawning new ones. Simple concept, genuinely useful for enterprise support teams.
+QuickTab, a classic browser extension, solved this. It intercepted Zendesk links and routed them to your existing agent tab instead of spawning new ones. Simple concept, useful for enterprise support teams.
 
 Then Tymeshift's version got pulled from the Chrome Web Store. The alternatives I found were... sketchy. Not the kind of thing you install on a corporate machine. I needed a trustworthy open source option, and the original [zendesk/QuickTab](https://github.com/zendesklabs/QuickTab) had been archived since December 2020.
 
-Why abandoned? Google's Manifest V3 requirements. Chrome extensions had gotten dramatically more complex, with stricter security policies and a completely different architecture. The original codebase was jQuery 1.6.1, Grunt, Webpack 1.x. 2015-era tooling facing 2026-era requirements. The gap felt insurmountable.
+Why abandoned? Google's Manifest V3 requirements. Chrome extensions had gotten dramatically more complex, with stricter security policies and a completely different architecture. The original codebase was jQuery 1.6.1, Grunt, Webpack 1.x. 2015-era tooling facing 2026-era requirements. The gap was massive.
 
 ## Why I Didn't Just Fix It Myself
 
 I'm not a software engineer. I'm a technician. A problem solver. My relationship with code mostly involves reviewing console logs and occasionally tweaking a config file. Building something from scratch has always been outside my ceiling.
 
-The QuickTab codebase was archaeological:
+The QuickTab codebase was quite outdated:
 
 ```
 BEFORE (2020)
@@ -44,9 +44,9 @@ BEFORE (2020)
 
 Google's ever-stricter extension requirements weren't just a technical hurdle. They were the reason the project was abandoned in the first place. Service workers that die after 30 seconds. Synchronous event listener registration. Storage-first architecture patterns. I didn't even know what half of that meant.
 
-## The Spark: Zach's MVP
+## The Spark: Gemini MVP
 
-Then [a friend of mine](https://github.com/zachvier) built something that changed my perspective. Using Gemini, he put together an MVP, a proof of concept that actually worked. It wasn't polished, but it proved the concept was tractable with AI assistance.
+Then my friend [Zach](https://github.com/zachvier) built something that made me reconsider. Using Gemini, he put together an MVP. Rough, but it worked.
 
 If AI could help him build a working prototype, maybe it could help me finish the project properly.
 
@@ -54,9 +54,9 @@ If AI could help him build a working prototype, maybe it could help me finish th
 
 I have been using Claude Code since the summer of 2025. It's super powerful, but it's also easy to auger yourself headfirst into problems with no way of getting yourself out without starting from scratch. For non-SWEs, you can definitely get into trouble. I certainly have more times than I can count.
 
-Recently, I started working with Claude Code using a workflow called [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done). It's a systematic approach: research first, then plan, then execute in phases with verification at each step. Not glamorous, but methodical.
+Recently, I started working with Claude Code using a workflow called [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done). It's a systematic approach: research first, then plan, then execute in phases with verification at each step. Methodical.
 
-The first thing that impressed me was the pitfalls research. Before writing a single line of code, Claude synthesized documentation from Chrome's developer docs, community issue trackers, and framework comparisons into a single document mapping out ten major traps in MV3 migration.
+The pitfalls research impressed me. Before writing a single line of code, Claude synthesized documentation from Chrome's developer docs, community issue trackers, and framework comparisons into a single document mapping out ten major traps in MV3 migration.
 
 The biggest trap: **service worker state loss.** In the old Manifest V2 world, background pages were persistent. You could store data in variables and it would just... stay there. In MV3, service workers terminate after 30 seconds of inactivity. Any global variables? Gone. This is the trap that silently kills migrations. Code works perfectly in development (because DevTools keeps the worker alive) and fails mysteriously in production.
 
@@ -82,19 +82,17 @@ AFTER (2026)
 ┗ Manifest V3 compliant
 ```
 
-It got approved on the Chrome Web Store. I didn't expect that.
+It got approved on the Chrome Web Store.
 
 This is my first public production software, the first thing I've built that strangers can install, and the first codebase I'm proud to hand off to a community.
 
 ## What This Means
 
-I keep thinking about the ceiling. Before AI tools like Claude Code, there was a hard limit on what I could create. I could *use* software, *configure* software, *troubleshoot* software. Building it was someone else's job.
+Before AI tools, I could use, configure, and troubleshoot software. Building it was someone else's job.
 
-That ceiling has moved. I still needed the push, the GSD methodology to stay organized, and my own judgment about what mattered. But AI let me operate at a level of technical sophistication I couldn't reach alone.
+Now I've shipped a Chrome extension with 98% test coverage, comprehensive documentation, and Web Store compliance. I didn't know that was something to aim for. I still needed the push, the GSD methodology to stay organized, and my own judgment about what mattered. But AI let me operate at a level of technical sophistication I couldn't reach alone.
 
-The quality bar for this project (98% test coverage, comprehensive documentation, Chrome Web Store compliance) isn't something I could have achieved by myself. It's not even something I would have known to aim for.
-
-This blog post, and the system I use to publish it (my own CMS), are also AI-assisted. The tools have changed what's possible.
+This blog post, and the system I use to publish it (my own CMS), are also AI-assisted.
 
 ---
 
