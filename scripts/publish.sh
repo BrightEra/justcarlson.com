@@ -263,9 +263,16 @@ normalize_frontmatter() {
     # Takes content as input, returns normalized content
     local content="$1"
 
-    # Replace author array with site default string
+    # Get author from config, fallback to site default
+    local author
+    author=$(get_author_from_config)
+    if [[ -z "$author" ]]; then
+        author="Justin Carlson"  # Default from site config
+    fi
+
+    # Replace author array with config value
     # Pattern matches: author:\n  - "[[Me]]" or author:\n  - [[Me]] or author:\n  - "Name"
-    content=$(echo "$content" | perl -0777 -pe 's/^author:\s*\n\s*-\s*.*$/author: "Justin Carlson"/m')
+    content=$(echo "$content" | perl -0777 -pe "s/^author:\s*\n\s*-\s*.*\$/author: \"$author\"/m")
 
     # Remove empty heroImage lines (heroImage: followed by newline or nothing)
     content=$(echo "$content" | perl -pe 's/^heroImage:\s*$\n?//m')
