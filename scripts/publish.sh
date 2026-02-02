@@ -729,6 +729,7 @@ transform_hero_image() {
     # Transform heroImage frontmatter path from Obsidian format to web format
     # Takes content and slug, returns transformed content
     # Handles: "Attachments/image.jpg" -> "/assets/blog/slug/image.jpg"
+    # Also handles wiki-link format: "[[image.png]]" -> "/assets/blog/slug/image.png"
     local content="$1"
     local slug="$2"
 
@@ -740,6 +741,12 @@ transform_hero_image() {
         echo "$content"
         return
     fi
+
+    # Strip quotes and wiki-link brackets from hero_value
+    # Handle: "[[image.png]]" -> image.png, [[image.png]] -> image.png
+    hero_value="${hero_value#[\"\']}"
+    hero_value="${hero_value%[\"\']}"
+    hero_value=$(echo "$hero_value" | sed 's/^\[\[//; s/\]\]$//')
 
     # Skip if already a URL (http/https)
     if [[ "$hero_value" =~ ^https?:// ]]; then
@@ -767,6 +774,7 @@ transform_hero_image() {
 extract_hero_image() {
     # Extract heroImage filename from content (if local)
     # Returns just the filename (for use with copy_images)
+    # Handles wiki-link format: "[[image.png]]" -> "image.png"
     local content="$1"
 
     local hero_value
@@ -775,6 +783,12 @@ extract_hero_image() {
     if [[ -z "$hero_value" ]]; then
         return
     fi
+
+    # Strip quotes and wiki-link brackets from hero_value
+    # Handle: "[[image.png]]" -> image.png, [[image.png]] -> image.png
+    hero_value="${hero_value#[\"\']}"
+    hero_value="${hero_value%[\"\']}"
+    hero_value=$(echo "$hero_value" | sed 's/^\[\[//; s/\]\]$//')
 
     # Skip if URL
     if [[ "$hero_value" =~ ^https?:// ]]; then
