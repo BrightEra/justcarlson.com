@@ -13,6 +13,9 @@ status:
   - Published
 draft: false
 tags: []
+heroImage: /src/assets/images/forrest-gump-quote.png
+heroImageAlt: Forrest Gump quote about life being like a box of chocolates
+heroImageCaption: A classic movie quote that resonates with many
 ---
 
 Welcome to my blog! This is a placeholder post while I get things set up.
