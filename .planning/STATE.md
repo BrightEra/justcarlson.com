@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-01)
 ## Current Position
 
 Phase: 16 of 17 (Two-Way Sync)
-Plan: 0 of ? (not yet planned)
-Status: Ready to plan
-Last activity: 2026-02-01 — Completed Phase 15
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-02 - Completed 16-01-PLAN.md (Shared Functions)
 
-Progress: [███░░░░░░░░░░░░░░░░░] 15% (v0.4.0)
+Progress: [████░░░░░░░░░░░░░░░░] 16% (v0.4.0)
 
 ## Performance Metrics
 
@@ -25,14 +25,15 @@ Progress: [███░░░░░░░░░░░░░░░░░] 15% (v0
 
 **Cumulative:**
 - 3 milestones shipped
-- 40 plans executed
+- 41 plans executed
 - 15 phases complete
 - 4 days total development
 
 **v0.4.0:**
-- Plans completed: 2
+- Plans completed: 3
 - Phases: 15-17 (3 phases, 17 requirements)
 - Phase 15 complete: Library Extraction + yq Integration
+- Phase 16 in progress: Two-Way Sync (1/3 plans)
 
 ## Accumulated Context
 
@@ -45,6 +46,11 @@ All decisions documented in PROJECT.md Key Decisions table.
 - extract_frontmatter_value is alias to get_frontmatter_field for backward compat
 - Installed go-yq (replacing kislyuk/yq) and shellcheck locally
 
+**Phase 16 Decisions:**
+- get_author_from_config returns empty (no fallback) - caller decides fallback behavior
+- update_obsidian_source creates .bak backup before modification (SYNC-04)
+- Used strenv() pattern for passing shell variables to yq expressions
+
 ### Pending Todos
 
 None.
@@ -55,10 +61,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-01
-Stopped at: Completed Phase 15
+Last session: 2026-02-02
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None
-Next action: `/gsd:plan-phase 16` or `/gsd:discuss-phase 16`
+Next action: Execute 16-02-PLAN.md (publish.sh integration)
 
 Config:
 {
