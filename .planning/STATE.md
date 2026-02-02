@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 
 Phase: 18 of 18 (Image & Caption Support) — complete ✓
 Plan: 2 of 2 — complete ✓
-Status: UAT gap closure complete, ready for final verification
-Last activity: 2026-02-02 — Completed 18-02 UAT gap closure plan
+Status: Milestone v0.4.1 ready for completion
+Last activity: 2026-02-02 — Phase 18 gap closure executed and verified (7/7 must-haves)
 
 Progress: [████████████████████] 100%
 
@@ -30,7 +30,7 @@ Progress: [████████████████████] 100%
 - 0.07 hours total
 
 **Cumulative:**
-- 4 milestones shipped (v0.4.1 in progress)
+- 4 milestones shipped (v0.4.1 complete)
 - 52 plans executed
 - 18 phases complete
 - 6 days total development
@@ -57,9 +57,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 18-02 UAT gap closure plan
+Stopped at: Phase 18 complete, verified ✓
 Resume file: None
-Next action: Run UAT verification, then `/gsd:complete-milestone` to finalize v0.4.1
+Next action: `/gsd:audit-milestone` or `/gsd:complete-milestone` to finalize v0.4.1
 
 Config:
 {
