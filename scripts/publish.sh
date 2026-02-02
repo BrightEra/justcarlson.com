@@ -277,6 +277,12 @@ normalize_frontmatter() {
     # Remove empty heroImage lines (heroImage: followed by newline or nothing)
     content=$(echo "$content" | perl -pe 's/^heroImage:\s*$\n?//m')
 
+    # Remove empty heroImageAlt lines
+    content=$(echo "$content" | perl -pe 's/^heroImageAlt:\s*$\n?//m')
+
+    # Remove empty heroImageCaption lines
+    content=$(echo "$content" | perl -pe 's/^heroImageCaption:\s*$\n?//m')
+
     echo "$content"
 }
 
