@@ -156,23 +156,22 @@ list_posts() {
         return
     fi
 
-    # Discover all posts with Published status
+    # Discover all posts with draft: false
     local found_files=()
 
     while IFS= read -r -d '' file; do
-        # Check if file contains status with Published value
-        # Using perl for multiline matching: status:\s*\n\s*-\s*[Pp]ublished
-        if perl -0777 -ne 'exit(!/status:\s*\n\s*-\s*[Pp]ublished/i)' "$file" 2>/dev/null; then
+        # Check if file contains draft: false
+        # Using perl for pattern matching: draft:\s*false
+        if perl -0777 -ne 'exit(!/draft:\s*false/i)' "$file" 2>/dev/null; then
             found_files+=("$file")
         fi
     done < <(find "$VAULT_PATH" -name "*.md" -type f -print0 2>/dev/null)
 
     if [[ ${#found_files[@]} -eq 0 ]]; then
-        echo -e "${YELLOW}No posts found with Published status.${RESET}"
+        echo -e "${YELLOW}No posts found with draft: false.${RESET}"
         echo ""
-        echo "To mark a post for publishing, add to frontmatter:"
-        echo "  status:"
-        echo "    - Published"
+        echo "To mark a post for publishing, set in frontmatter:"
+        echo "  draft: false"
         exit $EXIT_SUCCESS
     fi
 
