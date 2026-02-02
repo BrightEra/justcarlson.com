@@ -58,12 +58,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LIB-01 | Phase 15 | Pending |
-| LIB-02 | Phase 15 | Pending |
-| LIB-03 | Phase 15 | Pending |
-| LIB-04 | Phase 15 | Pending |
-| LIB-05 | Phase 15 | Pending |
-| CONF-02 | Phase 15 | Pending |
+| LIB-01 | Phase 15 | Complete |
+| LIB-02 | Phase 15 | Complete |
+| LIB-03 | Phase 15 | Complete |
+| LIB-04 | Phase 15 | Complete |
+| LIB-05 | Phase 15 | Complete |
+| CONF-02 | Phase 15 | Complete |
 | SYNC-01 | Phase 16 | Complete |
 | SYNC-02 | Phase 16 | Complete |
 | SYNC-03 | Phase 16 | Complete |
