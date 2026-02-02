@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-01)
 ## Current Position
 
 Phase: 16 of 17 (Two-Way Sync)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-02 - Completed 16-01-PLAN.md (Shared Functions)
+Last activity: 2026-02-02 - Completed 16-02-PLAN.md (Publish.sh Integration)
 
-Progress: [████░░░░░░░░░░░░░░░░] 16% (v0.4.0)
+Progress: [████░░░░░░░░░░░░░░░░] 20% (v0.4.0)
 
 ## Performance Metrics
 
@@ -30,10 +30,10 @@ Progress: [████░░░░░░░░░░░░░░░░] 16% (v0
 - 4 days total development
 
 **v0.4.0:**
-- Plans completed: 3
+- Plans completed: 4
 - Phases: 15-17 (3 phases, 17 requirements)
 - Phase 15 complete: Library Extraction + yq Integration
-- Phase 16 in progress: Two-Way Sync (1/3 plans)
+- Phase 16 in progress: Two-Way Sync (2/3 plans)
 
 ## Accumulated Context
 
@@ -50,6 +50,8 @@ All decisions documented in PROJECT.md Key Decisions table.
 - get_author_from_config returns empty (no fallback) - caller decides fallback behavior
 - update_obsidian_source creates .bak backup before modification (SYNC-04)
 - Used strenv() pattern for passing shell variables to yq expressions
+- Author fallback is "Justin Carlson" when config value not set (16-02)
+- update_obsidian_source called after copy_post to ensure publish succeeded (16-02)
 
 ### Pending Todos
 
@@ -62,9 +64,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 16-01-PLAN.md
+Stopped at: Completed 16-02-PLAN.md
 Resume file: None
-Next action: Execute 16-02-PLAN.md (publish.sh integration)
+Next action: Execute 16-03-PLAN.md (unpublish.sh integration)
 
 Config:
 {
