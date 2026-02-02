@@ -725,6 +725,71 @@ convert_wiki_links() {
     echo "$content"
 }
 
+transform_hero_image() {
+    # Transform heroImage frontmatter path from Obsidian format to web format
+    # Takes content and slug, returns transformed content
+    # Handles: "Attachments/image.jpg" -> "/assets/blog/slug/image.jpg"
+    local content="$1"
+    local slug="$2"
+
+    # Extract heroImage value (if any)
+    local hero_value
+    hero_value=$(echo "$content" | grep -oP '^heroImage:\s*\K.+' | head -1)
+
+    if [[ -z "$hero_value" ]]; then
+        echo "$content"
+        return
+    fi
+
+    # Skip if already a URL (http/https)
+    if [[ "$hero_value" =~ ^https?:// ]]; then
+        echo "$content"
+        return
+    fi
+
+    # Skip if already transformed (starts with /assets/)
+    if [[ "$hero_value" =~ ^/assets/ ]]; then
+        echo "$content"
+        return
+    fi
+
+    # Extract just the filename (handle paths like "Attachments/image.jpg")
+    local filename
+    filename=$(basename "$hero_value")
+
+    # Replace the heroImage value with the web path
+    local new_path="/assets/blog/${slug}/${filename}"
+    content=$(echo "$content" | perl -pe "s|^heroImage:.*\$|heroImage: ${new_path}|m")
+
+    echo "$content"
+}
+
+extract_hero_image() {
+    # Extract heroImage filename from content (if local)
+    # Returns just the filename (for use with copy_images)
+    local content="$1"
+
+    local hero_value
+    hero_value=$(echo "$content" | grep -oP '^heroImage:\s*\K.+' | head -1)
+
+    if [[ -z "$hero_value" ]]; then
+        return
+    fi
+
+    # Skip if URL
+    if [[ "$hero_value" =~ ^https?:// ]]; then
+        return
+    fi
+
+    # Skip if already transformed
+    if [[ "$hero_value" =~ ^/assets/ ]]; then
+        return
+    fi
+
+    # Return just the filename
+    basename "$hero_value"
+}
+
 copy_images() {
     # Copy images to public assets directory
     local slug="$1"
@@ -790,6 +855,9 @@ copy_post() {
     # Normalize frontmatter types (author array -> string, remove empty heroImage)
     content=$(normalize_frontmatter "$content")
 
+    # Transform heroImage path from Obsidian to web format
+    content=$(transform_hero_image "$content" "$slug")
+
     # Convert wiki-links to markdown
     content=$(convert_wiki_links "$content" "$slug")
 
@@ -843,11 +911,18 @@ process_posts() {
         local content
         content=$(cat "$file")
 
-        # Extract and copy images
+        # Extract and copy images (inline images from content)
         local images=()
         while IFS= read -r img; do
             [[ -n "$img" ]] && images+=("$img")
         done < <(extract_images "$content")
+
+        # Also extract heroImage from frontmatter (if local)
+        local hero_img
+        hero_img=$(extract_hero_image "$content")
+        if [[ -n "$hero_img" ]]; then
+            images+=("$hero_img")
+        fi
 
         if [[ ${#images[@]} -gt 0 ]]; then
             echo -e "  ${CYAN}Copying images...${RESET}"
