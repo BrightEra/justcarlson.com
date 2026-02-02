@@ -52,7 +52,7 @@ If AI could help him build a working prototype, maybe it could help me finish th
 
 ## Enter Claude Code + GSD
 
-I have been using Claude Code since the summer of 2025. It's super powerful, but it's also easy to auger yourself headfirst into problems with no way of getting yourself out without starting from scratch. For non-SWEs, you can definitely get into trouble. I certainly have more times than I can count.
+I have been using Claude Code since the summer of 2025. It's super powerful, but it's also easy to auger yourself headfirst into problems with no way of getting yourself out without starting from scratch. For non-SWEs, you can definitely get into trouble. I certainly have.
 
 Recently, I started working with Claude Code using a workflow called [GSD (Get Shit Done)](https://github.com/glittercowboy/get-shit-done). It's a systematic approach: research first, then plan, then execute in phases with verification at each step. Methodical.
 
