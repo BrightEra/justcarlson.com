@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 18-image-caption-support
 source: [18-01-SUMMARY.md]
 started: 2026-02-02T05:35:00Z
@@ -59,17 +59,25 @@ skipped: 4
   reason: "User reported: this doesn't exist. also the Post template doesn't have this."
   severity: major
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Obsidian Post Template missing heroImageAlt and heroImageCaption fields"
+  artifacts:
+    - path: "/home/jc/notes/personal-vault/Templates/Post Template.md"
+      issue: "Missing heroImageAlt and heroImageCaption fields"
+  missing:
+    - "Add heroImageAlt: field to Obsidian template"
+    - "Add heroImageCaption: field to Obsidian template"
+  debug_session: ".planning/debug/phase-18-uat-failures.md"
 
-- truth: "Phase 18 implementation is incomplete - missing example post, Obsidian templates, and justfile scripts"
+- truth: "Feature cannot be tested without example post with hero image"
   status: failed
-  reason: "User reported: no tests will be successful because an example post doesn't exist on the localhost build server, and Obsidian template functionality or justfile script functionality has been updated. major gaps. redo needed of phase planning."
+  reason: "User reported: no tests will be successful because an example post doesn't exist on the localhost build server"
   severity: blocker
   test: 6
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "No test post exists with heroImage set - only post (hello-world.md) has no hero image"
+  artifacts:
+    - path: "src/content/blog/"
+      issue: "No posts have hero images to test the feature"
+  missing:
+    - "Create or update a post with heroImage for testing"
+    - "Optionally add heroImageAlt and heroImageCaption to demonstrate feature"
+  debug_session: ".planning/debug/phase-18-uat-failures.md"
