@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** A clean, personal space to write — with a publishing workflow that just works.
-**Current focus:** Phase 16 - Two-Way Sync
+**Current focus:** Phase 16 - Two-Way Sync (Complete)
 
 ## Current Position
 
 Phase: 16 of 17 (Two-Way Sync)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-02 - Completed 16-02-PLAN.md (Publish.sh Integration)
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-02-02 - Completed 16-03-PLAN.md (Unpublish.sh Integration)
 
-Progress: [████░░░░░░░░░░░░░░░░] 20% (v0.4.0)
+Progress: [█████░░░░░░░░░░░░░░░] 25% (v0.4.0)
 
 ## Performance Metrics
 
@@ -30,10 +30,10 @@ Progress: [████░░░░░░░░░░░░░░░░] 20% (v0
 - 4 days total development
 
 **v0.4.0:**
-- Plans completed: 4
+- Plans completed: 5
 - Phases: 15-17 (3 phases, 17 requirements)
 - Phase 15 complete: Library Extraction + yq Integration
-- Phase 16 in progress: Two-Way Sync (2/3 plans)
+- Phase 16 complete: Two-Way Sync (3/3 plans)
 
 ## Accumulated Context
 
@@ -52,6 +52,8 @@ All decisions documented in PROJECT.md Key Decisions table.
 - Used strenv() pattern for passing shell variables to yq expressions
 - Author fallback is "Justin Carlson" when config value not set (16-02)
 - update_obsidian_source called after copy_post to ensure publish succeeded (16-02)
+- Use ${VAULT_PATH:-} pattern for safe unbound variable check (16-03)
+- Display warning but continue when Obsidian source not found on unpublish (16-03)
 
 ### Pending Todos
 
@@ -64,9 +66,9 @@ None.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 16-02-PLAN.md
+Stopped at: Completed 16-03-PLAN.md
 Resume file: None
-Next action: Execute 16-03-PLAN.md (unpublish.sh integration)
+Next action: Execute Phase 17 (Final Milestone)
 
 Config:
 {
