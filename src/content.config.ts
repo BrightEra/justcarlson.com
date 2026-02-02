@@ -29,8 +29,10 @@ const blog = defineCollection({
       categories: z.array(z.string()).optional(),
       url: z.string().optional().nullable(),
       created: z.coerce.date().optional(),
+      // DEPRECATED: Use pubDatetime instead. Kept for backward compatibility.
       published: z.coerce.date().optional().nullable(),
       topics: z.array(z.string()).optional(),
+      // DEPRECATED: Use draft instead. Kept for backward compatibility.
       status: z.array(z.string()).optional(),
     }),
 });
