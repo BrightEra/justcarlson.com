@@ -88,10 +88,11 @@ Plans:
 *Astro Schema:*
   15. `content.config.ts` updated: remove `status` and `published` from schema (or mark deprecated)
 
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 17-01: [TBD - determined during plan-phase]
+- [ ] 17-01-PLAN.md — Create and execute migrate-schema.sh for existing vault posts
+- [ ] 17-02-PLAN.md — Update Obsidian template, types.json, views, and Astro schema
 
 ## Progress
 
@@ -102,7 +103,7 @@ Phases execute in numeric order: 15 -> 16 -> 17
 |-------|----------------|--------|-----------|
 | 15. Library Extraction | 2/2 | Complete | 2026-02-01 |
 | 16. Two-Way Sync | 4/4 | Complete | 2026-02-02 |
-| 17. Schema Migration | 0/? | Not started | - |
+| 17. Schema Migration | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-01*
