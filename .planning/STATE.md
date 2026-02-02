@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 19 of 19 (Justfile Hero Image Support) — complete
-Plan: 1 of 1 in current phase
+Plan: 2 of 2 in current phase
 Status: Phase complete, milestone complete
-Last activity: 2026-02-02 — Completed 19-01-PLAN.md
+Last activity: 2026-02-02 — Completed 19-02-PLAN.md (gap closure)
 
 Progress: [████████████████████] 100%
 
@@ -25,13 +25,13 @@ Progress: [████████████████████] 100%
 - v0.4.0: 8 plans, 2.0 min avg, 0.27 hours total (2 days)
 
 **Current Milestone (v0.4.1):**
-- 3 plans executed
-- 5 min total duration
-- 0.08 hours total
+- 4 plans executed (including gap closure)
+- 8 min total duration
+- 0.13 hours total
 
 **Cumulative:**
 - 4 milestones shipped (v0.4.1 ready)
-- 53 plans executed
+- 54 plans executed
 - 19 phases complete
 - 6 days total development
 
@@ -45,10 +45,13 @@ Progress: [████████████████████] 100%
 | 18-01 | Optional schema fields | Maintains backward compatibility with existing posts |
 | 18-02 | Use existing test image | forrest-gump-quote.png already available in assets |
 | 18-02 | External template update | Obsidian vault is separate from git repo |
+| 19-02 | Use [ \t]*\n instead of \s*$\n? | Avoid Perl variable interpolation bug |
+| 19-02 | Transform heroImage paths like inline images | Consistent handling, Astro compatibility |
 
 ### Roadmap Evolution
 
 - Phase 19 added: justfile scripts update to support heroImage, heroImageAlt, heroImageCaption
+- Plan 19-02 added: Gap closure for Perl regex bug discovered in UAT
 
 ### Pending Todos
 
@@ -60,8 +63,8 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-02T06:11:35Z
-Stopped at: Completed 19-01-PLAN.md
+Last session: 2026-02-02T06:38:33Z
+Stopped at: Completed 19-02-PLAN.md
 Resume file: None
 Next action: `/gsd:complete-milestone` to complete v0.4.1
 
