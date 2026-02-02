@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 19-justfile-hero-image-support
 source: 19-01-SUMMARY.md
 started: 2026-02-02T06:30:00Z
-updated: 2026-02-02T06:48:00Z
+updated: 2026-02-02T06:55:00Z
 ---
 
 ## Current Test
@@ -43,10 +43,10 @@ skipped: 2
   reason: "User reported: Build fails with YAML parse error. The heroImage: key is being stripped from frontmatter, leaving orphaned value."
   severity: blocker
   test: 1
-  root_cause: "Shell variable interpolation bug in publish.sh lines 278, 281, 284. The regex pattern uses double quotes causing $\\n to be interpreted as shell variable expansion instead of Perl regex anchor+newline."
+  root_cause: "Perl variable interpolation bug. The regex pattern `s/^heroImage:\\s*$\\n?//m` contains `$\\n` which Perl interprets as the variable `$\\` (output record separator, empty) followed by literal 'n'. The compiled regex becomes `^heroImage:\\s*n?` which matches and strips the 'heroImage: ' key even when a value is present."
   artifacts:
     - path: "scripts/publish.sh"
-      issue: "Lines 278, 281, 284 use double-quoted perl -pe with $\\n pattern which shell expands incorrectly"
+      issue: "Lines 278, 281, 284 use `\\s*$\\n?` pattern where `$\\n` is interpreted by Perl as variable interpolation, not end-of-line anchor"
   missing:
-    - "Change double quotes to single quotes around perl regex patterns, or escape the $ as \\$"
+    - "Change `\\s*$\\n?` to `[ \\t]*\\n` - use explicit space/tab class (not \\s which includes newlines) and required newline (not optional)"
   debug_session: ""
