@@ -46,10 +46,12 @@ Plans:
   3. A `.bak` file is created before any Obsidian file modification
   4. Running `just unpublish --dry-run` shows what would change without modifying any files
   5. Author field in published posts uses value from settings.local.json, not hardcoded string
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 16-01: [TBD - determined during plan-phase]
+- [ ] 16-01-PLAN.md — Add update_obsidian_source and get_author_from_config functions to common.sh
+- [ ] 16-02-PLAN.md — Extend publish.sh with two-way sync and config-driven author
+- [ ] 16-03-PLAN.md — Extend unpublish.sh with --dry-run flag and Obsidian source sync
 
 ### Phase 17: Schema Migration
 
@@ -98,7 +100,7 @@ Phases execute in numeric order: 15 -> 16 -> 17
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 15. Library Extraction | 2/2 | Complete | 2026-02-01 |
-| 16. Two-Way Sync | 0/? | Not started | - |
+| 16. Two-Way Sync | 0/3 | Not started | - |
 | 17. Schema Migration | 0/? | Not started | - |
 
 ---
