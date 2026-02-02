@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 22 of 22 (External Resilience)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-02-02 — Phase 21 verified and complete
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-02 — Completed 22-01-PLAN.md
 
-Progress: [██████░░░░] 67% v0.5.0
+Progress: [██████████] 100% v0.5.0
 
 ## Performance Metrics
 
@@ -27,11 +27,12 @@ Progress: [██████░░░░] 67% v0.5.0
 
 **Current v0.5.0:**
 - Phase 21: 1 plan, 2 min
+- Phase 22: 1 plan, 2 min
 
 **Cumulative:**
 - 5 milestones shipped (v0.1.0 - v0.4.1)
-- 52 plans executed
-- 20 phases complete
+- 54 plans executed
+- 22 phases complete
 - 6 days total development
 
 ## Accumulated Context
@@ -48,6 +49,9 @@ Recent decisions for v0.5.0:
 - Chromium-only for image blocking tests (sufficient for this use case)
 - 256x256 WebP at quality 80 for avatar fallback (4KB, good retina support)
 - Explicit width/height attributes on avatar prevent layout shift
+- GitHubChart.astro component for MDX compatibility (scripts with curly braces)
+- Console.log for blocked scripts (not silent) for debuggability
+- Twitter widget conditional on .twitter-tweet or blockquote[data-twitter] presence
 
 ### Pending Todos
 
@@ -59,10 +63,10 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-02-02 22:44
-Stopped at: Completed 21-01-PLAN.md
+Last session: 2026-02-02 23:25
+Stopped at: Completed 22-01-PLAN.md
 Resume file: None
-Next action: `/gsd:discuss-phase 22` (Final UAT)
+Next action: Final UAT for v0.5.0 Graceful Fallback milestone
 
 Config:
 {
