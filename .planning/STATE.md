@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** A clean, personal space to write — with a publishing workflow that just works.
-**Current focus:** Planning next milestone
+**Current focus:** v0.5.0 Graceful Fallback for Blocked Services
 
 ## Current Position
 
-Phase: Ready for next milestone
-Plan: Not started
-Status: v0.4.1 shipped, ready to plan next milestone
-Last activity: 2026-02-02 — v0.4.1 milestone complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-02 — Milestone v0.5.0 started
 
-Progress: [████████████████████] Milestone complete
+Progress: [░░░░░░░░░░░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -54,7 +54,7 @@ None.
 Last session: 2026-02-02
 Stopped at: v0.4.1 milestone complete
 Resume file: None
-Next action: `/gsd:new-milestone` when ready to start next version
+Next action: Define requirements, then `/gsd:plan-phase 20`
 
 Config:
 {
