@@ -16,6 +16,11 @@ import getSortedPosts from "@/utils/getSortedPosts";
 const posts = await getCollection("blog");
 
 const sortedPosts = getSortedPosts(posts);
+
+// Avatar with Vercel Image Optimization proxy and local fallback
+const gravatarUrl = "https://gravatar.com/avatar/ef133a0cc6308305d254916b70332b1a?s=400";
+const proxyUrl = `/_vercel/image?url=${encodeURIComponent(gravatarUrl)}&w=256&q=75`;
+const fallbackUrl = "/avatar-fallback.webp";
 const posts2025AndLater = sortedPosts.filter(({ data }) => data.pubDatetime.getFullYear() >= 2025);
 const featuredPosts = posts2025AndLater.filter(({ data }) => data.featured);
 const recentPosts = posts2025AndLater.filter(({ data }) => !data.featured);
@@ -30,8 +35,12 @@ const recentPosts = posts2025AndLater.filter(({ data }) => !data.featured);
       <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <a href="/about" class="block mx-auto sm:mx-0 group">
           <img
-            src="https://gravatar.com/avatar/ef133a0cc6308305d254916b70332b1a?s=400&d=identicon"
+            src={proxyUrl}
+            onerror={`this.onerror=null; this.src='${fallbackUrl}';`}
             alt={SITE.author}
+            width="160"
+            height="160"
+            loading="eager"
             class="w-40 h-40 rounded-full object-cover flex-shrink-0 transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
           />
         </a>

@@ -5,17 +5,17 @@
 <!-- Vercel Analytics -->
 <script>
   if (typeof window !== 'undefined' && import.meta.env.PROD) {
-    import('@vercel/analytics').then(({ inject }) => {
-      inject();
-    });
+    import('@vercel/analytics')
+      .then(({ inject }) => inject())
+      .catch(() => console.log('Vercel Analytics unavailable'));
   }
 </script>
 
 <!-- Vercel Speed Insights -->
 <script>
   if (typeof window !== 'undefined' && import.meta.env.PROD) {
-    import('@vercel/speed-insights').then(({ injectSpeedInsights }) => {
-      injectSpeedInsights();
-    });
+    import('@vercel/speed-insights')
+      .then(({ injectSpeedInsights }) => injectSpeedInsights())
+      .catch(() => console.log('Vercel Speed Insights unavailable'));
   }
 </script>

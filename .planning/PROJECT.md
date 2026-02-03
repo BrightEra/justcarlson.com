@@ -64,7 +64,14 @@ A clean, personal space to write — with a publishing workflow that just works.
 
 ### Active
 
-(Planning next milestone)
+**Current Milestone: v0.5.0 Graceful Fallback for Blocked Services**
+
+**Goal:** Pages load fully when any external service is blocked by firewall/VPN
+
+- [ ] Self-hosted avatar replacing Gravatar dependency
+- [ ] External scripts (analytics, widgets) fail silently without breaking page
+- [ ] External images degrade gracefully with placeholders
+- [ ] No network-dependent critical rendering
 
 ### Deferred
 
@@ -164,4 +171,4 @@ A clean, personal space to write — with a publishing workflow that just works.
 | Early wiki-link sanitization | Strip brackets before URL/basename checks | ✓ Good — clean processing |
 
 ---
-*Last updated: 2026-02-02 after v0.4.1 milestone complete*
+*Last updated: 2026-02-02 after v0.5.0 milestone started*
