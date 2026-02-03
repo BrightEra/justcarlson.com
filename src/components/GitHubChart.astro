@@ -13,7 +13,6 @@
     alt="Just Carlson's GitHub Contribution Graph"
     class="w-full"
     style="max-width: 100%; height: auto;"
-    loading="lazy"
   />
 </div>
 
@@ -23,30 +22,49 @@
     const img = container?.querySelector('img');
     if (!img || !container) return;
 
+    // Check if image is successfully loaded
+    const isImageLoaded = () => img.complete && img.naturalHeight > 0;
+
     // If image already loaded (cached), remove loading state and exit
-    if (img.complete && img.naturalHeight > 0) {
+    if (isImageLoaded()) {
       container.classList.remove('img-loading');
       return;
     }
 
     const TIMEOUT_MS = 5000;
+    const POLL_INTERVAL_MS = 100;
     let timeoutId: ReturnType<typeof setTimeout>;
+    let pollId: ReturnType<typeof setInterval>;
+
+    const cleanup = () => {
+      clearTimeout(timeoutId);
+      clearInterval(pollId);
+      img.onerror = null;
+      img.onload = null;
+    };
+
+    const handleSuccess = () => {
+      cleanup();
+      container.classList.remove('img-loading');
+    };
 
     const showFallback = () => {
-      clearTimeout(timeoutId);
-      img.onerror = null;
+      cleanup();
       container.classList.remove('img-loading');
       container.innerHTML = `<p class="p-4 text-center"><a href="https://github.com/justcarlson" class="text-accent underline">View my contributions on GitHub</a></p>`;
     };
 
     img.onerror = showFallback;
+    img.onload = handleSuccess;
 
-    img.onload = () => {
-      clearTimeout(timeoutId);
-      container.classList.remove('img-loading');
-    };
+    // Poll for image completion (handles Edge deferred load events)
+    pollId = setInterval(() => {
+      if (isImageLoaded()) {
+        handleSuccess();
+      }
+    }, POLL_INTERVAL_MS);
 
-    // Timeout for slow loads
+    // Timeout for blocked/slow loads
     timeoutId = setTimeout(showFallback, TIMEOUT_MS);
   }
 
