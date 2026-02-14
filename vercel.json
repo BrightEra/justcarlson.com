@@ -17,12 +17,12 @@
   "redirects": [
     {
       "source": "/:year(\\d{4})/:month(\\d{2})/:day(\\d{2})/:slug",
-      "destination": "/posts/:slug",
+      "destination": "/posts/:year/:slug",
       "permanent": true
     },
     {
       "source": "/blog/:year(\\d{4})/:month(\\d{2})/:day(\\d{2})/:slug",
-      "destination": "/posts/:slug",
+      "destination": "/posts/:year/:slug",
       "permanent": true
     },
     {
@@ -38,7 +38,7 @@
     { "source": "/tag/:tag", "destination": "/tags/:tag", "permanent": true },
     {
       "source": "/20:year/:month/:day/:slug(.*)",
-      "destination": "/posts/:slug",
+      "destination": "/posts/20:year/:slug",
       "permanent": true
     }
   ],
