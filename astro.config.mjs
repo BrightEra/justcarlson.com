@@ -64,23 +64,25 @@ export default defineConfig({
 	          item.priority = 0.9;
 	          item.changefreq = ChangeFreqEnum.WEEKLY;
 	        }
-	        // Recent blog posts (2024-2025)
-	        else if (url.includes('/posts/2025') || url.includes('/posts/2024')) {
-	          item.priority = 0.8;
-	          item.changefreq = ChangeFreqEnum.WEEKLY;
+		        // Blog posts - dynamically prioritize by publication year in URL
+	        else if (/\/posts\/\d{4}\//.test(url)) {
+	          const postYearMatch = url.match(/\/posts\/(\d{4})\//);
+	          const postYear = postYearMatch ? Number(postYearMatch[1]) : NaN;
+	          const currentYear = new Date().getFullYear();
+	          const yearsOld = Number.isNaN(postYear) ? 99 : currentYear - postYear;
+
+	          if (yearsOld <= 1) {
+	            item.priority = 0.8;
+	            item.changefreq = ChangeFreqEnum.WEEKLY;
+	          } else if (yearsOld <= 5) {
+	            item.priority = 0.6;
+	            item.changefreq = ChangeFreqEnum.MONTHLY;
+	          } else {
+	            item.priority = 0.4;
+	            item.changefreq = ChangeFreqEnum.YEARLY;
+	          }
 	        }
-	        // Somewhat recent posts (2020-2023)
-	        else if (url.includes('/posts/2023') || url.includes('/posts/2022') || 
-	                 url.includes('/posts/2021') || url.includes('/posts/2020')) {
-	          item.priority = 0.6;
-	          item.changefreq = ChangeFreqEnum.MONTHLY;
-	        }
-	        // Older posts (2010-2019)
-	        else if (url.includes('/posts/201')) {
-	          item.priority = 0.4;
-	          item.changefreq = ChangeFreqEnum.YEARLY;
-	        }
-	        // Tag pages - low priority
+        // Tag pages - low priority
 	        else if (url.includes('/tags/')) {
 	          item.priority = 0.1;
 	          item.changefreq = ChangeFreqEnum.YEARLY;
