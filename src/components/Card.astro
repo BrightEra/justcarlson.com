@@ -1,9 +1,9 @@
 ---
-import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { getPath } from "@/utils/getPath";
 import { calculateReadingTime } from "@/utils/readingTime";
 import { slugifyStr } from "@/utils/slugify";
+import { originalImageFallback, vercelImage, vercelSrcset } from "@/utils/vercelImage";
 import Datetime from "./Datetime.astro";
 
 export interface Props extends CollectionEntry<"blog"> {
@@ -46,16 +46,17 @@ const headerProps = {
           href={getPath(id, filePath)}
           class="flex-shrink-0 hidden sm:block group"
         >
-          <Image
-            src={heroImage}
+          <img
+            src={vercelImage(heroImage, 256)}
+            srcset={vercelSrcset(heroImage, [256, 640])}
+            sizes="140px"
+            onerror={originalImageFallback(heroImage)}
             alt={title}
-            width={140}
-            height={79}
+            width="140"
+            height="79"
             class="rounded shadow-sm transition-all duration-200 group-hover:shadow-md group-hover:scale-105 object-cover"
-            format="webp"
-            quality={80}
             loading="lazy"
-            densities={[1, 2]}
+            decoding="async"
           />
         </a>
       )}

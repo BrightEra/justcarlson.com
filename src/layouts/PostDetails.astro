@@ -16,6 +16,7 @@ import Layout from "@/layouts/Layout.astro";
 import { getPath } from "@/utils/getPath";
 import { calculateReadingTime } from "@/utils/readingTime";
 import { slugifyStr } from "@/utils/slugify";
+import { originalImageFallback, vercelImage, vercelSrcset } from "@/utils/vercelImage";
 
 export interface Props {
   post: CollectionEntry<"blog">;
@@ -154,10 +155,17 @@ const wordCount = (post.body ?? "").split(/\s+/).length;
         heroImage && (
           <figure class="mb-8">
             <img
-              src={heroImage}
+              src={vercelImage(heroImage, 1080)}
+              srcset={vercelSrcset(heroImage, [640, 1080, 2048])}
+              sizes="(min-width: 48rem) 48rem, 100vw"
+              onerror={originalImageFallback(heroImage)}
               alt={heroImageAlt || title}
+              width="1280"
+              height="720"
               class="aspect-video w-full rounded-md object-cover"
-              loading="lazy"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
             />
             {heroImageCaption && (
               <figcaption class="mt-2 text-center text-sm">

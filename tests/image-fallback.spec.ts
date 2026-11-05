@@ -99,6 +99,28 @@ test.describe("Image fallback behavior", () => {
     expect(src).toContain("avatar-fallback.webp");
   });
 
+  test("post images fall back to originals when the proxy is unavailable", async ({ page }) => {
+    // /_vercel/image exists only on Vercel; block it so the result does not depend on the server.
+    await page.route("**/_vercel/image**", (route) => route.abort("blockedbyclient"));
+
+    const loadedOriginal = async (img: import("@playwright/test").Locator) => {
+      await img.scrollIntoViewIfNeeded();
+      await expect
+        .poll(() =>
+          img.evaluate((el: HTMLImageElement) =>
+            el.complete && el.naturalWidth > 0 ? el.currentSrc : ""
+          )
+        )
+        .toMatch(/\/assets\/blog\/.+\.(jpg|png)$/);
+    };
+
+    await page.goto("/posts");
+    await loadedOriginal(page.locator('main img[src*="assets"]').first());
+
+    await page.goto("/posts/2026/hello-world");
+    await loadedOriginal(page.locator("article figure img"));
+  });
+
   test("page loads without external images", async ({ page }) => {
     // Block ALL external requests to simulate strict firewall
     await page.route("**/*", (route) => {

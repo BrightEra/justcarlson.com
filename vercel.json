@@ -6,7 +6,7 @@
       { "protocol": "https", "hostname": "ghchart.rshah.org", "pathname": "/**" }
     ],
     "formats": ["image/webp", "image/avif"],
-    "minimumCacheTTL": 3600
+    "minimumCacheTTL": 2678400
   },
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
