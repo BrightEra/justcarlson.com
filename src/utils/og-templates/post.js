@@ -120,6 +120,7 @@ export default async (post) => {
             props: {
               style: {
                 position: "absolute",
+                boxSizing: "border-box",
                 top: "-1px",
                 right: "-1px",
                 border: "4px solid #000",
@@ -138,6 +139,8 @@ export default async (post) => {
             type: "div",
             props: {
               style: {
+                position: "relative",
+                boxSizing: "border-box",
                 border: "4px solid #000",
                 background: "#fefbfb",
                 borderRadius: "4px",
@@ -163,6 +166,8 @@ export default async (post) => {
                       type: "p",
                       props: {
                         style: {
+                          // Satori 0.63 applies browser margins to <p>; keep the 0.18 position.
+                          margin: "17px 0 0 0",
                           fontSize: 72,
                           fontWeight: "bold",
                           maxHeight: "84%",
@@ -187,13 +192,6 @@ export default async (post) => {
                             props: {
                               children: [
                                 "by ",
-                                {
-                                  type: "span",
-                                  props: {
-                                    style: { color: "transparent" },
-                                    children: '"',
-                                  },
-                                },
                                 {
                                   type: "span",
                                   props: {
