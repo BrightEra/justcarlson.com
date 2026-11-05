@@ -2,7 +2,6 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
-import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
@@ -105,7 +104,6 @@ export default defineConfig({
         return item;
       }
     }),
-    react(),
     AstroPWA({
       registerType: "autoUpdate",
       // globPatterns already precaches these; listing them again duplicates entries.
@@ -143,7 +141,9 @@ export default defineConfig({
       generateSW: {
         cleanupOutdatedCaches: true,
         navigateFallback: "/404",
-        globPatterns: ["**/*.{css,js,html,svg,png,jpg,jpeg,gif,webp,woff,woff2,ttf,eot,ico}"],
+        // Keep raster images out of precache. The images-cache rule below caches
+        // the ones a visitor views, so offline pages still show their images.
+        globPatterns: ["**/*.{css,js,html,svg,woff,woff2,ttf,eot,ico}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -160,7 +160,8 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            // Also match resized images from /_vercel/image.
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$|\/_vercel\/image\?/,
             handler: "CacheFirst",
             options: {
               cacheName: "images-cache",
