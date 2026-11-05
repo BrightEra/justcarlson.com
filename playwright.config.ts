@@ -18,7 +18,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    // --ignore-lock keeps Astro 7 in the foreground when it detects an AI agent.
+    command: "npm run dev -- --ignore-lock",
     url: "http://localhost:4321",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

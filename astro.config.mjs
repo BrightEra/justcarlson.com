@@ -8,20 +8,26 @@ import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
 import { remarkLazyLoadImages } from "./src/utils/remarkLazyLoadImages.mjs";
 import { SITE } from "./src/config";
-import AstroPWA from "@vite-pwa/astro";
+import { unified } from "@astrojs/markdown-remark";
+import { AstroPWAIntegration as AstroPWA } from "@vite-pwa/astro";
 import buildValidator from "./src/integrations/build-validator.ts";
 
 // https://astro.build/config
 export default defineConfig({
   site: SITE.website,
   trailingSlash: "ignore",
+  // Astro 7 defaults to "jsx" whitespace rules; keep the Astro 5 HTML output.
+  compressHTML: true,
   markdown: {
-    remarkPlugins: [
-      remarkToc,
-      // @ts-ignore - TypeScript has issues with remark plugin tuple syntax
-      [remarkCollapse, { test: "Table of contents" }],
-      remarkLazyLoadImages
-    ],
+    // Astro 7 defaults to Sätteri; the remark plugins below need unified.
+    processor: unified({
+      remarkPlugins: [
+        remarkToc,
+        // @ts-ignore - TypeScript has issues with remark plugin tuple syntax
+        [remarkCollapse, { test: "Table of contents" }],
+        remarkLazyLoadImages,
+      ],
+    }),
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
       themes: { light: "min-light", dark: "night-owl" },
@@ -102,7 +108,8 @@ export default defineConfig({
     react(),
     AstroPWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png"],
+      // globPatterns already precaches these; listing them again duplicates entries.
+      includeManifestIcons: false,
       manifest: {
         name: "Justin Carlson",
         short_name: "JustCarlson",
@@ -133,7 +140,8 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
+      generateSW: {
+        cleanupOutdatedCaches: true,
         navigateFallback: "/404",
         globPatterns: ["**/*.{css,js,html,svg,png,jpg,jpeg,gif,webp,woff,woff2,ttf,eot,ico}"],
         runtimeCaching: [
